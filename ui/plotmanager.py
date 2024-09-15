@@ -2,7 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 
 from ui.resizableframe import ResizableFrameRightEdge 
-
+from ui.signalentry import SignalEntry
 from ui.fileselector import FileSelector
 
 class PlotManagerPane(ResizableFrameRightEdge):
@@ -62,6 +62,7 @@ class PlotManager(tk.Frame):
         '''Initialize the PlotManager panel.'''
 
         self.allSignals = []
+        self.presenter = presenter
         
         # Make sure that the grid column takes up all the space 
         self.columnconfigure(0,weight=1)
@@ -82,7 +83,7 @@ class PlotManager(tk.Frame):
         self.signalCollection = ttk.Combobox(self.frame,state='readonly')
         self.signalCollection.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
         
-        self.addSignBtn = ttk.Button(self.frame,text="Add",width=5, command=self.addSignal)
+        self.addSignBtn = ttk.Button(self.frame,text="Add",width=5, command=self.AddSignal)
         self.addSignBtn.grid(row=1,column=1,sticky='EW', padx = (0,3), pady = 2)
         
         self.sigListLab = ttk.Label(self.frame,text='Signal List')
@@ -90,27 +91,20 @@ class PlotManager(tk.Frame):
         
         
         
-    def addSignal(self):
+    def AddSignal(self):
+        '''Perform all the actions to add a signal in the ui, model, and plot canvas.'''
+        
+        # Add SignalEntry in the PlotManager 
         entryText = self.signalCollection.get()
-        ent = ErasableEntry(self,entryText,bg='gray40')
+        ent = SignalEntry(self,entryText,bg='gray40')
         entryPosition = len(self.allSignals)+3
         ent.grid(row = entryPosition,column=0,sticky='EW')
         self.allSignals.append(ent)
         
+        # Add signal data in the PlotData
+        self.presenter.AddSignalToPlotData(entryText)
+        # Plot the signals in plotData
+        self.presenter.PlotPlotData()
         
-class ErasableEntry(tk.Frame):
-    def __init__(self,parent,text,*args,**kwargs)->None:
-        super().__init__(parent,*args,**kwargs)
-
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=0)
         
-        self.entry = ttk.Label(self, text = text)
-        self.entry.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
-
-        self.eraseButton = ttk.Button(self,text='x',width = 5,command=self.destroy)
-        self.eraseButton.grid(row=1,column=1,sticky='EW', padx = 3, pady = 2)
-        
-        self.hideButton = ttk.Button(self,text='o',width = 5,command=self.destroy)
-        self.hideButton.grid(row=1,column=2,sticky='EW', padx = 3, pady = 2)
         

@@ -5,6 +5,8 @@ import os
 import threading
 import subprocess
 import numpy as np
+
+
 # from  include.ui import UI -> Not working because of circular import
 
 
@@ -233,8 +235,20 @@ class Presenter():
         self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
         
         
+    # Plot results
+    def AddSignalToPlotData(self,key)->None:
+        '''Add a signal to plot data.'''
+        # Extract value from results dictionary
+        value = self.model.results[key]
+        # Create key-value pair in plotData dictionary
+        self.model.plotData.results[key].append(value)
+        
+    def PlotPlotData(self)->None:
+        '''Plot the signals contained in plotData.'''
         
         
+        
+      
         
 
     # Save functions

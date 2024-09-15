@@ -1,4 +1,6 @@
 
+from collections import defaultdict
+
 class SignalCollection():
     """Class that generates a signal collection."""
 
@@ -9,7 +11,7 @@ class SignalCollection():
         '''Initialize the SignalCollection object.'''
 
         # Dictionary with signal names and values
-        self.results = {}
+        self.results = defaultdict(list)
         # List of units
         self.units = []
         
