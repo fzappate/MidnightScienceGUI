@@ -198,7 +198,7 @@ class Presenter():
         
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
-        self.UpdateEntry(self.view.mainTabColl.plotter.signalSelectorFrame.signalSelectionContent.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
+        self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
           
         
         
@@ -230,7 +230,7 @@ class Presenter():
         self.model.results = resDict
         
         # Update the combobox
-        self.view.mainTabColl.plotter.signalSelectorFrame.signalSelectionContent.signalCollection['values'] = tuple(self.model.results.keys())
+        self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
         
         
         

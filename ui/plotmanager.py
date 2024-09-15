@@ -3,12 +3,9 @@ import tkinter as tk
 
 from ui.resizableframe import ResizableFrameRightEdge 
 
-from ui.labelhelpinput import LabelHelpEntry
-from ui.collapsiblepane import CollapsiblePane
-from ui.expandablelist import ExpandableList
 from ui.fileselector import FileSelector
 
-class SignalSelectionFrame(ResizableFrameRightEdge):
+class PlotManagerPane(ResizableFrameRightEdge):
     def __init__(self,parent,presenter, *args, **kwargs)->None:
         super().__init__(parent,*args, **kwargs)
         '''Graphicalm object that wraps the widgets necessary to select the signals to plot. '''
@@ -20,27 +17,25 @@ class SignalSelectionFrame(ResizableFrameRightEdge):
         # Input panel must be placed in a canvas to use the scroll bar
         self.inputCanvas = tk.Canvas(self)
         self.inputCanvas.columnconfigure(0,weight=1)
-        self.signalSelectionContent = SignalSelectionContent(self.inputCanvas,presenter)
+        self.inputCanvas.configure(bg='green')
         self.scrollbar=ttk.Scrollbar(self,orient="vertical", command=self.inputCanvas.yview)
         self.inputCanvas.configure(yscrollcommand=self.scrollbar.set)
         
+        self.plotManager = PlotManager(self.inputCanvas,presenter)        
+        
         # Create an handle for the frame window so that it can be configured later 
-        self.internal = self.inputCanvas.create_window((0, 0), window=self.signalSelectionContent, anchor="nw")
+        self.internal = self.inputCanvas.create_window((0, 0), window=self.plotManager, anchor="nw")
 
-        self.scrollbar.grid(row=0,column=1,sticky='NSE',padx = (0,5))
-        self.inputCanvas.grid(row=0,column=0,sticky='NEWS')
+        self.inputCanvas.grid(row=0,column=0,sticky='NEWS',padx = (3,3),pady = (3,3))
+        self.scrollbar.grid(row=0,column=1,sticky='NSE',padx = (0,3),pady = (3,3))
 
         # Bind methods
         # Horizontally stretch the frame inside the canvas to fill the canvas when it is resized
         self.inputCanvas.bind("<Configure>", lambda e: self.inputCanvas.itemconfig(self.internal, width=e.width))
         # Scroll bar configures 
-        self.signalSelectionContent.bind("<Configure>",lambda e: self.inputCanvas.configure(scrollregion=self.signalSelectionContent.bbox("all")))
-        self.signalSelectionContent.bind('<Enter>', self.boundToMouseWheel)
-        self.signalSelectionContent.bind('<Leave>', self.unboundToMouseWheel)
-
-        # Run button 
-        self.runButton = ttk.Button(self,text = 'Run')
-        self.runButton.grid(row=1,column=0,sticky='E')
+        self.plotManager.bind("<Configure>",lambda e: self.inputCanvas.configure(scrollregion=self.plotManager.bbox("all")))
+        self.plotManager.bind('<Enter>', self.boundToMouseWheel)
+        self.plotManager.bind('<Leave>', self.unboundToMouseWheel)
 
 
     def boundToMouseWheel(self, event):
@@ -59,54 +54,63 @@ class SignalSelectionFrame(ResizableFrameRightEdge):
                 self.inputCanvas.yview_scroll(int(-1*(event.delta/120)), "units")
                 
                 
-class SignalSelectionContent(ttk.Frame):    
+class PlotManager(tk.Frame):    
     '''This class contains all the UI widget necesary to navigate the signals of a result file.'''
 
     def __init__(self, parent, presenter,*args,**kwargs)->None:
         super().__init__(parent,*args,**kwargs)     
-        '''Initialize the SignalSelectionContent panel.'''
+        '''Initialize the PlotManager panel.'''
 
         self.allSignals = []
         
         # Make sure that the grid column takes up all the space 
         self.columnconfigure(0,weight=1)
 
-        # Create the main frame and collapsible panes first 
-        self.fileSelector = FileSelector(self,presenter)
+        # Results file selection
+        self.fileSelector = FileSelector(self,presenter, bg = 'grey40')
         self.fileSelector.grid(row=0,column=0,sticky='EW')
         
-        self.frame = ttk.Frame(self)
+        # Plot manager frame
+        self.frame = tk.Frame(self, bg = 'grey40')
         self.frame.columnconfigure(0,weight=1)
         self.frame.columnconfigure(1,weight=0)
+        self.frame.grid(row=1,column=0,sticky='EW')
+        
+        self.sigSelLab = ttk.Label(self.frame,text = 'Signal Selection')
+        self.sigSelLab.grid(row=0,column=0,sticky='EW',padx = 3, pady = (4,0))
         
         self.signalCollection = ttk.Combobox(self.frame,state='readonly')
-        self.signalCollection.grid(row=0,column=0,sticky='EW')
+        self.signalCollection.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
         
-        self.addSignBtn = ttk.Button(self.frame,text="Add",width=10, command=self.addSignal)
-        self.addSignBtn.grid(row=0,column=1,sticky='EW')
+        self.addSignBtn = ttk.Button(self.frame,text="Add",width=5, command=self.addSignal)
+        self.addSignBtn.grid(row=1,column=1,sticky='EW', padx = (0,3), pady = 2)
         
-        self.frame.grid(row=1,column=0,sticky='EW')
+        self.sigListLab = ttk.Label(self.frame,text='Signal List')
+        self.sigListLab.grid(row=2,column=0,sticky='EW',padx = 3, pady = (4,0))
+        
         
         
     def addSignal(self):
         entryText = self.signalCollection.get()
-        ent = ErasableEntry(self,entryText)
-        entryPosition = len(self.allSignals)+2
+        ent = ErasableEntry(self,entryText,bg='gray40')
+        entryPosition = len(self.allSignals)+3
         ent.grid(row = entryPosition,column=0,sticky='EW')
         self.allSignals.append(ent)
         
         
-class ErasableEntry(ttk.Frame):
+class ErasableEntry(tk.Frame):
     def __init__(self,parent,text,*args,**kwargs)->None:
         super().__init__(parent,*args,**kwargs)
 
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=0)
         
-        self.firstEntry = ttk.Entry(self)
-        self.firstEntry.insert(0, text)
-        self.firstEntry.grid(row=1,column=0,sticky='EW')
+        self.entry = ttk.Label(self, text = text)
+        self.entry.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
 
-        self.eraseButton = ttk.Button(self,text='X',width = 5,command=self.destroy)
-        self.eraseButton.grid(row=1,column=1,sticky='EW')
+        self.eraseButton = ttk.Button(self,text='x',width = 5,command=self.destroy)
+        self.eraseButton.grid(row=1,column=1,sticky='EW', padx = 3, pady = 2)
+        
+        self.hideButton = ttk.Button(self,text='o',width = 5,command=self.destroy)
+        self.hideButton.grid(row=1,column=2,sticky='EW', padx = 3, pady = 2)
         

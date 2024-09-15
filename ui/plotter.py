@@ -1,9 +1,8 @@
+import tkinter as tk
 from tkinter import ttk 
-from tkinter import Label
 
 
-from ui.signalselector import SignalSelectionFrame
-from include.geompreprocplotui import GeomPreprocPlotUI
+from ui.plotmanager import PlotManagerPane
 from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
 
 try:
@@ -13,9 +12,9 @@ except:
         pass
 
 
-class Plotter(ttk.Frame):
-    def __init__(self,parent,presenter)->None:
-        super().__init__(parent)
+class Plotter(tk.Frame):
+    def __init__(self,parent,presenter,*args, **kwargs)->None:
+        super().__init__(parent,*args, **kwargs)
         '''Container of the whole plotter.'''
 
         # Set the grid configuration of this object
@@ -25,13 +24,13 @@ class Plotter(ttk.Frame):
         self.rowconfigure(0,weight=1)        
         
         # Signal selection 
-        self.signalSelectorFrame = SignalSelectionFrame(self,presenter,width = 330)
-        self.signalSelectorFrame.grid(row=0,column=0,sticky='NES')
+        self.plotManagerPane = PlotManagerPane(self,presenter,width = 330,bg = 'gray30')
+        self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         
         # Plot
-        self.plot = ttk.Label(self,text = "Here goes the plot")
-        self.plot.grid(row=0,column=1)  
+        self.plot = tk.Frame(self,bg='gray30')
+        self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)  
         
         # Plot Controls panel
-        self.plotControls = GeomPreprocPlotControlsUI(self,presenter,width = 280)
-        self.plotControls.grid(row=0,column=2,sticky='NWS')
+        self.plotControls = GeomPreprocPlotControlsUI(self,presenter,width = 280,bg = 'gray30')
+        self.plotControls.grid(row=0,column=2,sticky='NWS', padx=3, pady=3)

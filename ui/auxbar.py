@@ -3,12 +3,12 @@ from tkinter import PhotoImage
 import tkinter as tk
 from PIL import Image,ImageTk
 import os
-class AuxBar(ttk.Frame):
+class AuxBar(tk.Frame):
     '''File bar class containing all the buttons for the auxiliary functions.'''
 
-    def __init__(self, parent,presenter)->None:
+    def __init__(self, parent,presenter,*args, **kwargs)->None:
+        super().__init__(parent,*args, **kwargs)
         '''Initialize the aux bar object.'''
-        super().__init__(parent)
         
         iconSize = (30, 30)
 
@@ -25,9 +25,9 @@ class AuxBar(ttk.Frame):
         self.loadIcon = ImageTk.PhotoImage(self.loadIcon)
 
         # Save button 
-        save_button = tk.Button(self, image=self.saveIcon,command=presenter.SaveGearGenData)
-        save_button.grid(row=0, column=0,   ipady=1, ipadx=1)
+        save_button = ttk.Button(self, image=self.saveIcon,command=presenter.SaveGearGenData)
+        save_button.grid(row=0, column=0, padx=(3,3), ipady=1, ipadx=1)
 
         # Load buttion
         load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadData)
-        load_button.grid(row=0, column=1, ipady=1, ipadx=1)
+        load_button.grid(row=0, column=1, padx=(3,3), ipady=1, ipadx=1)

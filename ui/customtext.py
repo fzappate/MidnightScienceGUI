@@ -16,12 +16,13 @@ class VerticalScrollText(ResizableFrameTopEdge):
         self.text = ''
         text = tk.Text(self)
         text.grid_rowconfigure(0, weight=1)
-        text.grid(column =0, row=0,sticky='NEWS',pady=10)
         text.insert('1.0','Please eneter a comment')
 
         # Scroll bar 
         text_scroll = ttk.Scrollbar(self, orient='vertical',command = text.yview)
-        text_scroll.grid(row=0,column=1,sticky='NS')
+        
+        text.grid(column =0, row=0,sticky='NEWS',padx=3,pady=2)
+        text_scroll.grid(row=0,column=1,sticky='NS',padx=(0,3),pady=2)
 
         # Link the text to the scroll bar
         text['yscrollcommand'] = text_scroll.set

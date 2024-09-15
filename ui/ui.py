@@ -26,6 +26,8 @@ class UI(tk.Tk):
         # get screen width and height
         ws = self.winfo_screenwidth() # width of the screen
         hs = self.winfo_screenheight() # height of the screen
+        self.config(bg='black')
+        
         w = 0.8*ws
         h = 0.8*hs
         # calculate x and y coordinates for the Tk root window
@@ -44,18 +46,18 @@ class UI(tk.Tk):
         self.rowconfigure(3,weight=1)
         self.rowconfigure(4,weight=0)
         
-        self.fileBar = FileBar(self)
-        self.fileBar.grid(row=0,column=0,sticky = 'W')
+        self.fileBar = FileBar(self,presenter, background = 'gray30')
+        self.fileBar.grid(row=0,column=0,sticky = 'EW', padx = (3,3),pady = (2,2))
 
-        self.auxBar = AuxBar(self,presenter)
-        self.auxBar.grid(row = 1,column=0,sticky='W')
+        self.auxBar = AuxBar(self,presenter, background = 'gray30')
+        self.auxBar.grid(row = 1,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
-        self.pathSelector = PathSelector(self,presenter)
-        self.pathSelector.grid(row=2,column=0,sticky='EW')
+        self.pathSelector = PathSelector(self,presenter, background = 'gray30')
+        self.pathSelector.grid(row=2,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
-        self.mainTabColl = HorizTabCollection(self,presenter)
-        self.mainTabColl.grid(row=3,column=0,sticky='NEWS')
+        self.mainTabColl = HorizTabCollection(self,presenter, background = 'gray30')
+        self.mainTabColl.grid(row=3,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
 
-        self.text = VerticalScrollText(self,height = 150)
-        self.text.grid(row=4,column=0,sticky='EW')
+        self.text = VerticalScrollText(self,height = 150, background = 'gray30')
+        self.text.grid(row=4,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
