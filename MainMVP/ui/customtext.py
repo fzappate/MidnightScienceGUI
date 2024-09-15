@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk 
-from include.resizableframe import ResizableFrameTopEdge
+from ui.resizableframe import ResizableFrameTopEdge
      
 class VerticalScrollText(ResizableFrameTopEdge):
     '''Text object with vertical scroll.'''

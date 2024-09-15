@@ -1,10 +1,10 @@
 from tkinter import ttk 
 from tkinter import Label
 
-from include.geompreprocmodulesui import GeomPreprocModulesUI
+
 from ui.signalselector import SignalSelectionFrame
 from include.geompreprocplotui import GeomPreprocPlotUI
-from include.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
+from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
 
 try:
     from ctypes import windll
@@ -29,7 +29,7 @@ class Plotter(ttk.Frame):
         self.signalSelectorFrame.grid(row=0,column=0,sticky='NES')
         
         # Plot
-        self.plot = GeomPreprocPlotUI(self)
+        self.plot = ttk.Label(self,text = "Here goes the plot")
         self.plot.grid(row=0,column=1)  
         
         # Plot Controls panel

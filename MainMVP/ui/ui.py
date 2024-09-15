@@ -1,11 +1,11 @@
 import tkinter as tk
 
 from include.presenter import Presenter
-from include.pathselector import PathSelector
-from include.notebook import HorizTabCollection
-from include.filebar import FileBar
-from include.customtext import VerticalScrollText
-from include.auxbar import AuxBar
+from ui.pathselector import PathSelector
+from ui.notebook import HorizTabCollection
+from ui.filebar import FileBar
+from ui.customtext import VerticalScrollText
+from ui.auxbar import AuxBar
 
 try:
     from ctypes import windll

@@ -1,11 +1,11 @@
 from tkinter import ttk
 import tkinter as tk
 
-from include.resizableframe import ResizableFrameRightEdge 
+from ui.resizableframe import ResizableFrameRightEdge 
 
 from include.labelhelpinput import LabelHelpEntry
-from include.collapsiblepane import CollapsiblePane
-from include.expandablelist import ExpandableList
+from ui.collapsiblepane import CollapsiblePane
+from ui.expandablelist import ExpandableList
 from ui.fileselector import FileSelector
 
 class SignalSelectionFrame(ResizableFrameRightEdge):
