@@ -4,7 +4,7 @@ from tkinter import Label
 
 from ui.signalselector import SignalSelectionFrame
 from include.geompreprocplotui import GeomPreprocPlotUI
-from include.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
+from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
 
 try:
     from ctypes import windll

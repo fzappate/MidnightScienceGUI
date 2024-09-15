@@ -1,5 +1,5 @@
 from model.model import Model 
-from include.ui import UI
+from ui.ui import UI
 from include.presenter import Presenter
 
 
