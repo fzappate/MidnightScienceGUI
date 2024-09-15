@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk 
 
 from include.geompreprocui import GeomPreprocUI
-
+from ui.plotter import Plotter
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -26,13 +26,13 @@ class HorizTabCollection(ttk.Frame):
         self.tab_notebook.grid(row=0,column=0,sticky='NEWS')
 
         # Create the objects to put in the tabs
+        self.plotter = Plotter(self.tab_notebook,presenter)
         self.geomPreproc = GeomPreprocUI(self.tab_notebook,presenter) 
         self.multics = ttk.Frame(self.tab_notebook)
-        self.postProc = ttk.Frame(self.tab_notebook)
         
         # Add the tabs (frame) to the notebook
+        self.tab_notebook.add(self.plotter, text='Plotter')
         self.tab_notebook.add(self.geomPreproc, text='Geometrical Preprocessor')
         self.tab_notebook.add(self.multics, text='Multics')
-        self.tab_notebook.add(self.postProc, text='Results Plotter')
         
         self.tab_notebook.pack(expand=1, fill="both")

@@ -1,7 +1,8 @@
 import tkinter as tk
+from tkinter import ttk
 from abc import ABC, abstractmethod
 
-class ResizableFrame(tk.Frame, ABC):    
+class ResizableFrame(ttk.Frame, ABC):    
     def __init__(self, *args, **kwargs):
         '''
         This is a virtual class of ResizableFrame. 

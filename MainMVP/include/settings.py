@@ -10,8 +10,11 @@ class Settings():
     def __init__(self)->None:
         '''Initialize the application setting object.'''
 
-        # Working folder path
+        self.settingsFilePath = './MainMVP/settings/settings.md'
         self.workingFolder = ''
+        self.resultsFile = ''
+        self.resultsFilePath = ''
+        
 
         # Predefined Gear Generator files name
         self.gearGenInputsFileName = '/shapingPara_dim.txt'

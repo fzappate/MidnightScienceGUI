@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
+from collections import defaultdict
 import os
 import threading
 import subprocess
@@ -24,11 +25,15 @@ class Presenter():
         self.view = view
 
 
+
     def RunUI(self):
         '''Run the UI.'''
         # Initialize UI and start the loop 
         self.view.initUI(self)
+        self.LoadSettings()
+        self.LoadResults()
         self.view.mainloop()
+
 
 
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
@@ -39,18 +44,36 @@ class Presenter():
         entry.insert(0,txt)
 
 
+
     # Path selector 
+    
     def BrowseWorkingFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
         and store its path in the main control models. """
         # Open the dialog window
-        workingFolder = filedialog.askdirectory()
+        folder = filedialog.askdirectory()
         # Update the working folder entry with the selecter folder 
-        self.UpdateEntry(self.view.pathSelector.pathEntry,workingFolder)
+        self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
+        # Update model setting
+        self.model.settings.workingFolder = folder
         # Set the workign folder of the setting object the same as the content of the entry 
-        self.UpdateSettingWorkingFolder(workingFolder)
+        self.UpdateSettingFile("workingFolder", folder)
         
         
+        
+    def BrowseResultsFile(self) -> None:
+        '''This function allows the selection of a file.'''
+        # Open the dialog window
+        filePath = filedialog.askopenfilename()
+        # Update the entry text
+        self.UpdateEntry(self.view.mainTabColl.plotter.signalSelector.inputsPanel.fileSelector.pathEntry,filePath)
+        # Update model setting 
+        self.model.settings.resultsFilePath = filePath
+        # Update setting file
+        self.UpdateSettingFile("resultsFilePath", filePath)
+        
+        
+                
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
         and pasting in the setting object. """
@@ -59,38 +82,162 @@ class Presenter():
         self.UpdateSettingWorkingFolder(workingFolder)
 
         
-    def UpdateSettingWorkingFolder(self,workingFolder)->None:
+        
+    def UpdateWorkingFolder(self,workingFolder)->None:
         """This function makes sure that when a working folder is chosen the path is properly 
-        updated in the Setting object."""
+        updated in the Settings object and settings file."""
 
-        # Update the setting object
-        self.model.settings.workingFolder = workingFolder
 
-        # Gear Generator
-        self.model.settings.gearGenInputsFilePath = workingFolder + self.model.settings.gearGenInputsFileName
-        self.model.settings.profile1Path = workingFolder + self.model.settings.profile1Name
-        self.model.settings.profile2Path = workingFolder + self.model.settings.profile2Name
 
-        # Geometry Code
-        self.model.settings.geomCodeInputsFilePath = workingFolder + self.model.settings.geomCodeInputsFileName
-        self.model.settings.geomCodeGearParaDict = workingFolder + self.model.settings.geomCodeGearParaDict
-        self.model.settings.radialRecessDictPath = workingFolder + self.model.settings.radialRecessDict
+        # Update settings file
+        file = open(self.model.settings.settingsFilePath,'r')
+        lines = file.readlines()
+        file.close()
+        
+        counter = 0
+        for line in lines:
+            if line.startswith('-'):
+                
+                lineMod = line.replace(line[0],"")
+                tokens = lineMod.split(',')
+                keyword = tokens[0].strip()                
+                setting = tokens[1].strip()
+                if keyword == "workingFolder":
+                    break
+            counter +=1
+        
+        lines[counter] = "- workingFolder, " + workingFolder + "\n"
+        file = open(self.model.settings.settingsFilePath,'w')
+        file.writelines(lines)
+        file.close()
+       
+        
+        
+    def UpdateSettingFile(self, targetSettingKey, targetSettingVal)->None:
+        """This function makes sure that when a working folder is chosen the path is properly 
+        updated in the Settings object and settings file.
+        
+        settingInModel:     structure of the setting in the UI.
+                            Eg: self.model.settings.workingFolder
+        targetSettingKey:   keyword of the setting in the settings file.
+                            Eg: workingFolder
+        setting:            data entered in the model setting structure and file."""
 
-        # # Reload inputs and gear set
-        # self.LoadGearGenData()
+        # Update settings file
+        file = open(self.model.settings.settingsFilePath,'r')
+        lines = file.readlines()
+        file.close()
+        
+        counter = 0
+        for line in lines:
+            if line.startswith('-'):
+                
+                lineMod = line.replace(line[0],"")
+                tokens = lineMod.split(',')
+                keyword = tokens[0].strip()                
+                setting = tokens[1].strip()
+                if keyword == targetSettingKey:
+                    break
+            counter +=1
+        
+        lines[counter] = "- " + targetSettingKey + ", "  + targetSettingVal + "\n"
+        file = open(self.model.settings.settingsFilePath,'w')
+        file.writelines(lines)
+        file.close()
+
 
 
     # Load funcions
+    
     def LoadData(self)->None:
-        '''This function loads all the inputs.'''
+        '''This function loads the inputs, outputs and so on.'''
 
+        # Load the results of the simulation 
+        # self.LoadResults()
+        
         # Load GearGen data
-        self.LoadGearGenData()
+        # self.LoadGearGenData()
 
         # Load GeometryCode data
-        self.LoadGeomCodeData()
+        # self.LoadGeomCodeData()
 
-    
+
+
+    def LoadSettings(self) -> None:
+        ''' This function loads the GUI settings.'''
+        
+        # Check that the settings file exists
+        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
+        
+        if (settingsFileExist):
+            print('Settings file found at: ' + self.model.settings.settingsFilePath)
+        else:
+            print('Settings file not found at: ' + self.model.settings.settingsFilePath)
+            
+        # Read setting file
+        file = open(self.model.settings.settingsFilePath,'r')
+        lines = file.readlines()
+        
+        # Create setting dictionary
+        settingDict = {}
+        for line in lines:
+            if line.startswith('-'):
+                
+                line = line.replace(line[0],"")
+                tokens = line.split(',')
+                keyword = tokens[0].strip()                
+                setting = tokens[1].strip()
+                
+                settingDict[keyword] = setting
+                    
+        file.close()
+        
+        # load setting dictionary in setting structure
+        self.model.settings.workingFolder = settingDict.get("workingFolder")
+        self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
+        
+        # Update entries
+        self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
+        self.UpdateEntry(self.view.mainTabColl.plotter.signalSelectorFrame.signalSelectionContent.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
+          
+        
+        
+    def LoadResults(self) -> None:
+        '''Load results.'''
+        # Read results file
+        file = open(self.model.settings.resultsFilePath,'r')
+        lines = file.readlines()
+        file.close()
+        
+        # Update the model dictionary containing the results 
+        resDict = defaultdict(list)
+        counter = 0
+        for line in lines:
+            lineTokens = line.split(',')
+            lineTokens = [lineToken.strip() for lineToken in lineTokens ]
+            lineTokens = lineTokens[:-1]
+            
+            if counter == 0:
+                headerTokens = lineTokens
+            else:
+                valueTokens = lineTokens
+                values = [float(x) for x in valueTokens]
+                for i, key in enumerate(headerTokens):
+                    resDict[key].append(values[i])
+                
+            counter +=1
+                    
+        self.model.results = resDict
+        
+        # Update the combobox
+        self.view.mainTabColl.plotter.signalSelectorFrame.signalSelectionContent.signalCollection['values'] = tuple(self.model.results.keys())
+        
+        
+        
+        
+        
+        
+        
     def LoadGearGenData(self) -> None:
         '''This function starts the routine that loads all the data.
         First the inputs are stored in the dictionaries, then the gear profiles 

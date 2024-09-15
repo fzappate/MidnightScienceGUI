@@ -21,7 +21,7 @@ class UI(tk.Tk):
         '''Initialize the graphical interface.'''
         
         super().__init__()
-        self.title("pyGear")
+        self.title("Midnight Science GUI")
 
         # get screen width and height
         ws = self.winfo_screenwidth() # width of the screen

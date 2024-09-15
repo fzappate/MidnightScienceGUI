@@ -15,8 +15,8 @@ except:
 
 
 class GeomPreprocUI(ttk.Frame):
-    def __init__(self,parent,presenter)->None:
-        super().__init__(parent)
+    def __init__(self,parent,presenter, *args, **kwargs)->None:
+        super().__init__(parent, *args, **kwargs)
         '''Container of the whole geometrical preprocessor model.'''
 
         # Set the grid configuration of this object
@@ -25,6 +25,10 @@ class GeomPreprocUI(ttk.Frame):
         self.columnconfigure(2,weight=0)
         self.rowconfigure(0,weight=1)        
 
+        # Input panel 
+        self.geomPreprocTabs = GeomPreprocModulesUI(self,presenter,width = 330)
+        self.geomPreprocTabs.grid(row=0,column=0,sticky='NES')
+        
         # Plot panel
         self.plot = GeomPreprocPlotUI(self)
         self.plot.grid(row=0,column=1)   
@@ -33,7 +37,4 @@ class GeomPreprocUI(ttk.Frame):
         self.plotControls = GeomPreprocPlotControlsUI(self,presenter,width = 280)
         self.plotControls.grid(row=0,column=2,sticky='NWS')
 
-        # Input panel 
-        self.geomPreprocTabs = GeomPreprocModulesUI(self,presenter,width = 330)
-        self.geomPreprocTabs.grid(row=0,column=0,sticky='NES')
         
