@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk 
 from tkinter import filedialog
 
-from include.presenter import Presenter
+from presenter.presenter import Presenter
 
 
 try:

@@ -4,7 +4,7 @@ class Settings():
     def __init__(self)->None:
         '''Initialize the application setting object.'''
 
-        self.settingsFilePath = './MainMVP/utilities/settings.md'
+        self.settingsFilePath = './utilities/settings.md'
         self.workingFolder = ''
         self.resultsFile = ''
         self.resultsFilePath = ''

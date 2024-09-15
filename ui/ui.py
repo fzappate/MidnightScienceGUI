@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from include.presenter import Presenter
+from presenter.presenter import Presenter
 from ui.pathselector import PathSelector
 from ui.notebook import HorizTabCollection
 from ui.filebar import FileBar

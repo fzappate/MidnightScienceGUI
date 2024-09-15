@@ -3,7 +3,7 @@ import tkinter as tk
 
 from ui.resizableframe import ResizableFrameRightEdge 
 
-from include.labelhelpinput import LabelHelpEntry
+from ui.labelhelpinput import LabelHelpEntry
 from ui.collapsiblepane import CollapsiblePane
 from ui.expandablelist import ExpandableList
 from ui.fileselector import FileSelector
