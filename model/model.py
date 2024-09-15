@@ -1,5 +1,5 @@
 from include.settings import Settings
-
+from model.signalcollection import SignalCollection
 
 class Model():
     '''Model class containing all the submodel of the software.'''
@@ -9,7 +9,7 @@ class Model():
 
         self.settings = Settings()
         self.results = {}
-        self.plotData = {}
+        self.plotData = SignalCollection()
         
         
 
