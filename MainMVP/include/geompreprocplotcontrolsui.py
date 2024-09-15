@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk 
 from tkinter import filedialog
 from numpy import pi
-from include.resizableframe import ResizableFrameLeftEdge 
+from ui.resizableframe import ResizableFrameLeftEdge 
 
 try: 
     from ctypes import windll

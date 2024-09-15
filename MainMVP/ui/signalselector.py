@@ -1,7 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
 
-from include.resizableframe import ResizableFrameRightEdge 
+from ui.resizableframe import ResizableFrameRightEdge 
 
 from include.labelhelpinput import LabelHelpEntry
 from include.collapsiblepane import CollapsiblePane
