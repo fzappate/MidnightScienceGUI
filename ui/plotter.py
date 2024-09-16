@@ -3,6 +3,7 @@ from tkinter import ttk
 
 
 from ui.plotmanager import PlotManagerPane
+from ui.plotpane import PlotPane
 from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
 
 try:
@@ -28,9 +29,11 @@ class Plotter(tk.Frame):
         self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         
         # Plot
-        self.plot = tk.Frame(self,bg='gray30')
+        self.plot = PlotPane(self)
         self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)  
         
         # Plot Controls panel
         self.plotControls = GeomPreprocPlotControlsUI(self,presenter,width = 280,bg = 'gray30')
         self.plotControls.grid(row=0,column=2,sticky='NWS', padx=3, pady=3)
+        
+    
