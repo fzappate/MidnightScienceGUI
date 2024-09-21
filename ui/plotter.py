@@ -32,10 +32,4 @@ class Plotter(tk.Frame):
         # Plot
         # self.plot = PlotPane(self, bg = 'green')
         self.plot = GraphFrameContainer(self, bg = 'green')
-        self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)  
-        
-        # Plot Controls panel
-        self.plotControls = GeomPreprocPlotControlsUI(self,presenter,width = 280,bg = 'gray30')
-        self.plotControls.grid(row=0,column=2,sticky='NWS', padx=3, pady=3)
-        
-    
+        self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      
