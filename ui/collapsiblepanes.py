@@ -135,15 +135,15 @@ class TogglePaneDel(ttk.Frame):
 
         # Create a frame to put a button and a label and manage their allaignment separately 
         self.labelFrame = ttk.Frame(self)
-        self.columnconfigure(0, weight = 1)
-        self.columnconfigure(1, weight = 1)
-        self.columnconfigure(2, weight = 0)
+        self.labelFrame.columnconfigure(0, weight = 0)
+        self.labelFrame.columnconfigure(1, weight = 1)
+        self.labelFrame.columnconfigure(2, weight = 0)
 
         self.toggleButton = ttk.Button( self.labelFrame, command = self._activate,text = self.collapsedText, width=3)
         self.toggleButton.grid(row = 0, column = 0,sticky='W')
         
         self.label = ttk.Label(self.labelFrame,text = label)
-        self.label.grid(row = 0, column=1,sticky='W')
+        self.label.grid(row = 0, column=1,sticky='EW')
 
         self.delButton = ttk.Button( self.labelFrame,text = 'x', width=3)
         self.delButton.grid(row = 0, column =2,sticky='E')
@@ -153,10 +153,10 @@ class TogglePaneDel(ttk.Frame):
         # This will create a separator
         # A separator is a line, we can also set thickness
         self._separator = ttk.Separator(self, orient ="horizontal")
-        self._separator.grid(row = 0, column = 2, sticky ="WE")
+        self._separator.grid(row = 0, column = 1, sticky ="WE")
  
-        self.frame = ttk.Frame(self)
-        self.frame.columnconfigure(0,weight=1)
+        self.subplotManagerPane = ttk.Frame(self)
+        self.subplotManagerPane.columnconfigure(0,weight=1)
  
         # This will call activate function of class
         self._activate()
@@ -165,7 +165,7 @@ class TogglePaneDel(ttk.Frame):
         if (self.isCollapsed==True):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
-            self.frame.grid_forget()
+            self.subplotManagerPane.grid_forget()
  
             # This will change the text of the checkbutton
             self.toggleButton.configure(text = self.collapsedText)
@@ -176,7 +176,7 @@ class TogglePaneDel(ttk.Frame):
         elif (self.isCollapsed==False):
             # increasing the frame area so new widgets
             # could reside in this container
-            self.frame.grid(row = 1, column = 0, columnspan = 2,sticky='EW')
+            self.subplotManagerPane.grid(row = 1, column = 0, columnspan = 2,sticky='EW')
             self.toggleButton.configure(text = self.expandedText)
 
             # # Change the property isCollpased to False
