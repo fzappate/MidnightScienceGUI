@@ -4,6 +4,7 @@ from tkinter import ttk
 
 from ui.plotmanager import PlotManagerPane
 from ui.plotpane import PlotPane
+from ui.plotpane import GraphFrameContainer
 from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
 
 try:
@@ -29,7 +30,8 @@ class Plotter(tk.Frame):
         self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         
         # Plot
-        self.plot = PlotPane(self, bg = 'green')
+        # self.plot = PlotPane(self, bg = 'green')
+        self.plot = GraphFrameContainer(self, bg = 'green')
         self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)  
         
         # Plot Controls panel

@@ -4,6 +4,8 @@ import tkinter as tk
 from ui.resizableframe import ResizableFrameRightEdge 
 from ui.signalentry import SignalEntry
 from ui.fileselector import FileSelector
+from ui.collapsiblepanes import TogglePaneDel
+from ui.collapsiblepanes import TogglePane
 
 class PlotManagerPane(ResizableFrameRightEdge):
     def __init__(self,parent,presenter, *args, **kwargs)->None:
@@ -21,7 +23,7 @@ class PlotManagerPane(ResizableFrameRightEdge):
         self.scrollbar=ttk.Scrollbar(self,orient="vertical", command=self.inputCanvas.yview)
         self.inputCanvas.configure(yscrollcommand=self.scrollbar.set)
         
-        self.plotManager = PlotManager(self.inputCanvas,presenter)        
+        self.plotManager = PlotManager(self.inputCanvas,presenter, bg = 'cyan')        
         
         # Create an handle for the frame window so that it can be configured later 
         self.internal = self.inputCanvas.create_window((0, 0), window=self.plotManager, anchor="nw")
@@ -61,50 +63,65 @@ class PlotManager(tk.Frame):
         super().__init__(parent,*args,**kwargs)     
         '''Initialize the PlotManager panel.'''
 
-        self.allSignals = []
+        self.toggleFrameList = []
+        self.noOfRows = 0
         self.presenter = presenter
         
-        # Make sure that the grid column takes up all the space 
+        # Set PlotManager columns weight
         self.columnconfigure(0,weight=1)
 
         # Results file selection
-        self.fileSelector = FileSelector(self,presenter, bg = 'grey40')
-        self.fileSelector.grid(row=0,column=0,sticky='EW')
+        rowNo = 0
+        self.fileSelector = ttk.Button(self,text='Add Plot',command = self.AddToggleFrame) 
+        self.fileSelector.grid(row=rowNo,column=0,sticky='W')
         
-        # Plot manager frame
-        self.frame = tk.Frame(self, bg = 'grey40')
-        self.frame.columnconfigure(0,weight=1)
-        self.frame.columnconfigure(1,weight=0)
-        self.frame.grid(row=1,column=0,sticky='EW')
+        # subplotLabel = "Subplot " + str(self.noOfRows)
+        # toggleFrame = TogglePaneDel(self, label = subplotLabel, bg = 'yellow')
+        # self.toggleFrameList.append(toggleFrame)
+        # self.noOfRows +=1
+        # toggleFrame.grid(row = self.noOfRows, column = 0, sticky='WE')
         
-        self.sigSelLab = ttk.Label(self.frame,text = 'Signal Selection')
-        self.sigSelLab.grid(row=0,column=0,sticky='EW',padx = 3, pady = (4,0))
+        # rowNo+=1
+        # self.fileSelector = FileSelector(self,presenter, bg = 'grey40')
+        # self.fileSelector.grid(row=rowNo,column=0,sticky='EW')
         
-        self.signalCollection = ttk.Combobox(self.frame,state='readonly')
-        self.signalCollection.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
+        # rowNo+=1
+        # self.sigSelLab = ttk.Label(self,text = 'Signal Selection')
+        # self.sigSelLab.grid(row=rowNo,column=0,sticky='EW',padx = 3, pady = (4,0))
         
-        self.addSignBtn = ttk.Button(self.frame,text="Add",width=5, command=self.AddSignal)
-        self.addSignBtn.grid(row=1,column=1,sticky='EW', padx = (0,3), pady = 2)
+        # rowNo+=1
+        # self.signalCollection = ttk.Combobox(self,state='readonly')
+        # self.signalCollection.grid(row=rowNo,column=0,sticky='EW', padx = 3, pady = 2)
         
-        self.sigListLab = ttk.Label(self.frame,text='Signal List')
-        self.sigListLab.grid(row=2,column=0,sticky='EW',padx = 3, pady = (4,0))
+        # self.addSignBtn = ttk.Button(self,text="Add",width=5, command=self.AddSignal)
+        # self.addSignBtn.grid(row=rowNo,column=1,sticky='EW', padx = (0,3), pady = 2)
         
+        # rowNo+=1
+        # self.sigListLab = ttk.Label(self,text='Signal List')
+        # self.sigListLab.grid(row=rowNo,column=0,sticky='EW',padx = 3, pady = (4,0))
         
+    def AddToggleFrame(self)->None:
+        '''Add a toggle frame to the plot manager pane.'''
+        subplotLabel = "Subplot " + str(self.noOfRows)
+        self.toggleFrame = TogglePaneDel(self, label = subplotLabel)
+        self.toggleFrameList.append(self.toggleFrame)
+        self.noOfRows +=1
+        self.toggleFrame.grid(row = self.noOfRows, column = 0, sticky='EW')
         
-    def AddSignal(self):
-        '''Perform all the actions to add a signal in the ui, model, and plot canvas.'''
+    # def AddSignal(self):
+    #     '''Perform all the actions to add a signal in the ui, model, and plot canvas.'''
         
-        # Add SignalEntry in the PlotManager 
-        entryText = self.signalCollection.get()
-        ent = SignalEntry(self,entryText,bg='gray40')
-        entryPosition = len(self.allSignals)+3
-        ent.grid(row = entryPosition,column=0,sticky='EW')
-        self.allSignals.append(ent)
+    #     # Add SignalEntry in the PlotManager 
+    #     entryText = self.signalCollection.get()
+    #     ent = SignalEntry(self,entryText,bg='gray40')
+    #     entryPosition = len(self.allSignals)+5 # Change this based on how many row we have
+    #     ent.grid(row = entryPosition,column=0,sticky='EW')
+    #     self.allSignals.append(ent)
         
-        # Add signal data in the PlotData
-        self.presenter.AddSignalToPlotData(entryText)
-        # Plot the signals in plotData
-        self.presenter.PlotPlotData()
+    #     # Add signal data in the PlotData
+    #     self.presenter.AddSignalToPlotData(entryText)
+    #     # Plot the signals in plotData
+    #     self.presenter.PlotPlotData()
         
         
         

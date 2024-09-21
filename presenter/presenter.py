@@ -25,19 +25,20 @@ class Presenter():
         # Save model and view into the presenter
         self.model = model
         self.view = view
-
-
-
+    
     def RunUI(self):
         '''Run the UI.'''
         # Initialize UI and start the loop 
         self.view.initUI(self)
         self.LoadSettings()
         self.LoadResults()
+        self.view.protocol("WM_DELETE_WINDOW", self._on_closing)  # Force closing when 
         self.view.mainloop()
 
-
-
+    def _on_closing(self):
+        self.view.quit()  # stops mainloop
+        self.view.destroy()  # this is necessary on Windows to prevent Fatal Python Error: PyEval_RestoreThread: NULL tstate
+        
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
         """This function takes whatever entry, deleted the text, and write the new 
         text given as input. """
@@ -45,9 +46,7 @@ class Presenter():
         entry.delete(0,tk.END)
         entry.insert(0,txt)
 
-
-
-    # Path selector 
+    ## Path selector 
     
     def BrowseWorkingFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
@@ -61,8 +60,6 @@ class Presenter():
         # Set the workign folder of the setting object the same as the content of the entry 
         self.UpdateSettingFile("workingFolder", folder)
         
-        
-        
     def BrowseResultsFile(self) -> None:
         '''This function allows the selection of a file.'''
         # Open the dialog window
@@ -73,8 +70,6 @@ class Presenter():
         self.model.settings.resultsFilePath = filePath
         # Update setting file
         self.UpdateSettingFile("resultsFilePath", filePath)
-        
-        
                 
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
@@ -82,8 +77,6 @@ class Presenter():
         workingFolder = self.view.pathSelector.pathEntry.get()
         # Set the workign folder of the setting object the same as the content of the entry 
         self.UpdateSettingWorkingFolder(workingFolder)
-
-        
         
     def UpdateWorkingFolder(self,workingFolder)->None:
         """This function makes sure that when a working folder is chosen the path is properly 
@@ -112,8 +105,6 @@ class Presenter():
         file = open(self.model.settings.settingsFilePath,'w')
         file.writelines(lines)
         file.close()
-       
-        
         
     def UpdateSettingFile(self, targetSettingKey, targetSettingVal)->None:
         """This function makes sure that when a working folder is chosen the path is properly 
@@ -147,8 +138,6 @@ class Presenter():
         file.writelines(lines)
         file.close()
 
-
-
     # Load funcions
     
     def LoadData(self)->None:
@@ -162,8 +151,6 @@ class Presenter():
 
         # Load GeometryCode data
         # self.LoadGeomCodeData()
-
-
 
     def LoadSettings(self) -> None:
         ''' This function loads the GUI settings.'''
@@ -200,9 +187,7 @@ class Presenter():
         
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
-        self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
-          
-        
+        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
         
     def LoadResults(self) -> None:
         '''Load results.'''
@@ -232,8 +217,7 @@ class Presenter():
         self.model.results = resDict
         
         # Update the combobox
-        self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
-        
+        # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
         
     # Plot results
     def AddSignalToPlotData(self,key)->None:
@@ -246,6 +230,9 @@ class Presenter():
     def PlotPlotData(self)->None:
         '''Plot the signals contained in plotData.'''
         
+    def AddPlotToggleFrame(self)->None:
+        '''Add a toggle frame in the plot manager pane.'''
+        self.view.mainTabColl.plotter.plotManagerPane.plotManager 
         
         
       
