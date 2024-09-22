@@ -135,8 +135,8 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
 
         # Bind the frame to the scrollbar so that it can be scrolled while paning over it
         # self.interior.bind("<Configure>",lambda e: self.canvas.configure(scrollregion=self.interior.bbox("all")))
-        self.bind('<Enter>', self.boundToMouseWheel)
-        self.bind('<Leave>', self.unboundToMouseWheel)
+        self.canvas.bind('<Enter>', self.boundToMouseWheel)
+        self.canvas.bind('<Leave>', self.unboundToMouseWheel)
         # self.vscrollbar.bind('<Enter>', self.enterScrollBar)
         # self.vscrollbar.bind('<Leave>', self.leaveScrollBar)
         
@@ -182,7 +182,8 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
         # If frame is greater than canvas scroll, otherwise not.
         interiorLength = self.interior.winfo_height()
         canvasLength = self.canvas.winfo_height()
-        if (interiorLength < canvasLength):
+        print("Scrolling")
+        if (interiorLength > canvasLength):
             self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
     def do_nothing():
