@@ -146,6 +146,7 @@ class TogglePane(tk.Frame):
             # # Change the property isCollpased to False
             self.isCollapsed = True
             
+
             
 class TogglePaneDel(tk.Frame):
     """
@@ -223,91 +224,6 @@ class TogglePaneDel(tk.Frame):
             # could reside in this container
             self.subplotManagerPane.grid(row = 1, column = 0, columnspan = 2,sticky='EW')
             self.toggleButton.configure(text = self.expandedText)
-
-            # # Change the property isCollpased to False
-            self.isCollapsed = True
-            
-            
-            
-            
-            
-            
-class TogglePaneDelOld(tk.Frame):
-    """
-     -----USAGE-----
-    collapsiblePane = CollapsiblePane(parent,
-                          expanded_text =[string],
-                          collapsed_text =[string])
- 
-    collapsiblePane.pack()
-    button = Button(collapsiblePane.frame).pack()
-    """
- 
-    def __init__(self, parent, label = "", *args, **kwargs):
-        super().__init__(*args, **kwargs)
- 
-        # These are the class variable
-        # see a underscore in expanded_text and _collapsed_text
-        # this means these are private to class
-        self.isCollapsed = True
-        self.parent = parent
-        self.collapsedText = '\u21E9' # ⇩
-        self.expandedText = '\u21E7' # ⇧
- 
-        # Here weight implies that it can grow it's size if extra space is available
-        self.columnconfigure(0, weight = 1)
-        
-        # Tkinter variable storing integer value
-        self._variable = tk.IntVar()
-        
-        # Create a frame to contain header elements
-        self.headerFrame = tk.Frame(self,bg = 'red')
-        self.headerFrame.grid(row = 0, column = 0,sticky='EW')
-        
-        self.expandButton = ttk.Button( self.headerFrame, command = self._activate, text = self.collapsedText, width=3)
-        self.expandButton.grid(row = 0, column = 0,sticky='W')
- 
-        self.label = ttk.Label(self.headerFrame,text = label)
-        self.label.grid(row = 0, column=1,sticky='EW')
-        
-        self.addButton = ttk.Button( self.headerFrame, text = "+", width=3)
-        self.addButton.grid(row = 0, column = 2,sticky='E')
-        
-        self.delButton = ttk.Button( self.headerFrame, text = "X", width=3)
-        self.delButton.grid(row = 0, column = 3,sticky='E')
-        
-
-
-        # This will create a separator
-        # A separator is a line, we can also set thickness
-        # self._separator = ttk.Separator(self, orient ="horizontal")
-        # self._separator.grid(row = 0, column = 2, sticky ="we")
- 
-        self.hiddenFrame = ttk.Frame(self)
-        self.hiddenFrame.columnconfigure(0,weight=1)
- 
-        # This will call activate function of class
-        self._activate()
- 
-    def _activate(self):
-        if (self.isCollapsed==True):
-            # As soon as button is pressed it removes this widget
-            # but is not destroyed means can be displayed again
-            self.hiddenFrame.grid_forget()
- 
-            # This will change the text of the checkbutton
-            # self._button.configure(image = self.expandIcon)
-            self.expandButton.configure(text = self.collapsedText)
-
-            # # Change the property isCollpased to False
-            self.isCollapsed = False
- 
-        elif (self.isCollapsed==False):
-            # increasing the frame area so new widgets
-            # could reside in this container
-            self.hiddenFrame.grid(row = 1, column = 0, columnspan = 4,sticky='EW')
-            # self._button.configure(image = self.collapseIcon)
-            self.expandButton.configure(text = self.expandedText)
 
             # # Change the property isCollpased to False
             self.isCollapsed = True
