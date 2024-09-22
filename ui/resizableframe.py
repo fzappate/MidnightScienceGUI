@@ -94,10 +94,8 @@ class ResizableFrameRightEdge(ResizableFrame):
         # If the cursor is close to the right edge change cursor icon
         if  event.x > width-self.dragBandWidth : 
             self.config(cursor='sb_h_double_arrow')
-            print("Inside drag band " + str(event.x))
         else:
             self.config(cursor='')
-            print("Inside frame " + str(event.x))
         
         # If horizontal resizing is allowed then resize frame with cursor
         if self.resizeMode == self.HORIZONTAL:
@@ -170,7 +168,6 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
         # If frame is greater than canvas scroll, otherwise not.
         interiorLength = self.interior.winfo_height()
         canvasLength = self.canvas.winfo_height()
-        print("Scrolling")
         if (interiorLength > canvasLength):
             self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
