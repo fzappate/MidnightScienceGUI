@@ -6,7 +6,8 @@ from ui.plotmanager import PlotManagerPane
 from ui.plotpane import PlotPane
 from ui.plotpane import GraphFrameContainer
 from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
-
+from ui.resizableframe import ResizeVerticalScrollFrame
+from ui.plotmanager import PlotManager
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -29,7 +30,22 @@ class Plotter(tk.Frame):
         self.plotManagerPane = PlotManagerPane(self,presenter,width = 330,bg = 'gray30')
         self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         
+        self.plotManagerPane2 = ResizeVerticalScrollFrame(self, width = 330,bg = 'blue')
+        self.plotManagerPane2.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
+        self.plotManager = PlotManager(self.plotManagerPane2.interior,presenter)
+        self.plotManager.grid(row=0,column=0)
+        
+        
+        
+        
+        # self.plotManagerPane = ResizeFrameRightEdgeScrollV(self)
+        # self.plotManagerCanvas = self.plotManagerPane.GetCanvasHandle()
+        
+        # self.plotManager = PlotManager(self.plotManagerCanvas,presenter, bg = 'cyan') 
+        # self.plotManagerPane.AddWidget(self.plotManager)
+        # self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
+        
         # Plot
-        # self.plot = PlotPane(self, bg = 'green')
+        self.plot = PlotPane(self, bg = 'green')
         self.plot = GraphFrameContainer(self, bg = 'green')
         self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      
