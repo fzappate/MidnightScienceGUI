@@ -132,13 +132,17 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
         # Insipired by:
         # https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame
         
+        self.columnconfigure(0,weight=1)
+        self.columnconfigure(1,weight=0)
+        
         # Create a canvas object and a vertical scrollbar for scrolling it
         self.vscrollbar = ttk.Scrollbar(self, orient='vertical')
-        self.vscrollbar.pack(fill='y', side='right', expand=False,padx = (0,self.dragBandWidth),pady = (3,3))
+        # self.vscrollbar.pack(fill='y', side='right', expand=False,padx = (0,self.dragBandWidth),pady = (3,3))
+        self.vscrollbar.grid(row=0,column=1,sticky='NWS',padx = (0,self.dragBandWidth),pady = (3,3))
         
         self.canvas = tk.Canvas(self,highlightthickness=0, yscrollcommand=self.vscrollbar.set)
-        self.canvas.grid(row=0,column=0,sticky='NEW',padx = (3,3),pady = (3,3))
-        self.canvas.pack(side='left', fill='both', expand=True,padx = (0,self.dragBandWidth),pady = (3,3))
+        self.canvas.grid(row=0,column=0,sticky='NEWS',padx = (3,3),pady = (3,3))
+        # self.canvas.pack(side='left', fill='both', expand=True,padx = (0,self.dragBandWidth),pady = (3,3))
         
         # There is no need to bond the scrollbar to the canvas because boundToMouseWheel is used
         # self.vscrollbar.config(command=self.canvas.yview)
