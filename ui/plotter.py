@@ -6,7 +6,8 @@ from ui.plotmanager import PlotManagerPane
 from ui.plotpane import PlotPane
 from ui.plotpane import GraphFrameContainer
 from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
-from ui.resizableframe import ResizeVerticalScrollFrame
+from ui.resizableframe import ResizeScrollVFrameRightEdge
+from ui.resizableframe import ResizeFrameRightEdgeScrollV
 from ui.plotmanager import PlotManager
 try:
     from ctypes import windll
@@ -27,10 +28,10 @@ class Plotter(tk.Frame):
         self.rowconfigure(0,weight=1)        
         
         # Signal selection 
-        self.plotManagerPane = PlotManagerPane(self,presenter,width = 330,bg = 'gray30')
-        self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
+        # self.plotManagerPane = PlotManagerPane(self,presenter,width = 330,bg = 'gray30')
+        # self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         
-        self.plotManagerPane2 = ResizeVerticalScrollFrame(self, width = 330,bg = 'blue')
+        self.plotManagerPane2 = ResizeScrollVFrameRightEdge(self, width = 330,bg = 'blue')
         self.plotManagerPane2.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         self.plotManager = PlotManager(self.plotManagerPane2.interior,presenter)
         self.plotManager.grid(row=0,column=0)
