@@ -25,9 +25,11 @@ class AuxBar(tk.Frame):
         self.loadIcon = ImageTk.PhotoImage(self.loadIcon)
 
         # Save button 
-        save_button = ttk.Button(self, image=self.saveIcon,command=presenter.SaveGearGenData)
+        save_button = ttk.Button(self, image=self.saveIcon)
+        # save_button = ttk.Button(self, image=self.saveIcon,command=presenter.SaveGearGenData)
         save_button.grid(row=0, column=0, padx=(3,3), ipady=1, ipadx=1)
 
         # Load buttion
-        load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadData)
+        load_button = ttk.Button(self, image=self.loadIcon)
+        # load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadData)
         load_button.grid(row=0, column=1, padx=(3,3), ipady=1, ipadx=1)
