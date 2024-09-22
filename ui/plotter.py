@@ -30,10 +30,11 @@ class Plotter(tk.Frame):
         self.rowconfigure(0,weight=1)        
         
         # Plot manager
-        self.plotManagerPane = ResizeScrollVFrameRightEdge(self, width = 330,bg = 'blue')
+        self.plotManagerPane = ResizeScrollVFrameRightEdge(self, width = 330,bg = 'cyan')
         self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
-        self.plotManager = PlotManager(self.plotManagerPane.interior,presenter)
-        self.plotManager.grid(row=0,column=0)
+        
+        self.plotManager = PlotManager(self.plotManagerPane.interior,presenter, bg = 'green')
+        self.plotManager.grid(row=0,column=0,sticky='NEW')
         
         # Plot frame
         self.plot = PlotPane(self, bg = 'green')

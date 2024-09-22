@@ -6,63 +6,24 @@ from ui.signalentry import SignalEntry
 from ui.fileselector import FileSelector
 from ui.collapsiblepanes import TogglePaneDel
 from ui.collapsiblepanes import TogglePane
-
-class PlotManagerPane(ResizableFrameRightEdge):
-    def __init__(self,parent,presenter, *args, **kwargs)->None:
-        super().__init__(parent,*args, **kwargs)
-        '''Graphicalm object that wraps the widgets necessary to select the signals to plot. '''
-
-        # Make sure that the content of SignalSelector stretches from left to right and top to bottom
-        self.columnconfigure(0,weight=1)
-        self.rowconfigure(0, weight=1)
-
-        # Input panel must be placed in a canvas to use the scroll bar
-        self.inputCanvas = tk.Canvas(self)
-        self.inputCanvas.columnconfigure(0,weight=1)
-        self.inputCanvas.configure(bg='green')
-        self.scrollbar=ttk.Scrollbar(self,orient="vertical", command=self.inputCanvas.yview)
-        self.inputCanvas.configure(yscrollcommand=self.scrollbar.set)
-        
-        self.plotManager = PlotManager(self.inputCanvas,presenter, bg = 'cyan')        
-        
-        # Create an handle for the frame window so that it can be configured later 
-        self.internal = self.inputCanvas.create_window((0, 0), window=self.plotManager, anchor="nw")
-
-        self.inputCanvas.grid(row=0,column=0,sticky='NEWS',padx = (3,3),pady = (3,3))
-        self.scrollbar.grid(row=0,column=1,sticky='NSE',padx = (0,3),pady = (3,3))
-
-        # Bind methods
-        # Horizontally stretch the frame inside the canvas to fill the canvas when it is resized
-        self.inputCanvas.bind("<Configure>", lambda e: self.inputCanvas.itemconfig(self.internal, width=e.width))
-        # Scroll bar configures 
-        self.plotManager.bind("<Configure>",lambda e: self.inputCanvas.configure(scrollregion=self.plotManager.bbox("all")))
-        self.plotManager.bind('<Enter>', self.boundToMouseWheel)
-        self.plotManager.bind('<Leave>', self.unboundToMouseWheel)
-
-
-    def boundToMouseWheel(self, event):
-        self.inputCanvas.bind_all("<MouseWheel>", self._on_mousewheel)
-
-
-    def unboundToMouseWheel(self, event):
-        self.inputCanvas.unbind_all("<MouseWheel>")
-
-
-    def _on_mousewheel(self, event):
-        # If frame is greater than canvas scroll, otherwise not.
-        inputsPanelLength = self.inputsPanel.winfo_height()
-        canvasLength = self.inputCanvas.winfo_height()
-        if (inputsPanelLength > canvasLength):
-                self.inputCanvas.yview_scroll(int(-1*(event.delta/120)), "units")
-                
                 
 class PlotManager(tk.Frame):    
-    '''This class contains all the UI widget necesary to navigate the signals of a result file.'''
-
     def __init__(self, parent, presenter,*args,**kwargs)->None:
+        """
+        Initialize an instance of the class of PlotManager. 
+        This is a control panel that manages the result files and signals.
+        
+        args: 
+        - all the Frame arguments
+            - background, bg: set background color
+            - borderwidth, bd: set border width
+            - ...
+        
+        -----USAGE-----
+        This is used exactly as a Frame widget.
+        """  
         super().__init__(parent,*args,**kwargs)     
-        '''Initialize the PlotManager panel.'''
-
+        
         self.toggleFrameList = []
         self.noOfRows = 0
         self.presenter = presenter
@@ -72,8 +33,15 @@ class PlotManager(tk.Frame):
 
         # Results file selection
         rowNo = 0
-        self.fileSelector = ttk.Button(self,text='Add Plot',command = self.AddToggleFrame) 
-        self.fileSelector.grid(row=rowNo,column=0,sticky='W')
+        self.addPlot = ttk.Button(self,text='Add Plot',command = self.AddToggleFrame) 
+        self.addPlot.grid(row=rowNo,column=0,sticky='W')
+        imageExpand = ".\images\expandIcon.png"
+        imageCollapse = ".\images\collapseIcon.png"
+        
+        rowNo += 1 
+        self.toggleFrame = TogglePane(self, label = "ciao",iconMode = 'img',expImgPath=imageExpand,collImgPath= imageCollapse)
+        self.toggleFrame.grid(row=rowNo,column=0,sticky='W')
+        
         
         # subplotLabel = "Subplot " + str(self.noOfRows)
         # toggleFrame = TogglePaneDel(self, label = subplotLabel, bg = 'yellow')
