@@ -120,7 +120,7 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
         self.canvas.grid(row=0,column=0,sticky='NEW',padx = (3,3),pady = (3,3))
         self.canvas.pack(side='left', fill='both', expand=True,padx = (0,self.dragBandWidth),pady = (3,3))
         
-        self.vscrollbar.config(command=self.canvas.yview)
+        # self.vscrollbar.config(command=self.canvas.yview)
         # self.vscrollbar.config(command=self.do_nothing)
         
         # Reset the view
