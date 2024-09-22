@@ -35,12 +35,13 @@ class PlotManager(tk.Frame):
         rowNo = 0
         self.addPlot = ttk.Button(self,text='Add Plot',command = self.AddToggleFrame) 
         self.addPlot.grid(row=rowNo,column=0,sticky='W')
-        imageExpand = ".\images\expandIcon.png"
-        imageCollapse = ".\images\collapseIcon.png"
+        
         
         rowNo += 1 
+        imageExpand = ".\images\expandIcon.png"
+        imageCollapse = ".\images\collapseIcon.png"
         self.toggleFrame = TogglePane(self, label = "ciao",iconMode = 'img',expImgPath=imageExpand,collImgPath= imageCollapse)
-        self.toggleFrame.grid(row=rowNo,column=0,sticky='W')
+        self.toggleFrame.grid(row=rowNo,column=0,sticky='EW')
         
         
         # subplotLabel = "Subplot " + str(self.noOfRows)

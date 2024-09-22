@@ -63,14 +63,13 @@ class TogglePane(tk.Frame):
  
         # Set the weight so that the header label takes up the excess of space
         self.columnconfigure(0, weight = 1)
-        self.columnconfigure(1, weight = 1)
-        self.columnconfigure(2, weight = 1)
         
         # Create the header frame
-        self.labelFrame = tk.Frame(self)
+        self.headerFrame = tk.Frame(self)
+        self.headerFrame.grid(row=0,column=0,sticky = 'EW')
         
         # Create expand button
-        self.expandButton = ttk.Button( self.labelFrame, command = self._activate, width=3)
+        self.expandButton = ttk.Button( self.headerFrame, command = self._activate, width=3)
         
         # Set the icon/text of the expand button
         if iconMode == 'img':
@@ -93,29 +92,21 @@ class TogglePane(tk.Frame):
         self.expandButton.grid(row = 0, column = 0,sticky='W')
  
         # Create header label
-        self.label = tk.Label(self.labelFrame,text = label)
+        self.label = tk.Label(self.headerFrame,text = label)
         self.label.grid(row = 0, column=1,sticky='W')
         
         # Create expandable frame
-        self.expandFrame = tk.Frame(self)
-        self.expandFrame.columnconfigure(0,weight=1)
+        self.interior = tk.Frame(self)
+        self.interior.columnconfigure(0,weight=1)
         
         # Tkinter variable storing integer value
-        self._variable = tk.IntVar()
-        
-        self.labelFrame.grid(row=0,column=0,sticky = 'EW')
-            
-
- 
-        
-
+        self._variable = tk.IntVar()        
 
         # This will create a separator
         # A separator is a line, we can also set thickness
-        # self._separator = ttk.Separator(self, orient ="horizontal")
-        # self._separator.grid(row = 0, column = 2, sticky ="we")
- 
- 
+        self._separator = ttk.Separator(self, orient ="horizontal")
+        self._separator.grid(row = 2, column = 0, sticky ="we")
+  
         # This will call activate function of class
         self._activate()
  
@@ -123,7 +114,7 @@ class TogglePane(tk.Frame):
         if (self.isCollapsed==True):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
-            self.expandFrame.grid_forget()
+            self.interior.grid_forget()
  
             # This will change the text of the checkbutton
             if self.iconMode == 'img':
@@ -137,7 +128,7 @@ class TogglePane(tk.Frame):
         elif (self.isCollapsed==False):
             # increasing the frame area so new widgets
             # could reside in this container
-            self.expandFrame.grid(row = 1, column = 0, columnspan = 2,sticky='EW')
+            self.interior.grid(row = 1, column = 0,sticky='EW')
             
             if self.iconMode == 'img':
                 self.expandButton.configure(image = self.collapseIcon)
