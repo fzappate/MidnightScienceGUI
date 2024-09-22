@@ -4,20 +4,24 @@ from abc import ABC, abstractmethod
 
 class ResizableFrame(tk.Frame, ABC):    
     def __init__(self, *args, **kwargs):
-        '''
-        This is a virtual class of ResizableFrame. 
+        """
+        Initialize an instance of the virtual class of ResizableFrame. 
         This is the parent of ResizableFrameRightEdge, ResizableFrameLeftEdge, ResizableFrameTopEdge, ResizableFrameBottomEdge.
         
-        Valid resource names: background, bd, bg, borderwidth, class, colormap, container, cursor, height, highlightbackground, 
+        Valid arguments: background, bd, bg, borderwidth, class, colormap, container, cursor, height, highlightbackground, 
         highlightcolor, highlightthickness, relief, takefocus, visual, width.
 
         
         -----USAGE-----
         This class should not be used. One of its children should be used instead. 
-        '''
+        """                
         super().__init__(*args, **kwargs)
         self.pack_propagate(0)
         self.grid_propagate(0)
+        
+        # By default, resizable frames should have only one children frame that expands in all directions
+        self.columnconfigure(0,weight=1)
+        self.rowconfigure(0,weight=1)
 
         # Resize mode
         self.NONE = 0
@@ -35,15 +39,15 @@ class ResizableFrame(tk.Frame, ABC):
 
     @abstractmethod
     def StartResize(self, event):
+        """Set the resize mode if the left button of the mouse is clicked close to the edge that must be resized."""
         pass
 
     @abstractmethod
     def MonitorCursorPosition(self,event):        
-        pass
-    
+        pass    
 
     def StopResize(self, event):
-        '''Disable any resize mode and set the standard arrow as cursor.'''
+        """Disable any resize mode and set the standard arrow as cursor."""
         self.resizeMode = self.NONE
         self.config(cursor='')
 
@@ -51,38 +55,38 @@ class ResizableFrame(tk.Frame, ABC):
 
 class ResizableFrameRightEdge(ResizableFrame):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        '''
-        Initialize a resizable frame that can be resized dragging the right edge.
+        """
+        Initialize an instance of the class of ResizableFrameRightEdge. 
+        This is a frame that can be resized when dragging its right edge.
         
-        Valid resource names: background, bd, bg, borderwidth, class, colormap, container, cursor, height, highlightbackground, 
-        highlightcolor, highlightthickness, relief, takefocus, visual, width.
-
+        args: 
+        - all the Frame arguments
+            - background, bg: set background color
+            - borderwidth, bd: set border width
+            - ...
         
         -----USAGE-----
             
         root.columnconfigure(0,weight = 0)
 
-        resFrame = ResizableFrame(root, background = "blue",width = 100, height = 100)
+        resFrame = ResizableFrameRightEdge(root, background = "blue",width = 100, height = 100)
         
         resFrame.grid(row = 0, column=0,sticky = 'NWS')
-        '''
-
+        """        
+        super().__init__(*args, **kwargs)
 
     def StartResize(self, event):
-        '''Set the resize mode if the left button of the mouse is clicked close to the edge that must be resized.'''
         # Extract the size of the frame
         width = self.winfo_width()
 
         # If the mouse left button is clicked close to the right edge allow horizontal resizing
         if  event.x > width-self.dragBandWidth : 
-            self.resizeMode = self.HORIZONTAL        
+            self.resizeMode = self.HORIZONTAL     
         else:
             self.resizeMode = self.NONE
-            
 
     def MonitorCursorPosition(self,event):        
-        '''Check whether the cursor is close to the right edge of the frame.'''
+        """Check whether the cursor is close to the right edge of the frame."""
         # Extract the size of the frame
         width = self.winfo_width()
         height = self.winfo_height()
@@ -90,9 +94,10 @@ class ResizableFrameRightEdge(ResizableFrame):
         # If the cursor is close to the right edge change cursor icon
         if  event.x > width-self.dragBandWidth : 
             self.config(cursor='sb_h_double_arrow')
+            print("Inside drag band " + str(event.x))
         else:
             self.config(cursor='')
-
+            print("Inside frame " + str(event.x))
         
         # If horizontal resizing is allowed then resize frame with cursor
         if self.resizeMode == self.HORIZONTAL:
@@ -100,30 +105,100 @@ class ResizableFrameRightEdge(ResizableFrame):
 
 
 
-class ResizableFrameLeftEdge(ResizableFrame):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        '''
-        Initialize a resizable frame that can be resized dragging the left edge.
+class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
+    def __init__(self, parent, *args, **kw):
+        """
+        Initialize an instance of the class of ResizeScrollVFrameRightEdge. 
+        This is a frame that can be scrolled and resized when dragging its right edge.
         
-        Valid resource names: background, bd, bg, borderwidth, class, colormap, container, cursor, height, highlightbackground, 
-        highlightcolor, highlightthickness, relief, takefocus, visual, width.
-
+        args: 
+        - all the Frame arguments
+            - background, bg: set background color
+            - borderwidth, bd: set border width
+            - ...
         
         -----USAGE-----
             
         root.columnconfigure(0,weight = 0)
 
-        resFrame = ResizableFrame(root, background = "blue",width = 100, height = 100)
+        resScrollFrame = ResizeScrollVFrameRightEdge(root)
         
-        resFrame.grid(row = 0, column=0,sticky = 'NES')
-        '''
+        resScrollFrame.grid(row = 0, column=0,sticky = 'NWS')
+        
+        frame = th.Frame(resSizeScroll, bg = blue)
+        
+        frame.grid(row = 0, column = 0, sticky = 'NEWS')
+        """  
 
-            # Resize mode
+        super().__init__(parent, *args, **kw)
+        # Insipired by:
+        # https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame
+        
+        # Create a canvas object and a vertical scrollbar for scrolling it
+        self.vscrollbar = ttk.Scrollbar(self, orient='vertical')
+        self.vscrollbar.pack(fill='y', side='right', expand=False,padx = (0,self.dragBandWidth),pady = (3,3))
+        
+        self.canvas = tk.Canvas(self,highlightthickness=0, yscrollcommand=self.vscrollbar.set)
+        self.canvas.grid(row=0,column=0,sticky='NEW',padx = (3,3),pady = (3,3))
+        self.canvas.pack(side='left', fill='both', expand=True,padx = (0,self.dragBandWidth),pady = (3,3))
+        
+        # There is no need to bond the scrollbar to the canvas because boundToMouseWheel is used
+        # self.vscrollbar.config(command=self.canvas.yview)
+        
+        # Reset the canvas view
+        self.canvas.xview_moveto(0)
+        self.canvas.yview_moveto(0)
 
+        # Create a frame inside the canvas which will be scrolled with it
+        self.interior = tk.Frame(self.canvas, bg = 'red')
+        self.interior.columnconfigure(0,weight=1)
+        self.interior.rowconfigure(0,weight=1)
+        self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor='nw')
+
+        # Bind the frame to the scrollbar so that it can be scrolled while paning over it
+        self.interior.bind("<Configure>",lambda e: self.canvas.configure(scrollregion=self.interior.bbox("all")))
+        self.bind('<Enter>', self.boundToMouseWheel)
+        self.bind('<Leave>', self.unboundToMouseWheel)
+        
+    def boundToMouseWheel(self, event):
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def unboundToMouseWheel(self, event):
+        self.canvas.unbind_all("<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        # If frame is greater than canvas scroll, otherwise not.
+        interiorLength = self.interior.winfo_height()
+        canvasLength = self.canvas.winfo_height()
+        print("Scrolling")
+        if (interiorLength > canvasLength):
+            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+
+
+class ResizableFrameLeftEdge(ResizableFrame):
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize an instance of the class of ResizableFrameRightEdge. 
+        This is a frame that can be resized when dragging its right edge.
+        
+        args: 
+        - all the Frame arguments
+            - background, bg: set background color
+            - borderwidth, bd: set border width
+            - ...
+        
+        -----USAGE-----
+            
+        root.columnconfigure(0,weight = 0)
+
+        resFrame = ResizableFrameRightEdge(root, background = "blue",width = 100, height = 100)
+        
+        resFrame.grid(row = 0, column=0,sticky = 'NWS')
+        """ 
+        super().__init__(*args, **kwargs)
 
     def StartResize(self, event):
-        '''Set the resize mode if the left button of the mouse is clicked close to the edge that must be resized.'''
         # Extract the size of the frame
         width = self.winfo_width()
 
