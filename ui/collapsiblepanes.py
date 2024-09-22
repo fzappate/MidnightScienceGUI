@@ -23,13 +23,18 @@ class TogglePane(tk.Frame):
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 
-        This is a widget with a header and button that can exapand or collapse
-        the frame below it.
+        This is a widget with a header and a toggle button that can exapand or 
+        collapse the frame below it. Collapsible widget must be insert in the child frame 
+        interior
         
         args: 
-        - expandText: text displayed in the toggle button when widget is expanded
-        - collapseText: text displayed in the toggle button when widget is collapsed
         - label: label displayed in the header
+        - iconMode: "text" or "img". "text" is default
+        - expandText: "text" option. Text displayed in the toggle button when widget is expanded
+        - collapseText: "text" option. Text displayed in the toggle button when widget is collapsed
+        - expImgPath: "img" option. Text displayed in the toggle button when widget is expanded
+        - collImgPath: "img" option. Text displayed in the toggle button when widget is collapsed
+        - iconSize: size of the toggle icon in pixels
         - all the Frame arguments
             - background, bg: set background color
             - borderwidth, bd: set border width
@@ -39,15 +44,11 @@ class TogglePane(tk.Frame):
         
         parentFrame = Frame(root)
         
-        collapsiblePane = CollapsiblePane(parentFrame,
-                            expandText =[string],
-                            collapseText =[string])
-    
+        collapsiblePane = CollapsiblePane(parentFrame,label = 'Collapsible Widget')
         collapsiblePane.grid(row = 0, column = 0, sticky = 'NEWS')
         
-        button = Button(collapsiblePane.frame)
-        
-        button.grid(row = 0, column = 0, sticky = 'NE')
+        userWidget = Frame(collapsiblePane.interior)
+        userWidget.grid(row = 0,column = 0, sticky = 'NEWS')
         """
         super().__init__(parent,*args,**kwargs)
  
