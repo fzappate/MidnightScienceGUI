@@ -45,7 +45,7 @@ class PlotManager(tk.Frame):
         
         # Toggle pane content
         inputFileSelector = ResFileManager(self.toggleFrame.interior, self.presenter, bg = 'blue')
-        inputFileSelector.grid(row=0,column=0,sticky='W')
+        inputFileSelector.grid(row=0,column=0,sticky='EW')
 
 
 
@@ -65,7 +65,7 @@ class ResFileManager(tk.Frame):
         This is used exactly as a Frame widget.
         """  
         super().__init__(parent,*args,**kwargs)
-        
+        self.columnconfigure(0,weight=1)
         self.presenter = presenter
         self.noOfRows = 0
         addFileBtn = ttk.Button(self,text='Add Result File', command= self.AddResFile)
@@ -98,6 +98,7 @@ class ResFilePane(tk.Frame):
         super().__init__(parent,*args,**kwargs)
         
         self.noOfRows = 0
+        self.columnconfigure(0,weight=1)
         
         self.fileSelector = FileSelector(self,presenter, bg = 'grey40')
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
