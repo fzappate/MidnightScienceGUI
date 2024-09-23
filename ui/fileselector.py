@@ -26,8 +26,8 @@ class FileSelector(tk.Frame):
         # Draw the graphical interface of the path selector 
         self.lab = ttk.Label(self, text = 'File', width = 7)
         self.lab.grid(row=0, column=0, sticky = 'EW',padx = 3, pady = 2)
-
-        self.navigate = ttk.Button(self, text="...",width = 3, command= lambda:presenter.BrowseResFile())
+        self.iconCode = "\U0001F5C1" # 🗈
+        self.navigate = ttk.Button(self, text=self.iconCode,width = 3, command= lambda:presenter.BrowseResFile())
         self.navigate.grid(row=0, column=1, padx = (0,3), pady = 2)
         
         self.pathEntry = ttk.Entry(self, justify='right')
