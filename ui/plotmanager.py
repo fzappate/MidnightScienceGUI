@@ -40,7 +40,7 @@ class PlotManager(tk.Frame):
         '''Add a toggle frame to the plot manager pane.'''
         subplotLabel = "Subplot " + str(self.noOfRows)
         self.noOfRows += 1 
-        self.toggleFrame = TogglePane(self, label = subplotLabel, bg = 'cyan')
+        self.toggleFrame = TogglePaneDel(self, label = subplotLabel, bg = 'cyan')
         self.toggleFrame.grid(row = self.noOfRows, column = 0, sticky='EW')
         
         # Toggle pane content
@@ -121,6 +121,7 @@ class ResFilePane(tk.Frame):
         sigPane = SignalPane(self, self.presenter, sigName = selection, bg = 'red')
         sigPane.grid(row=self.noOfRows,column=0,sticky='EW')
 
+
         
 class SignalPane(tk.Frame):
     def __init__(self, 
@@ -150,15 +151,7 @@ class SignalPane(tk.Frame):
         self.columnconfigure(2,weight=0)
         
         # Handy icons
-        self.delIcon = '\u2297' # ⊗
-        self.delIcon = '\u26DD' # ⛝
-        self.delIcon = '\u2BBF' # ⮿
-        self.delIcon = '\u2BBE' # ⮾
-        self.delIcon = '\u2B59' # ⭙ 
-        self.delIcon = '\U0001F5D1' #🗑
-        self.optIcon = '\U0001F3A8' # 🎨
-        self.optIcon = '\U0001F6E0' # 🛠️
-        self.optIcon = '\u2699' # ⚙️ 
+        self.delIcon = '\U0001F5D1' # 🗑
         self.optIcon = '\U0001F527' # 🔧
         
         self.label = ttk.Label(self,text=sigName)
@@ -167,6 +160,9 @@ class SignalPane(tk.Frame):
         self.optBtn = ttk.Button(self,text = self.optIcon, width=3)
         self.optBtn.grid(row=0,column=1,sticky='EW', padx=(3,0))
         
-        self.delBtn = ttk.Button(self,text = self.delIcon, width=3)
+        self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=self.DeleteSignal)
         self.delBtn.grid(row=0,column=2,sticky='EW', padx = 3)
+        
+    def DeleteSignal(self):
+        self.destroy()
         
