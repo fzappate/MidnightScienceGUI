@@ -25,13 +25,13 @@ class FileSelector(tk.Frame):
 
         # Draw the graphical interface of the path selector 
         self.lab = ttk.Label(self, text = 'File', width = 7)
-        self.lab.grid(row=0, column=0, sticky = 'EW',padx = 3, pady = (2,0))
+        self.lab.grid(row=0, column=0, sticky = 'EW',padx = 3, pady = 2)
 
+        self.navigate = ttk.Button(self, text="...",width = 3, command= lambda:presenter.BrowseResFile())
+        self.navigate.grid(row=0, column=1, padx = (0,3), pady = 2)
+        
         self.pathEntry = ttk.Entry(self, justify='right')
         self.pathEntry.insert(0,presenter.model.settings.resultsFilePath)
-        self.pathEntry.grid(row=1,column=0,sticky = "EW", padx = 3, pady = 2)
+        self.pathEntry.grid(row=1,column=0,sticky = "EW", padx = 3, pady = (0,2),columnspan=2)
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
-
-        self.navigate = ttk.Button(self, text="...",width = 5, command= lambda:presenter.BrowseResFile())
-        self.navigate.grid(row=1, column=1, padx = (0,3), pady = 2)

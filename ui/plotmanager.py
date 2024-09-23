@@ -53,7 +53,7 @@ class ResFileManager(tk.Frame):
     def __init__(self, parent, presenter,*args,**kwargs)->None:
         """
         Initialize an instance of the class of ResFileManager. 
-        This is a control panel that manages the result files and signals.
+        This is a control panel that manages the result displayed in one subplot.
         
         args: 
         - all the Frame arguments
@@ -65,9 +65,10 @@ class ResFileManager(tk.Frame):
         This is used exactly as a Frame widget.
         """  
         super().__init__(parent,*args,**kwargs)
-        self.columnconfigure(0,weight=1)
         self.presenter = presenter
         self.noOfRows = 0
+        self.columnconfigure(0,weight=1)
+        
         addFileBtn = ttk.Button(self,text='Add Result File', command= self.AddResFile)
         addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
         
@@ -82,9 +83,8 @@ class ResFileManager(tk.Frame):
 class ResFilePane(tk.Frame):
     def __init__(self, parent, presenter,*args,**kwargs)->None:
         """
-        UPDATE THIS
-        Initialize an instance of the class of PlotManager. 
-        This is a control panel that manages the result files and signals.
+        Initialize an instance of the class of ResFilePane. 
+        This is a pane where, given a result file, signals can be selected.
         
         args: 
         - all the Frame arguments
@@ -104,7 +104,8 @@ class ResFilePane(tk.Frame):
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
-        self.signalCollection = ttk.Combobox(self,state='readonly')
+        listOfSignals = ["Option 1", "Option 2", "Option 3"]
+        self.signalCollection = ttk.Combobox(self,state='readonly', values=listOfSignals)
         self.signalCollection.grid(row=self.noOfRows,column=0,sticky='EW', padx = 3, pady = 2)
         
 
