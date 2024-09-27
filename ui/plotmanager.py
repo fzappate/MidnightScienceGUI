@@ -4,6 +4,7 @@ import tkinter as tk
 from ui.resizableframe import ResizableFrameRightEdge 
 from ui.signalentry import SignalEntry
 from ui.fileselector import FileSelector
+from ui.fileselector import FileSelectorDel
 from ui.collapsiblepanes import TogglePaneDel
 from ui.collapsiblepanes import TogglePane
                 
@@ -103,7 +104,7 @@ class ResFilePane(tk.Frame):
         self.noOfRows = 0
         self.presenter = presenter
         
-        self.fileSelector = FileSelector(self,presenter, bg = 'grey40')
+        self.fileSelector = FileSelectorDel(self,presenter, bg = 'grey40')
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
