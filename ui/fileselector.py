@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk 
 from tkinter import filedialog
 
-from presenter.presenter import Presenter
+# from presenter.presenter import Presenter
 
 
 try:
@@ -15,7 +15,7 @@ except:
 class FileSelector(tk.Frame):
     """ This object contains the graphical elements to select a working folder."""
 
-    def __init__(self,parent,presenter:Presenter, *args, **kwargs):
+    def __init__(self,parent,presenter, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         '''Initialize the path selector.'''
 
@@ -39,7 +39,7 @@ class FileSelector(tk.Frame):
 class FileSelectorDel(tk.Frame):
     """ This object contains the graphical elements to select a working folder."""
 
-    def __init__(self,parent,presenter:Presenter, *args, **kwargs):
+    def __init__(self,parent,presenter, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         '''Initialize the path selector.'''
 

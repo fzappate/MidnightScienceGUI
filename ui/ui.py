@@ -28,8 +28,8 @@ class UI(tk.Tk):
         hs = self.winfo_screenheight() # height of the screen
         self.config(bg='black')
         
-        w = 0.8*ws
-        h = 0.8*hs
+        w = 0.7*ws
+        h = 0.7*hs
         # calculate x and y coordinates for the Tk root window
         x = (ws*0.1)
         y = (hs*0.1)

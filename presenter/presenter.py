@@ -6,7 +6,8 @@ import threading
 import subprocess
 import numpy as np
 
-
+from ui.collapsiblepanes import TogglePaneDel
+from ui.resfilemanager import ResFileManager
 # from  include.ui import UI -> Not working because of circular import
 
 
@@ -220,6 +221,20 @@ class Presenter():
         # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
         
     # Plot results
+    
+    def AddSubplot(self,plotManager)->None:
+        '''Called by PlotManager 'Add Plot' button.
+        Add a toggle frame to the plot manager pane.'''
+        
+        subplotLabel = "Subplot " + str(plotManager.noOfRows)
+        plotManager.noOfRows += 1 
+        toggleFrame = TogglePaneDel(plotManager, label = subplotLabel, bg = 'cyan')
+        toggleFrame.grid(row = plotManager.noOfRows, column = 0, sticky='EW')
+        
+        # Toggle pane content
+        inputFileSelector = ResFileManager(toggleFrame.interior, self, bg = 'blue')
+        inputFileSelector.grid(row=plotManager.noOfRows,column=0,sticky='EW')
+        
     def AddSignalToPlotData(self,key)->None:
         '''Add a signal to plot data.'''
         # Extract value from results dictionary

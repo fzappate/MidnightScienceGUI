@@ -37,6 +37,5 @@ class Plotter(tk.Frame):
         self.plotManager.grid(row=0,column=0,sticky='NEW')
         
         # Plot frame
-        self.plot = PlotPane(self, bg = 'green')
         self.plot = GraphFrameContainer(self, bg = 'green')
         self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      
