@@ -9,7 +9,9 @@ import numpy as np
 from ui.collapsiblepanes import TogglePaneDel
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
-# from  include.ui import UI -> Not working because of circular import
+from model.SubplotModel import SubplotModel
+from model.PlotModel import PlotModel
+
 
 
 try:
@@ -17,6 +19,7 @@ try:
     windll.shcore.SetProcessDpiAwareness(1)
 except:
         pass
+
 
 
 class Presenter():
@@ -216,13 +219,18 @@ class Presenter():
         '''Called by PlotManager 'Add Plot' button.
         Add a toggle frame to the plot manager pane.'''
         
-        # Toggle the subplot manager
-        subplotLabel = "Subplot " + str(plotManager.noOfRows)
+        # Add sublot manager
+        subplotname = "Subplot " + str(plotManager.noOfRows)
         plotManager.noOfRows += 1 
-        plotManager.toggleFrame = TogglePaneDel(plotManager,self, label = subplotLabel, bg = 'cyan')
+        plotManager.toggleFrame = TogglePaneDel(plotManager,self, label = subplotname, bg = 'cyan')
         plotManager.toggleFrame.grid(row = plotManager.noOfRows, column = 0, sticky='EW')
         plotManager.inputFileSelector = ResFileManager(plotManager.toggleFrame.interior, self, bg = 'blue')
         plotManager.inputFileSelector.grid(row=plotManager.noOfRows,column=0,sticky='EW')
+        
+        # Add subplot pane
+        subplot = SubplotModel(subplotname)
+        self.model.plotModel.AddSubplot(subplot)
+        self.view.mainTabColl.plotter.plot.AddSubplot(self.model.plotModel)
     
     def DeleteTogglePane(self,togglePane):
         '''Delete a toggle pane and connected subplot.'''
