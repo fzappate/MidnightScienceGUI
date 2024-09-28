@@ -55,7 +55,7 @@ class PlotPane(tk.Frame):
         ...
         
         
-class GraphFrameContainer(tk.Frame):
+class SubplotContainer(tk.Frame):
     '''Class of plot where the GearGen gear set is plot.'''
 
     def __init__(self,parent,*args, **kwargs)->None:
@@ -96,25 +96,6 @@ class GraphFrame(tk.Frame):
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
         
-        
-# class GraphFrame(tk.Frame):
-#     '''Class of plot where the GearGen gear set is plot.'''
-
-#     def __init__(self,parent,*args, **kwargs)->None:
-#         super().__init__(parent,*args, **kwargs)
-#         '''Initialize the GearGen plot object.'''
-#         x = [1, 2, 3, 4]
-#         y1 = [1, 2, 3, 4]
-        
-#         self.fig = Figure()
-#         self.ax = self.fig.add_subplot(111)
-#         self.ax.plot(x,y1)
-#         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-#         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
-#         self.toolbar.update()
-#         self.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-#         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
 
 
 
