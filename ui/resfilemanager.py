@@ -24,11 +24,6 @@ class ResFileManager(tk.Frame):
         self.noOfRows = 0
         self.columnconfigure(0,weight=1)
         
-        addFileBtn = ttk.Button(self,text='Add Result File', command= self.AddResFile)
+        addFileBtn = ttk.Button(self,text='Add Result File', command= lambda:self.presenter.AddResFilePane(self))
         addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
         
-    def AddResFile(self)->None:
-        '''Add result pane.'''
-        self.noOfRows += 1
-        self.resFilePane = ResFilePane(self, self.presenter)
-        self.resFilePane.grid(row = self.noOfRows,column=0, sticky = 'EW')

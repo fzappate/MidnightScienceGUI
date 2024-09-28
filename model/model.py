@@ -1,4 +1,4 @@
-from include.settings import Settings
+from model.settings import Settings
 from model.signalcollection import SignalCollection
 
 class Model():

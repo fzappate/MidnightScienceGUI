@@ -43,3 +43,5 @@ class ResFilePane(tk.Frame):
         self.noOfRows +=1
         sigPane = SignalPane(self, self.presenter, sigName = selection, bg = 'red')
         sigPane.grid(row=self.noOfRows,column=0,sticky='EW')
+        
+    
