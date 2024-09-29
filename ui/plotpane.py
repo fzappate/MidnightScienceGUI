@@ -21,6 +21,7 @@ class PlotUI(tk.Frame):
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,weight=1)
         
+        # Create a blank canvas to start
         self.fig, axs = plt.subplots(1)
     
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
@@ -28,11 +29,9 @@ class PlotUI(tk.Frame):
         self.toolbar.update()
         self.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+               
         
-
-        
-        
-    def AddSubplot(self,plotModel):
+    def CreateSubplots(self,plotModel):
         '''
         Add a subplot to the plot.
         '''
@@ -55,6 +54,11 @@ class PlotUI(tk.Frame):
         self.toolbar.update()
         self.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        
+    def DeleteSubplot(self):
+        '''
+        Remove subplot.
+        '''
 
 
 

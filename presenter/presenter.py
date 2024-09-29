@@ -219,22 +219,41 @@ class Presenter():
         '''Called by PlotManager 'Add Plot' button.
         Add a toggle frame to the plot manager pane.'''
         
-        # Add sublot manager
+        # Update PlotManager - Add ResFileManager
         subplotname = "Subplot " + str(plotManager.noOfRows)
         plotManager.noOfRows += 1 
-        plotManager.toggleFrame = TogglePaneDel(plotManager,self, label = subplotname, bg = 'cyan')
+        plotManager.toggleFrame = TogglePaneDel(plotManager,self,togglePaneNo=plotManager.noOfRows-1,label = subplotname, bg = 'cyan')
         plotManager.toggleFrame.grid(row = plotManager.noOfRows, column = 0, sticky='EW')
         plotManager.inputFileSelector = ResFileManager(plotManager.toggleFrame.interior, self, bg = 'blue')
         plotManager.inputFileSelector.grid(row=plotManager.noOfRows,column=0,sticky='EW')
         
-        # Add subplot pane
-        subplot = SubplotModel(subplotname)
+        plotManager.toggleFrameList.append(plotManager.toggleFrame)
+        
+        # Update PlotUI - Add subplot in PlotUI
+        subplot = SubplotModel(subplotname, plotManager.noOfRows)
         self.model.plotModel.AddSubplot(subplot)
-        self.view.mainTabColl.plotter.plot.AddSubplot(self.model.plotModel)
+        self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
     
-    def DeleteTogglePane(self,togglePane):
-        '''Delete a toggle pane and connected subplot.'''
-        togglePane.destroy()
+    def DeleteSubplot(self,subplotPane):
+        '''Delete a toggle pane and connected subplot.'''        
+        
+        # Remove subplot from PlotModel(and adjust the number of the other subplots)
+        self.model.plotModel.DeleteSubplot(subplotPane.togglePaneNo)
+        
+        # Recreate the plotUI
+        self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
+        
+        # Remove the subplot pane from plotManager(and adjust the number of the other panes)
+        # subplotPane.destroy()
+        
+        del self.view.mainTabColl.plotter.plotManager.toggleFrameList[subplotPane.togglePaneNo]
+        for ii,pane in enumerate(self.view.mainTabColl.plotter.plotManager.toggleFrameList):
+            pane.togglePaneNo = ii
+            
+        
+        
+        
+        
         
     def AddResFilePane(self, resFileManager)->None:
         '''Add a result file pane. The result file pane contains a file selector, 

@@ -17,3 +17,15 @@ class PlotModel():
         self.containedSubplots.append(subplot)
         self.noOfSubplots = len(self.containedSubplots)
         
+    def DeleteSubplot(self,subplotNo):
+        '''
+        Remove a subplot from the sublpot list.
+        '''
+        del self.containedSubplots[subplotNo]
+        for ii, subplotTemp in enumerate(self.containedSubplots):
+            subplotTemp.subplotNo = ii
+            
+        self.noOfSubplots = len(self.containedSubplots)
+
+        
+        

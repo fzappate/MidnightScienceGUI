@@ -143,6 +143,7 @@ class TogglePaneDel(tk.Frame):
     def __init__(self, 
                  parent, 
                  presenter,
+                 togglePaneNo = 0,
                  iconMode = "text",
                  expandText ="+",
                  collapseText ="-",
@@ -185,6 +186,7 @@ class TogglePaneDel(tk.Frame):
         # Properties
         self.parent = parent
         self.presenter = presenter
+        self.togglePaneNo = togglePaneNo
         self.iconMode = iconMode
         self.expImgPath = expImgPath
         self.collImgPath = collImgPath
@@ -229,7 +231,7 @@ class TogglePaneDel(tk.Frame):
         
         # Create header delete button
         self.delIcon = '\u2B59' # ⭙ 
-        self.delBtn = ttk.Button( self.headerFrame, text = self.delIcon, command=lambda:self.presenter.DeleteTogglePane(self),width=3)
+        self.delBtn = ttk.Button( self.headerFrame, text = self.delIcon, command=lambda:self.presenter.DeleteSubplot(self),width=3)
         self.delBtn.grid(row = 0, column=2,sticky='E')
         
         # Create expandable frame
