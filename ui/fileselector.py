@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk 
 from tkinter import filedialog
 
-from presenter.presenter import Presenter
+# from presenter.presenter import Presenter
 
 
 try:
@@ -15,7 +15,7 @@ except:
 class FileSelector(tk.Frame):
     """ This object contains the graphical elements to select a working folder."""
 
-    def __init__(self,parent,presenter:Presenter, *args, **kwargs):
+    def __init__(self,parent,presenter, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         '''Initialize the path selector.'''
 
@@ -35,14 +35,18 @@ class FileSelector(tk.Frame):
         self.pathEntry.grid(row=1,column=0,sticky = "EW", padx = 3, pady = (0,2),columnspan=2)
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
+      
+      
         
 class FileSelectorDel(tk.Frame):
     """ This object contains the graphical elements to select a working folder."""
 
-    def __init__(self,parent,presenter:Presenter, *args, **kwargs):
+    def __init__(self,parent,presenter, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         '''Initialize the path selector.'''
 
+        self.presenter = presenter
+        
         # Set the grid configuration of this object
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=0)
@@ -54,14 +58,12 @@ class FileSelectorDel(tk.Frame):
         self.navigate = ttk.Button(self, text=self.navigateIcon,width = 3, command= lambda:presenter.BrowseResFile())
         self.navigate.grid(row=0, column=1, padx = (0,3), pady = 2)
         self.deleteIcon = "\u274C" # ❌ 
-        self.delBtn = ttk.Button(self, text=self.deleteIcon, width = 3, command= self.DeleteFileSelector)
+        self.delBtn = ttk.Button(self, text=self.deleteIcon, width = 3, command= lambda:self.presenter.DelResFilePane(self))
         self.delBtn.grid(row=0, column=2, padx = (0,3), pady = 2)
         
         self.pathEntry = ttk.Entry(self, justify='right')
         self.pathEntry.insert(0,presenter.model.settings.resultsFilePath)
-        self.pathEntry.grid(row=1,column=0,sticky = "EW", padx = 3, pady = (0,2),columnspan=2)
+        self.pathEntry.grid(row=1,column=0,sticky = "EW", padx = 3, pady = (0,2),columnspan=3)
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
     
-    def DeleteFileSelector(self):
-        self.destroy()

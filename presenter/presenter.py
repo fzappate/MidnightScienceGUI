@@ -6,8 +6,12 @@ import threading
 import subprocess
 import numpy as np
 
+from ui.collapsiblepanes import TogglePaneDel
+from ui.resfilemanager import ResFileManager
+from ui.resfilepane import ResFilePane
+from model.SubplotModel import SubplotModel
+from model.PlotModel import PlotModel
 
-# from  include.ui import UI -> Not working because of circular import
 
 
 try:
@@ -15,6 +19,7 @@ try:
     windll.shcore.SetProcessDpiAwareness(1)
 except:
         pass
+
 
 
 class Presenter():
@@ -59,18 +64,7 @@ class Presenter():
         self.model.settings.workingFolder = folder
         # Set the workign folder of the setting object the same as the content of the entry 
         self.UpdateSettingFile("workingFolder", folder)
-        
-    def BrowseResultsFile(self) -> None:
-        '''This function allows the selection of a file.'''
-        # Open the dialog window
-        filePath = filedialog.askopenfilename()
-        # Update the entry text
-        self.UpdateEntry(self.view.mainTabColl.plotter.signalSelector.inputsPanel.fileSelector.pathEntry,filePath)
-        # Update model setting 
-        self.model.settings.resultsFilePath = filePath
-        # Update setting file
-        self.UpdateSettingFile("resultsFilePath", filePath)
-                
+                    
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
         and pasting in the setting object. """
@@ -219,7 +213,71 @@ class Presenter():
         # Update the combobox
         # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
         
-    # Plot results
+    # Plot manager
+    
+    def AddSubplot(self,plotManager)->None:
+        '''Called by PlotManager 'Add Plot' button.
+        Add a toggle frame to the plot manager pane.'''
+        
+        # Update PlotManager - Add ResFileManager
+        subplotname = "Subplot " + str(plotManager.noOfRows)
+        plotManager.noOfRows += 1 
+        plotManager.toggleFrame = TogglePaneDel(plotManager,self,togglePaneNo=plotManager.noOfRows-1,label = subplotname, bg = 'cyan')
+        plotManager.toggleFrame.grid(row = plotManager.noOfRows, column = 0, sticky='EW')
+        plotManager.inputFileSelector = ResFileManager(plotManager.toggleFrame.interior, self, bg = 'blue')
+        plotManager.inputFileSelector.grid(row=plotManager.noOfRows,column=0,sticky='EW')
+        
+        plotManager.toggleFrameList.append(plotManager.toggleFrame)
+        
+        # Update PlotUI - Add subplot in PlotUI
+        subplot = SubplotModel(subplotname, plotManager.noOfRows)
+        self.model.plotModel.AddSubplot(subplot)
+        self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
+    
+    def DeleteSubplot(self,subplotPane):
+        '''Delete a toggle pane and connected subplot.'''        
+        
+        # Remove subplot from PlotModel(and adjust the number of the other subplots)
+        self.model.plotModel.DeleteSubplot(subplotPane.togglePaneNo)
+        
+        # Recreate the plotUI
+        self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
+        
+        # Remove the subplot pane from plotManager(and adjust the number of the other panes)
+        # subplotPane.destroy()
+        
+        del self.view.mainTabColl.plotter.plotManager.toggleFrameList[subplotPane.togglePaneNo]
+        for ii,pane in enumerate(self.view.mainTabColl.plotter.plotManager.toggleFrameList):
+            pane.togglePaneNo = ii
+            
+        
+        
+        
+        
+        
+    def AddResFilePane(self, resFileManager)->None:
+        '''Add a result file pane. The result file pane contains a file selector, 
+        a combobox, and a frame with a list of signals.'''
+        resFileManager.noOfRows += 1
+        resFileManager.resFilePane = ResFilePane(resFileManager, self)
+        resFileManager.resFilePane.grid(row = resFileManager.noOfRows,column=0, sticky = 'EW')
+        
+    def DelResFilePane(self, fileSelector):
+        fileSelector.master.destroy()
+
+    def BrowseResFile(self) -> None:
+        '''This function allows the selection of a file.'''
+        # Open the dialog window
+        filePath = filedialog.askopenfilename()
+        # Update the entry text
+        self.UpdateEntry(self.view.mainTabColl.plotter.plotManager.inputFileSelector.resFileManager.fileSelector.pathEntry,filePath)
+        # Update model setting 
+        self.model.settings.resultsFilePath = filePath
+        # Update setting file
+        self.UpdateSettingFile("resultsFilePath", filePath)
+        
+        
+
     def AddSignalToPlotData(self,key)->None:
         '''Add a signal to plot data.'''
         # Extract value from results dictionary
