@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import ttk 
 
-
-from ui.plotmanager import PlotManagerPane
-from ui.geompreprocplotcontrolsui import GeomPreprocPlotControlsUI
-
+# from ui.plotpane import PlotPane
+from ui.plotpane import PlotUI
+from ui.resizableframe import ResizeScrollVFrameRightEdge
+from ui.plotmanager import PlotManager
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -14,8 +14,14 @@ except:
 
 class Plotter(tk.Frame):
     def __init__(self,parent,presenter,*args, **kwargs)->None:
+        """
+        Initialize Plotter. 
+        This is a frame containing all the widgets necessary to plot results. 
+        
+        -----USAGE-----
+        This widget can be used exactly as a frame. 
+        """
         super().__init__(parent,*args, **kwargs)
-        '''Container of the whole plotter.'''
 
         # Set the grid configuration of this object
         self.columnconfigure(0,weight=0)
@@ -23,14 +29,13 @@ class Plotter(tk.Frame):
         self.columnconfigure(2,weight=0)
         self.rowconfigure(0,weight=1)        
         
-        # Signal selection 
-        self.plotManagerPane = PlotManagerPane(self,presenter,width = 330,bg = 'gray30')
+        # Plot manager
+        self.plotManagerPane = ResizeScrollVFrameRightEdge(self, width = 330,bg = 'cyan')
         self.plotManagerPane.grid(row=0,column=0,sticky='NES', padx=3, pady=3)
         
-        # Plot
-        self.plot = tk.Frame(self,bg='gray30')
-        self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)  
+        self.plotManager = PlotManager(self.plotManagerPane.interior,presenter, bg = 'green')
+        self.plotManager.grid(row=0,column=0,sticky='NEW')
         
-        # Plot Controls panel
-        self.plotControls = GeomPreprocPlotControlsUI(self,presenter,width = 280,bg = 'gray30')
-        self.plotControls.grid(row=0,column=2,sticky='NWS', padx=3, pady=3)
+        # Plot frame
+        self.plot = PlotUI(self, bg = 'green')
+        self.plot.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      

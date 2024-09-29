@@ -1,116 +1,35 @@
 from tkinter import ttk
 import tkinter as tk
 
-from ui.resizableframe import ResizableFrameRightEdge 
-
-from ui.fileselector import FileSelector
-
-class PlotManagerPane(ResizableFrameRightEdge):
-    def __init__(self,parent,presenter, *args, **kwargs)->None:
-        super().__init__(parent,*args, **kwargs)
-        '''Graphicalm object that wraps the widgets necessary to select the signals to plot. '''
-
-        # Make sure that the content of SignalSelector stretches from left to right and top to bottom
-        self.columnconfigure(0,weight=1)
-        self.rowconfigure(0, weight=1)
-
-        # Input panel must be placed in a canvas to use the scroll bar
-        self.inputCanvas = tk.Canvas(self)
-        self.inputCanvas.columnconfigure(0,weight=1)
-        self.inputCanvas.configure(bg='green')
-        self.scrollbar=ttk.Scrollbar(self,orient="vertical", command=self.inputCanvas.yview)
-        self.inputCanvas.configure(yscrollcommand=self.scrollbar.set)
-        
-        self.plotManager = PlotManager(self.inputCanvas,presenter)        
-        
-        # Create an handle for the frame window so that it can be configured later 
-        self.internal = self.inputCanvas.create_window((0, 0), window=self.plotManager, anchor="nw")
-
-        self.inputCanvas.grid(row=0,column=0,sticky='NEWS',padx = (3,3),pady = (3,3))
-        self.scrollbar.grid(row=0,column=1,sticky='NSE',padx = (0,3),pady = (3,3))
-
-        # Bind methods
-        # Horizontally stretch the frame inside the canvas to fill the canvas when it is resized
-        self.inputCanvas.bind("<Configure>", lambda e: self.inputCanvas.itemconfig(self.internal, width=e.width))
-        # Scroll bar configures 
-        self.plotManager.bind("<Configure>",lambda e: self.inputCanvas.configure(scrollregion=self.plotManager.bbox("all")))
-        self.plotManager.bind('<Enter>', self.boundToMouseWheel)
-        self.plotManager.bind('<Leave>', self.unboundToMouseWheel)
+from ui.fileselector import FileSelectorDel
 
 
-    def boundToMouseWheel(self, event):
-        self.inputCanvas.bind_all("<MouseWheel>", self._on_mousewheel)
-
-
-    def unboundToMouseWheel(self, event):
-        self.inputCanvas.unbind_all("<MouseWheel>")
-
-
-    def _on_mousewheel(self, event):
-        # If frame is greater than canvas scroll, otherwise not.
-        inputsPanelLength = self.inputsPanel.winfo_height()
-        canvasLength = self.inputCanvas.winfo_height()
-        if (inputsPanelLength > canvasLength):
-                self.inputCanvas.yview_scroll(int(-1*(event.delta/120)), "units")
-                
-                
 class PlotManager(tk.Frame):    
-    '''This class contains all the UI widget necesary to navigate the signals of a result file.'''
-
     def __init__(self, parent, presenter,*args,**kwargs)->None:
-        super().__init__(parent,*args,**kwargs)     
-        '''Initialize the PlotManager panel.'''
-
-        self.allSignals = []
+        """
+        Initialize an instance of the class of PlotManager. 
+        This is a control panel that manages the result files and signals.
         
-        # Make sure that the grid column takes up all the space 
+        args: 
+        - all the Frame arguments
+            - background, bg: set background color
+            - borderwidth, bd: set border width
+            - ...
+        
+        -----USAGE-----
+        This is used exactly as a Frame widget.
+        """  
+        super().__init__(parent,*args,**kwargs)
+        
+        self.toggleFrameList = []
+        self.noOfRows = 0
+        self.presenter = presenter
+        
+        # Set PlotManager columns weight
         self.columnconfigure(0,weight=1)
 
         # Results file selection
-        self.fileSelector = FileSelector(self,presenter, bg = 'grey40')
-        self.fileSelector.grid(row=0,column=0,sticky='EW')
-        
-        # Plot manager frame
-        self.frame = tk.Frame(self, bg = 'grey40')
-        self.frame.columnconfigure(0,weight=1)
-        self.frame.columnconfigure(1,weight=0)
-        self.frame.grid(row=1,column=0,sticky='EW')
-        
-        self.sigSelLab = ttk.Label(self.frame,text = 'Signal Selection')
-        self.sigSelLab.grid(row=0,column=0,sticky='EW',padx = 3, pady = (4,0))
-        
-        self.signalCollection = ttk.Combobox(self.frame,state='readonly')
-        self.signalCollection.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
-        
-        self.addSignBtn = ttk.Button(self.frame,text="Add",width=5, command=self.addSignal)
-        self.addSignBtn.grid(row=1,column=1,sticky='EW', padx = (0,3), pady = 2)
-        
-        self.sigListLab = ttk.Label(self.frame,text='Signal List')
-        self.sigListLab.grid(row=2,column=0,sticky='EW',padx = 3, pady = (4,0))
-        
-        
-        
-    def addSignal(self):
-        entryText = self.signalCollection.get()
-        ent = ErasableEntry(self,entryText,bg='gray40')
-        entryPosition = len(self.allSignals)+3
-        ent.grid(row = entryPosition,column=0,sticky='EW')
-        self.allSignals.append(ent)
-        
-        
-class ErasableEntry(tk.Frame):
-    def __init__(self,parent,text,*args,**kwargs)->None:
-        super().__init__(parent,*args,**kwargs)
-
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=0)
-        
-        self.entry = ttk.Label(self, text = text)
-        self.entry.grid(row=1,column=0,sticky='EW', padx = 3, pady = 2)
-
-        self.eraseButton = ttk.Button(self,text='x',width = 5,command=self.destroy)
-        self.eraseButton.grid(row=1,column=1,sticky='EW', padx = 3, pady = 2)
-        
-        self.hideButton = ttk.Button(self,text='o',width = 5,command=self.destroy)
-        self.hideButton.grid(row=1,column=2,sticky='EW', padx = 3, pady = 2)
-        
+        self.noOfRows
+        self.addPlot = ttk.Button(self,text='Add Plot',command = lambda:self.presenter.AddSubplot(self)) 
+        self.addPlot.grid(row=self.noOfRows,column=0,sticky='W')
+    
