@@ -7,6 +7,6 @@ class ResultFile():
         '''
         # Dictionary with signal names and values
         self.name = ''
-        self.resultNo = 0
+        self.indx = 0
         self.absPath = ''
         self.signals = {}
