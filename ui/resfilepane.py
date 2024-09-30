@@ -23,6 +23,8 @@ class ResFilePane(tk.Frame):
         self.columnconfigure(0,weight=1)
         
         # Handy numbers
+        self.name = ''
+        self.indx = 0
         self.noOfRows = 0
         self.presenter = presenter
         

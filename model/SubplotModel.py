@@ -8,14 +8,21 @@ class SubplotModel():
         # Dictionary with signal names and values
         self.name = ''
         self.indx = 0
+        self.noOfResFile = 0
+        self.resultFiles = []
+        self.plottedSignal = []
+        
         self.xLabel = ''
         self.yLabel = ''
         self.xTick = 0
         self.yTick = 0
         self.grid = 1
         self.xAxis = ''
-        self.resultFiles = {}
-        self.plottedSignal = {}
+        
+    def AddResultFile(self,resultFileModel):
+        '''Add ResultFileModel to SubplotModel.'''
+        self.resultFiles.append(resultFileModel)
+        self.noOfResFile = len(self.resultFiles)
         
         
         

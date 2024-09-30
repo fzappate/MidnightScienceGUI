@@ -9,8 +9,10 @@ import numpy as np
 from ui.collapsiblepanes import TogglePaneDel
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
-from model.SubplotModel import SubplotModel
 from model.PlotModel import PlotModel
+from model.SubplotModel import SubplotModel
+from model.ResultFileModel import ResultFileModel
+
 
 
 
@@ -213,10 +215,10 @@ class Presenter():
         # Update the combobox
         # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
         
-    # Plot manager
+    # PlotManager
     
     def AddSubplot(self,plotManager)->None:
-        '''Called by PlotManager 'Add Plot' button.
+        '''Add subplot to PlotManager and Plot.
         Add a toggle frame to the plot manager pane.'''
         # Get useful information 
         noOfSubplot = self.model.plotModel.noOfSubplots
@@ -231,34 +233,34 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
-
-        # subplotname = "Subplot " + str(plotManager.noOfRows)
-        # plotManager.noOfRows += 1 
-        # plotManager.toggleFrame = TogglePaneDel(plotManager,self,togglePaneNo=plotManager.noOfRows-1,label = subplotname, bg = 'cyan')
-        # plotManager.toggleFrame.grid(row = plotManager.noOfRows, column = 0, sticky='EW')
-        # plotManager.inputFileSelector = ResFileManager(plotManager.toggleFrame.interior, self, bg = 'blue')
-        # plotManager.inputFileSelector.grid(row=plotManager.noOfRows,column=0,sticky='EW')
-        # plotManager.toggleFrameList.append(plotManager.toggleFrame)
-        # # Update PlotUI - Add subplot in PlotUI
-        # subplot = SubplotModel(subplotname, plotManager.noOfRows)
-        # self.model.plotModel.AddSubplot(subplot)
-        # self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
+        
     
     def DeleteSubplot(self,subplotPane):
         '''Delete a toggle pane and connected subplot.'''        
-        
         # Update PlotModel deleting the SubplotModel
         self.model.plotModel.DeleteSubplot(subplotPane)
         
         # Redraw PlotManager
         self.RedrawPlotManager()
-        
-        # Remove the subplot pane from plotManager(and adjust the number of the other panes)
-        # subplotPane.destroy()
-        # del self.view.mainTabColl.plotter.plotManager.toggleFrameList[subplotPane.togglePaneNo]
-        # for ii,pane in enumerate(self.view.mainTabColl.plotter.plotManager.toggleFrameList):
-        #     pane.togglePaneNo = ii
             
+        
+    def AddResultFile(self, resFileManager)->None:
+        '''Add ResultFile to Subplot.'''
+        # Get useful information 
+        noOfResFile = resFileManager.noOfRows
+        subplotIndx = resFileManager.master.master.indx
+        
+        # Create ResFilePane
+        resultFileModel = ResultFileModel()
+        resultFileModel.name = str(noOfResFile)
+        resultFileModel.indx = noOfResFile
+        
+        # Update SubplotModel adding a ResultFile
+        self.model.plotModel.containedSubplots[subplotIndx].AddResultFile(resultFileModel)
+        
+        # Redraw PlotManager
+        self.RedrawPlotManager()
+    
         
     def RedrawPlotManager(self):
         '''
@@ -273,19 +275,28 @@ class Presenter():
             
         # Redraw everything in the plot manager
         areCollapsed = self.model.plotModel.areCollapsed
+        # Iterate on the Subplots
         for ii,sp in enumerate(self.model.plotModel.containedSubplots):
-            row = ii+1
+            
             toggleFrame = TogglePaneDel(self.view.mainTabColl.plotter.plotManager,
                                         self,
                                         label = sp.name,
-                                        indx=row-1,
+                                        indx=ii,
                                         isCollapsed=areCollapsed[ii],
                                         bg = 'cyan')
-            toggleFrame.grid(row = row, column = 0, sticky='EW')
-            inputFileSelector = ResFileManager( toggleFrame.interior, 
-                                                self, 
-                                                bg = 'blue')
-            inputFileSelector.grid(row=0,column=0,sticky='EW')
+            toggleFrame.grid(row = ii+1, column = 0, sticky='EW')
+            resFileManager = ResFileManager(toggleFrame.interior, 
+                                            self, 
+                                            bg = 'blue')
+            resFileManager.grid(row=0,column=0,sticky='EW')
+            
+            # Iterate on the ResultFile
+            for jj,rf in enumerate(sp.resultFiles):
+            # for jj,rf in enumerate(self.model.plotModel.containedSubplots[ii].resultFiles):
+                rfRow=jj+1 # Skip the button row
+                resFile = ResFilePane(resFileManager,
+                                      self)
+                resFile.grid(row=rfRow,column=0,sticky='EW')
             
             
         
@@ -297,12 +308,7 @@ class Presenter():
         self.model.plotModel.areCollapsed[indx] = isCollapsed
     
         
-    def AddResFilePane(self, resFileManager)->None:
-        '''Add a result file pane. The result file pane contains a file selector, 
-        a combobox, and a frame with a list of signals.'''
-        resFileManager.noOfRows += 1
-        resFileManager.resFilePane = ResFilePane(resFileManager, self)
-        resFileManager.resFilePane.grid(row = resFileManager.noOfRows,column=0, sticky = 'EW')
+
         
     def DelResFilePane(self, fileSelector):
         fileSelector.master.destroy()

@@ -1,4 +1,4 @@
-class ResultFile():
+class ResultFileModel():
     def __init__(self)->None:
         '''
         Class that generates the model of a ResultFile object.
