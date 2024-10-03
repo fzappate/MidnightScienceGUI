@@ -72,7 +72,7 @@ class Presenter():
         and pasting in the setting object. """
         workingFolder = self.view.pathSelector.pathEntry.get()
         # Set the workign folder of the setting object the same as the content of the entry 
-        self.UpdateSettingWorkingFolder(workingFolder)
+        # self.UpdateSettingWorkingFolder(workingFolder)
         
     def UpdateWorkingFolder(self,workingFolder)->None:
         """This function makes sure that when a working folder is chosen the path is properly 
@@ -235,7 +235,7 @@ class Presenter():
         self.RedrawPlotManager()
         
     
-    def DeleteSubplot(self,subplotPane):
+    def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
         # Update PlotModel deleting the SubplotModel
         self.model.plotModel.DeleteSubplot(subplotPane)
@@ -250,7 +250,7 @@ class Presenter():
         noOfResFile = resFileManager.noOfRows
         subplotIndx = resFileManager.master.master.indx
         
-        # Create ResFilePane
+        # Create ResFileModel
         resultFileModel = ResultFileModel()
         resultFileModel.name = str(noOfResFile)
         resultFileModel.indx = noOfResFile
@@ -260,9 +260,21 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
+        
+        
+    def DeleteResultFile(self,resFilePane)->None:
+        '''Delete ResultFile from the model and redraw the PlotManager.'''
+        resFileIndx = resFilePane.indx
+        subplotIndx = resFilePane.master.master.master.indx
+        
+        # Update SubplotModel adding a ResultFile
+        self.model.plotModel.containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
+        
+        # Redraw PlotManager
+        self.RedrawPlotManager()
     
         
-    def RedrawPlotManager(self):
+    def RedrawPlotManager(self)->None:
         '''
         Redraw the plot manager time.
         '''
@@ -313,12 +325,13 @@ class Presenter():
     def DelResFilePane(self, fileSelector):
         fileSelector.master.destroy()
 
-    def BrowseResFile(self) -> None:
+    def BrowseResFile(self,resFilePane) -> None:
         '''This function allows the selection of a file.'''
         # Open the dialog window
         filePath = filedialog.askopenfilename()
         # Update the entry text
-        self.UpdateEntry(self.view.mainTabColl.plotter.plotManager.inputFileSelector.resFileManager.fileSelector.pathEntry,filePath)
+        resFilePane.UpdateEntry(filePath)
+        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManager.inputFileSelector.resFileManager.fileSelector.pathEntry,filePath)
         # Update model setting 
         self.model.settings.resultsFilePath = filePath
         # Update setting file

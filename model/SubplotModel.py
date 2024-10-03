@@ -24,5 +24,18 @@ class SubplotModel():
         self.resultFiles.append(resultFileModel)
         self.noOfResFile = len(self.resultFiles)
         
+    def DeleteResultFile(self,resultFilePane):
+        '''Remove a ResultFileModel from SubplotModel.'''
+        # Remove result file
+        resultFileNo = resultFilePane.indx
+        del self.resultFiles[resultFileNo]
+        
+        # Reassign result files indx
+        for ii, resFileTemp in enumerate(self.resultFiles):
+            resFileTemp.indx = ii
+            
+        self.noOfResFile = len(self.resultFiles)
+        
+        
         
         
