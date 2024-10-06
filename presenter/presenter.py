@@ -38,7 +38,7 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initUI(self)
         self.LoadSettings()
-        self.LoadResults()
+        self.LoadResultsFromSavedSettings()
         self.view.protocol("WM_DELETE_WINDOW", self._on_closing)  # Force closing when 
         self.view.mainloop()
 
@@ -53,7 +53,77 @@ class Presenter():
         entry.delete(0,tk.END)
         entry.insert(0,txt)
 
-    # Path selector 
+    # GUI Initialization
+
+    def LoadSettings(self) -> None:
+        ''' This function loads the GUI settings.'''
+        
+        # Check that the settings file exists
+        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
+        
+        if (settingsFileExist):
+            print('Settings file found at: ' + self.model.settings.settingsFilePath)
+        else:
+            print('Settings file not found at: ' + self.model.settings.settingsFilePath)
+            
+        # Read setting file
+        file = open(self.model.settings.settingsFilePath,'r')
+        lines = file.readlines()
+        
+        # Create setting dictionary
+        settingDict = {}
+        for line in lines:
+            if line.startswith('-'):
+                
+                line = line.replace(line[0],"")
+                tokens = line.split(',')
+                keyword = tokens[0].strip()                
+                setting = tokens[1].strip()
+                
+                settingDict[keyword] = setting
+                    
+        file.close()
+        
+        # load setting dictionary in setting structure
+        self.model.settings.workingFolder = settingDict.get("workingFolder")
+        self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
+        
+        # Update entries
+        self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
+        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
+    
+    def LoadResultsFromSavedSettings(self) -> None:
+        '''Load results.'''
+        # Read results file
+        file = open(self.model.settings.resultsFilePath,'r')
+        lines = file.readlines()
+        file.close()
+        
+        # Update the model dictionary containing the results 
+        resDict = defaultdict(list)
+        counter = 0
+        for line in lines:
+            lineTokens = line.split(',')
+            lineTokens = [lineToken.strip() for lineToken in lineTokens ]
+            lineTokens = lineTokens[:-1]
+            
+            if counter == 0:
+                headerTokens = lineTokens
+            else:
+                valueTokens = lineTokens
+                values = [float(x) for x in valueTokens]
+                for i, key in enumerate(headerTokens):
+                    resDict[key].append(values[i])
+                
+            counter +=1
+                    
+        self.model.results = resDict
+        
+        # Update the combobox
+        # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
+    
+    
+    # Working Folder Selection
     
     def BrowseWorkingFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
@@ -134,88 +204,8 @@ class Presenter():
         file.writelines(lines)
         file.close()
 
-    # Load funcions
-    
-    def LoadData(self)->None:
-        '''This function loads the inputs, outputs and so on.'''
-
-        # Load the results of the simulation 
-        # self.LoadResults()
-        
-        # Load GearGen data
-        # self.LoadGearGenData()
-
-        # Load GeometryCode data
-        # self.LoadGeomCodeData()
-
-    def LoadSettings(self) -> None:
-        ''' This function loads the GUI settings.'''
-        
-        # Check that the settings file exists
-        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
-        
-        if (settingsFileExist):
-            print('Settings file found at: ' + self.model.settings.settingsFilePath)
-        else:
-            print('Settings file not found at: ' + self.model.settings.settingsFilePath)
-            
-        # Read setting file
-        file = open(self.model.settings.settingsFilePath,'r')
-        lines = file.readlines()
-        
-        # Create setting dictionary
-        settingDict = {}
-        for line in lines:
-            if line.startswith('-'):
-                
-                line = line.replace(line[0],"")
-                tokens = line.split(',')
-                keyword = tokens[0].strip()                
-                setting = tokens[1].strip()
-                
-                settingDict[keyword] = setting
-                    
-        file.close()
-        
-        # load setting dictionary in setting structure
-        self.model.settings.workingFolder = settingDict.get("workingFolder")
-        self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
-        
-        # Update entries
-        self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
-        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
-        
-    def LoadResults(self) -> None:
-        '''Load results.'''
-        # Read results file
-        file = open(self.model.settings.resultsFilePath,'r')
-        lines = file.readlines()
-        file.close()
-        
-        # Update the model dictionary containing the results 
-        resDict = defaultdict(list)
-        counter = 0
-        for line in lines:
-            lineTokens = line.split(',')
-            lineTokens = [lineToken.strip() for lineToken in lineTokens ]
-            lineTokens = lineTokens[:-1]
-            
-            if counter == 0:
-                headerTokens = lineTokens
-            else:
-                valueTokens = lineTokens
-                values = [float(x) for x in valueTokens]
-                for i, key in enumerate(headerTokens):
-                    resDict[key].append(values[i])
-                
-            counter +=1
-                    
-        self.model.results = resDict
-        
-        # Update the combobox
-        # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
-        
-    # PlotManager
+     
+    # Subplot Handling
     
     def AddSubplot(self,plotManager)->None:
         '''Add subplot to PlotManager and Plot.
@@ -233,8 +223,7 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
-        
-    
+            
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
         # Update PlotModel deleting the SubplotModel
@@ -243,6 +232,8 @@ class Presenter():
         # Redraw PlotManager
         self.RedrawPlotManager()
             
+            
+    # ResultFile Handling
         
     def AddResultFile(self, resFileManager)->None:
         '''Add ResultFile to Subplot.'''
@@ -261,10 +252,8 @@ class Presenter():
         # Redraw PlotManager
         self.RedrawPlotManager()
         
-        
     def DeleteResultFile(self,resFilePane)->None:
         '''Delete ResultFile from the model and redraw the PlotManager.'''
-        resFileIndx = resFilePane.indx
         subplotIndx = resFilePane.master.master.master.indx
         
         # Update SubplotModel adding a ResultFile
@@ -272,8 +261,58 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
-    
         
+    def BrowseResFile(self,fileSelector,resFilePane) -> None:
+        '''This function allows the selection of a file.'''
+        # Open the dialog window
+        filePath = filedialog.askopenfilename()
+        
+        # Check if a path exists
+        pathExists = os.path.exists(filePath)
+        if not pathExists:
+            return
+        
+        # Update the entry text
+        fileSelector.UpdateEntry(filePath)
+        
+        # Update model setting 
+        self.model.settings.resultsFilePath = filePath
+        # Update setting file
+        self.UpdateSettingFile("resultsFilePath", filePath)
+        
+        # Retrieve useful info
+        subplotIndx = resFilePane.master.master.master.indx
+        resFileIndx = resFilePane.indx
+        
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
+        
+    def FileSelectorReturn(self, event, fileSelector, resFilePane)->None:
+        '''Event called whenever a file is copied and return is hit. Or when the entry looses focus.'''
+
+        # Retrieve file path from entry
+        filePath = fileSelector.GetEntry()
+        
+        # Check if a path exists
+        pathExists = os.path.exists(filePath)
+        if not pathExists:
+            return
+                
+        # Update model setting 
+        self.model.settings.resultsFilePath = filePath
+        # Update setting file
+        self.UpdateSettingFile("resultsFilePath", filePath)
+        
+        # Retrieve useful info
+        subplotIndx = resFilePane.master.master.master.indx
+        resFileIndx = resFilePane.indx
+        
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
+        # Populate the ResultFileModel
+        # self.LoadResult()
+        
+        
+    
+    # Plot Manager
     def RedrawPlotManager(self)->None:
         '''
         Redraw the plot manager time.
@@ -325,17 +364,7 @@ class Presenter():
     def DelResFilePane(self, fileSelector):
         fileSelector.master.destroy()
 
-    def BrowseResFile(self,resFilePane) -> None:
-        '''This function allows the selection of a file.'''
-        # Open the dialog window
-        filePath = filedialog.askopenfilename()
-        # Update the entry text
-        resFilePane.UpdateEntry(filePath)
-        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManager.inputFileSelector.resFileManager.fileSelector.pathEntry,filePath)
-        # Update model setting 
-        self.model.settings.resultsFilePath = filePath
-        # Update setting file
-        self.UpdateSettingFile("resultsFilePath", filePath)
+
         
         
 
@@ -354,9 +383,6 @@ class Presenter():
         self.view.mainTabColl.plotter.plotManagerPane.plotManager 
         
         
-      
-        
-
     # Save functions
     def SaveGearGenData(self)->None:
         '''Initiate the routing that saves all the data of the GearGen model.'''
