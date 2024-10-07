@@ -53,6 +53,7 @@ class Presenter():
         entry.delete(0,tk.END)
         entry.insert(0,txt)
 
+
     # GUI Initialization
 
     def LoadSettings(self) -> None:
@@ -89,7 +90,7 @@ class Presenter():
         self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
         
         # Update entries
-        self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
+        # self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
         # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
     
     def LoadResultsFromSavedSettings(self) -> None:
@@ -267,24 +268,10 @@ class Presenter():
         # Open the dialog window
         filePath = filedialog.askopenfilename()
         
-        # Check if a path exists
-        pathExists = os.path.exists(filePath)
-        if not pathExists:
-            return
-        
         # Update the entry text
         fileSelector.UpdateEntry(filePath)
         
-        # Update model setting 
-        self.model.settings.resultsFilePath = filePath
-        # Update setting file
-        self.UpdateSettingFile("resultsFilePath", filePath)
-        
-        # Retrieve useful info
-        subplotIndx = resFilePane.master.master.master.indx
-        resFileIndx = resFilePane.indx
-        
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
+        self.FileSelectorReturn(None, fileSelector, resFilePane)
         
     def FileSelectorReturn(self, event, fileSelector, resFilePane)->None:
         '''Event called whenever a file is copied and return is hit. Or when the entry looses focus.'''
@@ -306,13 +293,23 @@ class Presenter():
         subplotIndx = resFilePane.master.master.master.indx
         resFileIndx = resFilePane.indx
         
+        # Load the signals into ResultFileModel
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].absPath = filePath
         self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
-        # Populate the ResultFileModel
-        # self.LoadResult()
         
+        self.RedrawPlotManager()
+        print('Result file added.')
+
         
+    # Signal Handling
     
+    def AddSignal(self)->None:
+        '''Add a Signal to the ResultFile'''
+        # Get useful information
+        
+        
     # Plot Manager
+    
     def RedrawPlotManager(self)->None:
         '''
         Redraw the plot manager time.
@@ -343,11 +340,17 @@ class Presenter():
             
             # Iterate on the ResultFile
             for jj,rf in enumerate(sp.resultFiles):
-            # for jj,rf in enumerate(self.model.plotModel.containedSubplots[ii].resultFiles):
                 rfRow=jj+1 # Skip the button row
                 resFile = ResFilePane(resFileManager,
-                                      self)
+                                      self,
+                                      entryText=rf.absPath,
+                                      comboboxList=rf.signalNames)
                 resFile.grid(row=rfRow,column=0,sticky='EW')
+            
+            
+            
+            
+            
             
             
         
