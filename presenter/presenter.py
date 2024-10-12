@@ -9,8 +9,11 @@ import numpy as np
 from ui.collapsiblepanes import TogglePaneDel
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
-from model.SubplotModel import SubplotModel
+from ui.signalpane import SignalPane
 from model.PlotModel import PlotModel
+from model.SubplotModel import SubplotModel
+from model.ResultFileModel import ResultFileModel
+
 
 
 
@@ -36,7 +39,7 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initUI(self)
         self.LoadSettings()
-        self.LoadResults()
+        self.LoadResultsFromSavedSettings()
         self.view.protocol("WM_DELETE_WINDOW", self._on_closing)  # Force closing when 
         self.view.mainloop()
 
@@ -51,7 +54,78 @@ class Presenter():
         entry.delete(0,tk.END)
         entry.insert(0,txt)
 
-    ## Path selector 
+
+    # GUI Initialization
+
+    def LoadSettings(self) -> None:
+        ''' This function loads the GUI settings.'''
+        
+        # Check that the settings file exists
+        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
+        
+        if (settingsFileExist):
+            print('Settings file found at: ' + self.model.settings.settingsFilePath)
+        else:
+            print('Settings file not found at: ' + self.model.settings.settingsFilePath)
+            
+        # Read setting file
+        file = open(self.model.settings.settingsFilePath,'r')
+        lines = file.readlines()
+        
+        # Create setting dictionary
+        settingDict = {}
+        for line in lines:
+            if line.startswith('-'):
+                
+                line = line.replace(line[0],"")
+                tokens = line.split(',')
+                keyword = tokens[0].strip()                
+                setting = tokens[1].strip()
+                
+                settingDict[keyword] = setting
+                    
+        file.close()
+        
+        # load setting dictionary in setting structure
+        self.model.settings.workingFolder = settingDict.get("workingFolder")
+        self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
+        
+        # Update entries
+        # self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
+        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
+    
+    def LoadResultsFromSavedSettings(self) -> None:
+        '''Load results.'''
+        # Read results file
+        file = open(self.model.settings.resultsFilePath,'r')
+        lines = file.readlines()
+        file.close()
+        
+        # Update the model dictionary containing the results 
+        resDict = defaultdict(list)
+        counter = 0
+        for line in lines:
+            lineTokens = line.split(',')
+            lineTokens = [lineToken.strip() for lineToken in lineTokens ]
+            lineTokens = lineTokens[:-1]
+            
+            if counter == 0:
+                headerTokens = lineTokens
+            else:
+                valueTokens = lineTokens
+                values = [float(x) for x in valueTokens]
+                for i, key in enumerate(headerTokens):
+                    resDict[key].append(values[i])
+                
+            counter +=1
+                    
+        self.model.results = resDict
+        
+        # Update the combobox
+        # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
+    
+    
+    # Working Folder Selection
     
     def BrowseWorkingFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
@@ -70,7 +144,7 @@ class Presenter():
         and pasting in the setting object. """
         workingFolder = self.view.pathSelector.pathEntry.get()
         # Set the workign folder of the setting object the same as the content of the entry 
-        self.UpdateSettingWorkingFolder(workingFolder)
+        # self.UpdateSettingWorkingFolder(workingFolder)
         
     def UpdateWorkingFolder(self,workingFolder)->None:
         """This function makes sure that when a working folder is chosen the path is properly 
@@ -132,149 +206,210 @@ class Presenter():
         file.writelines(lines)
         file.close()
 
-    # Load funcions
-    
-    def LoadData(self)->None:
-        '''This function loads the inputs, outputs and so on.'''
-
-        # Load the results of the simulation 
-        # self.LoadResults()
-        
-        # Load GearGen data
-        # self.LoadGearGenData()
-
-        # Load GeometryCode data
-        # self.LoadGeomCodeData()
-
-    def LoadSettings(self) -> None:
-        ''' This function loads the GUI settings.'''
-        
-        # Check that the settings file exists
-        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
-        
-        if (settingsFileExist):
-            print('Settings file found at: ' + self.model.settings.settingsFilePath)
-        else:
-            print('Settings file not found at: ' + self.model.settings.settingsFilePath)
-            
-        # Read setting file
-        file = open(self.model.settings.settingsFilePath,'r')
-        lines = file.readlines()
-        
-        # Create setting dictionary
-        settingDict = {}
-        for line in lines:
-            if line.startswith('-'):
-                
-                line = line.replace(line[0],"")
-                tokens = line.split(',')
-                keyword = tokens[0].strip()                
-                setting = tokens[1].strip()
-                
-                settingDict[keyword] = setting
-                    
-        file.close()
-        
-        # load setting dictionary in setting structure
-        self.model.settings.workingFolder = settingDict.get("workingFolder")
-        self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
-        
-        # Update entries
-        self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
-        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
-        
-    def LoadResults(self) -> None:
-        '''Load results.'''
-        # Read results file
-        file = open(self.model.settings.resultsFilePath,'r')
-        lines = file.readlines()
-        file.close()
-        
-        # Update the model dictionary containing the results 
-        resDict = defaultdict(list)
-        counter = 0
-        for line in lines:
-            lineTokens = line.split(',')
-            lineTokens = [lineToken.strip() for lineToken in lineTokens ]
-            lineTokens = lineTokens[:-1]
-            
-            if counter == 0:
-                headerTokens = lineTokens
-            else:
-                valueTokens = lineTokens
-                values = [float(x) for x in valueTokens]
-                for i, key in enumerate(headerTokens):
-                    resDict[key].append(values[i])
-                
-            counter +=1
-                    
-        self.model.results = resDict
-        
-        # Update the combobox
-        # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
-        
-    # Plot manager
+     
+    # Subplot Handling
     
     def AddSubplot(self,plotManager)->None:
-        '''Called by PlotManager 'Add Plot' button.
+        '''Add subplot to PlotManager and Plot.
         Add a toggle frame to the plot manager pane.'''
+        # Get useful information 
+        noOfSubplot = self.model.plotModel.noOfSubplots
         
-        # Update PlotManager - Add ResFileManager
-        subplotname = "Subplot " + str(plotManager.noOfRows)
-        plotManager.noOfRows += 1 
-        plotManager.toggleFrame = TogglePaneDel(plotManager,self,togglePaneNo=plotManager.noOfRows-1,label = subplotname, bg = 'cyan')
-        plotManager.toggleFrame.grid(row = plotManager.noOfRows, column = 0, sticky='EW')
-        plotManager.inputFileSelector = ResFileManager(plotManager.toggleFrame.interior, self, bg = 'blue')
-        plotManager.inputFileSelector.grid(row=plotManager.noOfRows,column=0,sticky='EW')
+        # Create SubplotModel
+        subplot = SubplotModel()
+        subplot.name = str(noOfSubplot)
+        subplot.indx = noOfSubplot
         
-        plotManager.toggleFrameList.append(plotManager.toggleFrame)
-        
-        # Update PlotUI - Add subplot in PlotUI
-        subplot = SubplotModel(subplotname, plotManager.noOfRows)
+        # Update PlotModel adding a SubplotModel
         self.model.plotModel.AddSubplot(subplot)
-        self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
-    
-    def DeleteSubplot(self,subplotPane):
-        '''Delete a toggle pane and connected subplot.'''        
         
-        # Remove subplot from PlotModel(and adjust the number of the other subplots)
-        self.model.plotModel.DeleteSubplot(subplotPane.togglePaneNo)
-        
-        # Recreate the plotUI
-        self.view.mainTabColl.plotter.plot.CreateSubplots(self.model.plotModel)
-        
-        # Remove the subplot pane from plotManager(and adjust the number of the other panes)
-        # subplotPane.destroy()
-        
-        del self.view.mainTabColl.plotter.plotManager.toggleFrameList[subplotPane.togglePaneNo]
-        for ii,pane in enumerate(self.view.mainTabColl.plotter.plotManager.toggleFrameList):
-            pane.togglePaneNo = ii
+        # Redraw PlotManager
+        self.RedrawPlotManager()
             
+    def DeleteSubplot(self,subplotPane)->None:
+        '''Delete a toggle pane and connected subplot.'''        
+        # Update PlotModel deleting the SubplotModel
+        self.model.plotModel.DeleteSubplot(subplotPane)
         
+        # Redraw PlotManager
+        self.RedrawPlotManager()
+            
+            
+    # ResultFile Handling
         
+    def AddResultFile(self, resFileManager)->None:
+        '''Add ResultFile to Subplot.'''
+        # Get useful information 
+        noOfResFile = resFileManager.noOfRows
+        subplotIndx = resFileManager.master.master.indx
         
+        # Create ResFileModel
+        resultFileModel = ResultFileModel()
+        resultFileModel.name = str(noOfResFile)
+        resultFileModel.indx = noOfResFile
         
+        # Update SubplotModel adding a ResultFile
+        self.model.plotModel.containedSubplots[subplotIndx].AddResultFile(resultFileModel)
         
-    def AddResFilePane(self, resFileManager)->None:
-        '''Add a result file pane. The result file pane contains a file selector, 
-        a combobox, and a frame with a list of signals.'''
-        resFileManager.noOfRows += 1
-        resFileManager.resFilePane = ResFilePane(resFileManager, self)
-        resFileManager.resFilePane.grid(row = resFileManager.noOfRows,column=0, sticky = 'EW')
+        # Redraw PlotManager
+        self.RedrawPlotManager()
         
-    def DelResFilePane(self, fileSelector):
-        fileSelector.master.destroy()
-
-    def BrowseResFile(self) -> None:
+    def DeleteResultFile(self,resFilePane)->None:
+        '''Delete ResultFile from the model and redraw the PlotManager.'''
+        subplotIndx = resFilePane.master.master.master.indx
+        
+        # Update SubplotModel adding a ResultFile
+        self.model.plotModel.containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
+        
+        # Redraw PlotManager
+        self.RedrawPlotManager()
+        
+    def BrowseResFile(self,fileSelector,resFilePane) -> None:
         '''This function allows the selection of a file.'''
         # Open the dialog window
         filePath = filedialog.askopenfilename()
+        
         # Update the entry text
-        self.UpdateEntry(self.view.mainTabColl.plotter.plotManager.inputFileSelector.resFileManager.fileSelector.pathEntry,filePath)
+        fileSelector.UpdateEntry(filePath)
+        
+        self.FileSelectorReturn(None, fileSelector, resFilePane)
+        
+    def FileSelectorReturn(self, event, fileSelector, resFilePane)->None:
+        '''Event called whenever a file is copied and return is hit. Or when the entry looses focus.'''
+
+        # Retrieve file path from entry
+        filePath = fileSelector.GetEntry()
+        
+        # Check if a path exists
+        pathExists = os.path.exists(filePath)
+        if not pathExists:
+            return
+                
         # Update model setting 
         self.model.settings.resultsFilePath = filePath
         # Update setting file
         self.UpdateSettingFile("resultsFilePath", filePath)
+        
+        # Retrieve useful info
+        subplotIndx = resFilePane.master.master.master.indx
+        resFileIndx = resFilePane.indx
+        
+        # Load the signals into ResultFileModel
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].absPath = filePath
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
+        
+        self.RedrawPlotManager()
+        print('Result file added.')
+
+        
+    # Signal Handling
+    
+    def AddSignal(self,event, resFilePane)->None:
+        '''Moves one signal from the ResultModel to the PlottedSignal.'''
+        
+        # Get useful information
+        subplotIndx = resFilePane.master.master.master.indx
+        resFileIndx = resFilePane.indx
+        
+        # Find the index of the signal selected
+        selectedSigNo = resFilePane.signalCollection.current()
+        # Extract from the ResultFileModel the signal selected
+        signalToPlot = self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals[selectedSigNo]
+        # Add it to the ResultFilePane selectedSignals list 
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.append(signalToPlot)
+        # Add it to the SubplotModel plottedSignals list
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.append(signalToPlot)
+        
+        self.RedrawPlotManager()
+        
+    def DeleteSignal(self, signalPane)->None:
+        '''Delete signal.'''
+        
+        # Get the index of the result file and subplot
+        subplotIndx = signalPane.master.master.master.master.indx
+        resFileIndx = signalPane.master.indx
+        signalIndx = signalPane.indx
+        
+        # Remove signal from ResultFileModel selectedSignals list
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.pop(signalIndx)
+        # Remove the signal from the SubplotModel plottedSignals list
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.pop(signalIndx)
+        
+        self.RedrawPlotManager()
+        
+        
+        
+         
+    # Plot Manager
+    
+    def RedrawPlotManager(self)->None:
+        '''
+        Redraw the plot manager time.
+        '''
+        # Delete everything in the plot manager but the first row
+        plotManagerChildren = self.view.mainTabColl.plotter.plotManager.winfo_children()
+        for ii,child in enumerate(plotManagerChildren):
+            if ii == 0:
+                continue
+            child.destroy()
+            
+        # Redraw everything in the plot manager
+        areCollapsed = self.model.plotModel.areCollapsed
+        # Iterate on the Subplots
+        for ii,sp in enumerate(self.model.plotModel.containedSubplots):
+            toggleFrame = TogglePaneDel(self.view.mainTabColl.plotter.plotManager,
+                                        self,
+                                        label = sp.name,
+                                        indx=ii,
+                                        isCollapsed=areCollapsed[ii],
+                                        bg = 'cyan')
+            toggleFrame.grid(row = ii+1, column = 0, sticky='EW')
+            resFileManager = ResFileManager(toggleFrame.interior, 
+                                            self, 
+                                            bg = 'blue')
+            resFileManager.grid(row=0,column=0,sticky='EW')
+            
+            # Iterate on the ResultFile
+            for jj,rf in enumerate(sp.resultFiles):
+                rfRow=jj+1 # Skip the button row
+                resFile = ResFilePane(resFileManager,
+                                      self,
+                                      entryText=rf.absPath,
+                                      comboboxList=rf.signalNames)
+                resFile.grid(row=rfRow,column=0,sticky='EW')
+                
+                # Iterate on the Signalpane
+                for kk, selectedSig in enumerate(rf.selectedSignals):
+                    sigPaneRow = kk+2 # Skip the button and combobox row
+                    sigName = selectedSig.name
+                    sigPane = SignalPane(   resFile,
+                                            self,
+                                            indx = kk,
+                                            sigName = sigName,
+                                            bg = 'red')
+                    sigPane.grid(row=sigPaneRow,column=0,sticky='EW')
+            
+            
+            
+            
+            
+            
+            
+        
+        
+    def UpdatedCollapsiblePaneModel(self, collapsiblePane)->None:
+        '''Update the PlotModel areCollapsed property.'''
+        indx = collapsiblePane.indx
+        isCollapsed = collapsiblePane.isCollapsed
+        self.model.plotModel.areCollapsed[indx] = isCollapsed
+    
+        
+
+        
+    def DelResFilePane(self, fileSelector):
+        fileSelector.master.destroy()
+
+
         
         
 
@@ -293,9 +428,6 @@ class Presenter():
         self.view.mainTabColl.plotter.plotManagerPane.plotManager 
         
         
-      
-        
-
     # Save functions
     def SaveGearGenData(self)->None:
         '''Initiate the routing that saves all the data of the GearGen model.'''

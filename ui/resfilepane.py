@@ -4,7 +4,7 @@ from ui.signalpane import SignalPane
 from ui.fileselector import FileSelectorDel
 
 class ResFilePane(tk.Frame):
-    def __init__(self, parent, presenter,*args,**kwargs)->None:
+    def __init__(self, parent, presenter,entryText = '',comboboxList = [],*args,**kwargs)->None:
         """
         Initialize an instance of the class of ResFilePane. 
         This is a pane where, given a result file, signals can be selected.
@@ -23,18 +23,20 @@ class ResFilePane(tk.Frame):
         self.columnconfigure(0,weight=1)
         
         # Handy numbers
+        self.name = ''
+        self.indx = 0
         self.noOfRows = 0
         self.presenter = presenter
         
-        self.fileSelector = FileSelectorDel(self,presenter, bg = 'grey40')
+        self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText, bg = 'grey40')
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
-        listOfSignals = ["Option 1", "Option 2", "Option 3"]
+        listOfSignals = comboboxList
         self.signalCollection = ttk.Combobox(self,state='readonly', values=listOfSignals)
         self.signalCollection.grid(row=self.noOfRows,column=0,sticky='EW', padx = 3, pady = 2)
         
-        self.signalCollection.bind("<<ComboboxSelected>>", self.PrintCombo)
+        self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
         
     def PrintCombo(self,event):
         '''Test fun'''

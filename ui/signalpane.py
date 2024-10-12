@@ -5,6 +5,7 @@ class SignalPane(tk.Frame):
     def __init__(self, 
                  parent, 
                  presenter,
+                 indx = 0,
                  sigName = 'Signal',
                  *args,
                  **kwargs)->None:
@@ -23,6 +24,8 @@ class SignalPane(tk.Frame):
         """  
         super().__init__(parent,*args,**kwargs)
         
+        self.indx = indx
+        self.presenter = presenter
         # Define columns weight
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=0)
@@ -38,8 +41,5 @@ class SignalPane(tk.Frame):
         self.optBtn = ttk.Button(self,text = self.optIcon, width=3)
         self.optBtn.grid(row=0,column=1,sticky='EW', padx=(3,0))
         
-        self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=self.DeleteSignal)
+        self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal( self))
         self.delBtn.grid(row=0,column=2,sticky='EW', padx = 3)
-        
-    def DeleteSignal(self):
-        self.destroy()

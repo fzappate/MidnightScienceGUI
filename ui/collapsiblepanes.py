@@ -56,7 +56,7 @@ class TogglePane(tk.Frame):
         self.iconMode = iconMode
         self.expImgPath = expImgPath
         self.collImgPath = collImgPath
-        self.isCollapsed = True
+        self.isCollapsed = False
         self.parent = parent
         self.expandText = expandText
         self.collapseText = collapseText
@@ -143,7 +143,7 @@ class TogglePaneDel(tk.Frame):
     def __init__(self, 
                  parent, 
                  presenter,
-                 togglePaneNo = 0,
+                 indx = 0,
                  iconMode = "text",
                  expandText ="+",
                  collapseText ="-",
@@ -151,6 +151,7 @@ class TogglePaneDel(tk.Frame):
                  iconSize = 20,
                  expImgPath = "",
                  collImgPath = "",
+                 isCollapsed = True,
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 
@@ -186,11 +187,11 @@ class TogglePaneDel(tk.Frame):
         # Properties
         self.parent = parent
         self.presenter = presenter
-        self.togglePaneNo = togglePaneNo
+        self.indx = indx
         self.iconMode = iconMode
         self.expImgPath = expImgPath
         self.collImgPath = collImgPath
-        self.isCollapsed = True
+        self.isCollapsed = isCollapsed
         self.expandText = expandText
         self.collapseText = collapseText
  
@@ -203,7 +204,7 @@ class TogglePaneDel(tk.Frame):
         self.headerFrame.grid(row=0,column=0,sticky = 'EW')
                 
         # Create expand button
-        self.expandButton = ttk.Button( self.headerFrame, command = self._activate, width=3)
+        self.expandButton = ttk.Button( self.headerFrame, command = self.SwitchState, width=3)
         
         # Set the icon/text of the expand button
         if iconMode == 'img':
@@ -247,10 +248,10 @@ class TogglePaneDel(tk.Frame):
         self._separator.grid(row = 2, column = 0, sticky ="we")
   
         # This will call activate function of class
-        self._activate()
+        self.SetState()
  
-    def _activate(self):
-        if (self.isCollapsed==True):
+    def SwitchState(self):
+        if (self.isCollapsed==False):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.interior.grid_forget()
@@ -261,10 +262,11 @@ class TogglePaneDel(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
 
-            # # Change the property isCollpased to False
-            self.isCollapsed = False
+            # Change the property isCollpased to False
+            self.isCollapsed = True
+            
  
-        elif (self.isCollapsed==False):
+        elif (self.isCollapsed==True):
             # increasing the frame area so new widgets
             # could reside in this container
             self.interior.grid(row = 1, column = 0,sticky='EW')
@@ -275,7 +277,28 @@ class TogglePaneDel(tk.Frame):
                 self.expandButton.configure(text = self.collapseText)
 
             # # Change the property isCollpased to False
-            self.isCollapsed = True
+            self.isCollapsed = False
             
-
-  
+        self.presenter.UpdatedCollapsiblePaneModel(self)
+        
+    def SetState(self):
+        if (self.isCollapsed==True):
+            # As soon as button is pressed it removes this widget
+            # but is not destroyed means can be displayed again
+            self.interior.grid_forget()
+ 
+            # This will change the text of the checkbutton
+            if self.iconMode == 'img':
+                self.expandButton.configure(image = self.expandIcon)
+            elif self.iconMode == 'text':
+                self.expandButton.configure(text = self.expandText)
+ 
+        elif (self.isCollapsed==False):
+            # increasing the frame area so new widgets
+            # could reside in this container
+            self.interior.grid(row = 1, column = 0,sticky='EW')
+            
+            if self.iconMode == 'img':
+                self.expandButton.configure(image = self.collapseIcon)
+            elif self.iconMode == 'text':
+                self.expandButton.configure(text = self.collapseText)
