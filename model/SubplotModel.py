@@ -10,7 +10,7 @@ class SubplotModel():
         self.indx = 0
         self.noOfResFile = 0
         self.resultFiles = []
-        self.plottedSignal = []
+        self.plottedSignals = []
         
         self.xLabel = ''
         self.yLabel = ''

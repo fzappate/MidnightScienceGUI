@@ -13,6 +13,7 @@ class ResultFileModel():
         self.absPath = ''
         self.signals = []
         self.signalNames = []
+        self.selectedSignals = []
         
     def LoadResults(self,filePath)->None:
         '''Load results.'''       

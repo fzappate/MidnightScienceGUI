@@ -9,6 +9,7 @@ import numpy as np
 from ui.collapsiblepanes import TogglePaneDel
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
+from ui.signalpane import SignalPane
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
@@ -303,11 +304,42 @@ class Presenter():
         
     # Signal Handling
     
-    def AddSignal(self)->None:
-        '''Add a Signal to the ResultFile'''
+    def AddSignal(self,event, resFilePane)->None:
+        '''Moves one signal from the ResultModel to the PlottedSignal.'''
+        
         # Get useful information
+        subplotIndx = resFilePane.master.master.master.indx
+        resFileIndx = resFilePane.indx
+        
+        # Find the index of the signal selected
+        selectedSigNo = resFilePane.signalCollection.current()
+        # Extract from the ResultFileModel the signal selected
+        signalToPlot = self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals[selectedSigNo]
+        # Add it to the ResultFilePane selectedSignals list 
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.append(signalToPlot)
+        # Add it to the SubplotModel plottedSignals list
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.append(signalToPlot)
+        
+        self.RedrawPlotManager()
+        
+    def DeleteSignal(self, signalPane)->None:
+        '''Delete signal.'''
+        
+        # Get the index of the result file and subplot
+        subplotIndx = signalPane.master.master.master.master.indx
+        resFileIndx = signalPane.master.indx
+        signalIndx = signalPane.indx
+        
+        # Remove signal from ResultFileModel selectedSignals list
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.pop(signalIndx)
+        # Remove the signal from the SubplotModel plottedSignals list
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.pop(signalIndx)
+        
+        self.RedrawPlotManager()
         
         
+        
+         
     # Plot Manager
     
     def RedrawPlotManager(self)->None:
@@ -325,7 +357,6 @@ class Presenter():
         areCollapsed = self.model.plotModel.areCollapsed
         # Iterate on the Subplots
         for ii,sp in enumerate(self.model.plotModel.containedSubplots):
-            
             toggleFrame = TogglePaneDel(self.view.mainTabColl.plotter.plotManager,
                                         self,
                                         label = sp.name,
@@ -346,6 +377,17 @@ class Presenter():
                                       entryText=rf.absPath,
                                       comboboxList=rf.signalNames)
                 resFile.grid(row=rfRow,column=0,sticky='EW')
+                
+                # Iterate on the Signalpane
+                for kk, selectedSig in enumerate(rf.selectedSignals):
+                    sigPaneRow = kk+2 # Skip the button and combobox row
+                    sigName = selectedSig.name
+                    sigPane = SignalPane(   resFile,
+                                            self,
+                                            indx = kk,
+                                            sigName = sigName,
+                                            bg = 'red')
+                    sigPane.grid(row=sigPaneRow,column=0,sticky='EW')
             
             
             
