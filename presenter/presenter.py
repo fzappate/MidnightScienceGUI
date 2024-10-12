@@ -374,6 +374,7 @@ class Presenter():
                 rfRow=jj+1 # Skip the button row
                 resFile = ResFilePane(resFileManager,
                                       self,
+                                      indx = jj,
                                       entryText=rf.absPath,
                                       comboboxList=rf.signalNames)
                 resFile.grid(row=rfRow,column=0,sticky='EW')
