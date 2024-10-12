@@ -360,13 +360,14 @@ class Presenter():
         areCollapsed = self.model.plotModel.areCollapsed
         # Iterate on the Subplots
         for ii,sp in enumerate(self.model.plotModel.containedSubplots):
+            spRow = ii+1 # Skip the 'Add subplot' button
             toggleFrame = TogglePaneDel(self.view.mainTabColl.plotter.plotManager,
                                         self,
                                         label = sp.name,
                                         indx=ii,
                                         isCollapsed=areCollapsed[ii],
                                         bg = 'cyan')
-            toggleFrame.grid(row = ii+1, column = 0, sticky='EW')
+            toggleFrame.grid(row = spRow, column = 0, sticky='EW')
             resFileManager = ResFileManager(toggleFrame.interior, 
                                             self, 
                                             bg = 'blue')
@@ -374,7 +375,7 @@ class Presenter():
             
             # Iterate on the ResultFile
             for jj,rf in enumerate(sp.resultFiles):
-                rfRow=jj+1 # Skip the button row
+                rfRow=jj+3 # Skip the label, combobox, and 'Add result file' button
                 resFile = ResFilePane(resFileManager,
                                       self,
                                       indx = jj,
@@ -383,15 +384,15 @@ class Presenter():
                 resFile.grid(row=rfRow,column=0,sticky='EW')
                 
                 # Iterate on the Signalpane
-                for kk, selectedSig in enumerate(rf.selectedSignals):
-                    sigPaneRow = kk+2 # Skip the button and combobox row
-                    sigName = selectedSig.name
+                for kk, ss in enumerate(rf.selectedSignals):
+                    ssRow = kk+2 # Skip the button and combobox row
+                    sigName = ss.name
                     sigPane = SignalPane(   resFile,
                                             self,
                                             indx = kk,
                                             sigName = sigName,
                                             bg = 'red')
-                    sigPane.grid(row=sigPaneRow,column=0,sticky='EW')
+                    sigPane.grid(row=ssRow,column=0,sticky='EW')
             
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''

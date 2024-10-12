@@ -33,7 +33,7 @@ class ResFilePane(tk.Frame):
         
         self.noOfRows +=1
         listOfSignals = comboboxList
-        self.signalCollection = ttk.Combobox(self,state='readonly', values=listOfSignals)
+        self.signalCollection = ttk.Combobox(self,state='readonly',values=listOfSignals)
         self.signalCollection.grid(row=self.noOfRows,column=0,sticky='EW', padx = 3, pady = 2)
         
         self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))

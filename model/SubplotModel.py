@@ -11,6 +11,7 @@ class SubplotModel():
         self.noOfResFile = 0
         self.resultFiles = []
         self.plottedSignals = []
+        self.xAxisSelextion = []
         
         self.xLabel = ''
         self.yLabel = ''
