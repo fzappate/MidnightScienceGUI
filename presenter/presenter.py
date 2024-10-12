@@ -229,8 +229,7 @@ class Presenter():
         # Redraw PlotManager
         self.RedrawPlotManager()
         # Redraw PlotUI
-        
-            
+         
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
         # Update PlotModel deleting the SubplotModel
@@ -238,7 +237,21 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
-            
+           
+    def SelectXAxis(self,event,resFileManager)->None:
+        '''Function invoked when an item is selected from the subplot X axis selection.'''
+        # Identify the subplot indx
+        subplotIndx = resFileManager.master.master.indx
+        
+        # Find the index of the signal selected
+        selectedSigNo = resFileManager.xAxisSelect.current
+        
+        # Update the subplotModel 
+        self.model.plotModel.containedSubplots[subplotIndx].xAxisSelectedIndx = selectedSigNo
+        signalsName = self.model.plotModel.containedSubplots[subplotIndx].xAxisSignalsName
+        self.model.plotModel.containedSubplots[subplotIndx].xAxisSelectedName = signalsName[selectedSigNo]
+        
+        
             
     # ResultFile Handling
         
@@ -302,6 +315,17 @@ class Presenter():
         # Load the signals into ResultFileModel
         self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].absPath = filePath
         self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
+        
+        # Extract signals and their names from the results file just loaded 
+        signals = self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals
+        signalNames = self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signalNames
+        
+        # If the first result pane is added
+        if resFilePane.indx == 0:
+        # Add the signals to the x axis selection 
+            for signal, signalName in zip(signals, signalNames):
+                self.model.plotModel.containedSubplots[subplotIndx].xAxisSignals.append(signal)
+                self.model.plotModel.containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
         
         self.RedrawPlotManager()
         print('Result file added.')
@@ -370,6 +394,8 @@ class Presenter():
             toggleFrame.grid(row = spRow, column = 0, sticky='EW')
             resFileManager = ResFileManager(toggleFrame.interior, 
                                             self, 
+                                            current = sp.xAxisSelectedIndx,
+                                            listOfSignals = sp.xAxisSignalsName,
                                             bg = 'blue')
             resFileManager.grid(row=0,column=0,sticky='EW')
             

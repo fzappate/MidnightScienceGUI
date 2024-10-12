@@ -4,7 +4,7 @@ from tkinter import ttk
 from ui.resfilepane import ResFilePane
 
 class ResFileManager(tk.Frame):
-    def __init__(self, parent, presenter,listOfSignals = [],*args,**kwargs)->None:
+    def __init__(self, parent, presenter,listOfSignals = [],current = 0,*args,**kwargs)->None:
         """
         Initialize an instance of the class of ResFileManager. 
         This is a control panel that manages the result displayed in one subplot.
@@ -23,16 +23,21 @@ class ResFileManager(tk.Frame):
         self.presenter = presenter
         self.listOfSignals = listOfSignals
         self.noOfRows = 0
+        self.current = current
         
         self.columnconfigure(0,weight=1)
-        xAxisLabel = ttk.Label(self,text = 'Select X axis')
-        xAxisLabel.grid(row=self.noOfRows,column=0,sticky='W')
+        self.xAxisLabel = ttk.Label(self,text = 'Select X axis')
+        self.xAxisLabel.grid(row=self.noOfRows,column=0,sticky='W')
         
         self.noOfRows +=1
-        xAxisSelext = ttk.Combobox(self,state='readonly',values=listOfSignals)
-        xAxisSelext.grid(row=self.noOfRows,column=0,sticky='EW')
+        self.xAxisSelect = ttk.Combobox(self,state='readonly',values=listOfSignals)
+        if len(listOfSignals)>0:
+            self.xAxisSelect.current(self.current)
+        self.xAxisSelect.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
-        addFileBtn = ttk.Button(self,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
-        addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
+        self.addFileBtn = ttk.Button(self,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
+        self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
+        
+        self.xAxisSelect.bind("<<ComboboxSelected>>",lambda event: self.presenter.SelectXAxis(event, self))
         
