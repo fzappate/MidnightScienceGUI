@@ -5,6 +5,9 @@ import os
 import threading
 import subprocess
 import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
 from ui.collapsiblepanes import TogglePaneDel
 from ui.resfilemanager import ResFileManager
@@ -225,6 +228,8 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
+        # Redraw PlotUI
+        
             
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
@@ -338,8 +343,6 @@ class Presenter():
         self.RedrawPlotManager()
         
         
-        
-         
     # Plot Manager
     
     def RedrawPlotManager(self)->None:
@@ -390,7 +393,35 @@ class Presenter():
                                             bg = 'red')
                     sigPane.grid(row=sigPaneRow,column=0,sticky='EW')
             
+    def RedrawPlotCanvas(self)->None:
+        '''This function redraws the plot canvas.'''
+        # Destroy toolbar and canvas
+        plotManagerChildren = self.view.mainTabColl.plotter.plot.winfo_children()
+        for ii,child in enumerate(plotManagerChildren):
+            child.destroy()
             
+        # Calculate the number of subplots that must be generated
+        noOfSubplots = self.model.plotModel.noOfSubplots
+        self.fig, axList = plt.subplots(noOfSubplots,1)
+        
+        if noOfSubplots == 1:
+            plottedSignal = self.model.plotModel.containedSubplots[0].plottedSignals
+            for sig in plottedSignal:
+                axList.plot(0,0) 
+        elif noOfSubplots > 1:
+            for ii in range(0,noOfSubplots):
+                s = 5
+                
+        else:
+            f = 9
+                # axList[ii].plot(x,y1) 
+            
+        # Draw the canvas and toolbar
+        self.view.mainTabColl.plotter.plot.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.view.mainTabColl.plotter.plot.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.view.mainTabColl.plotter.plot.toolbar.update()
+        self.view.mainTabColl.plotter.plot.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+        self.view.mainTabColl.plotter.plot.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
             
             
@@ -404,15 +435,8 @@ class Presenter():
         isCollapsed = collapsiblePane.isCollapsed
         self.model.plotModel.areCollapsed[indx] = isCollapsed
     
-        
-
-        
     def DelResFilePane(self, fileSelector):
         fileSelector.master.destroy()
-
-
-        
-        
 
     def AddSignalToPlotData(self,key)->None:
         '''Add a signal to plot data.'''
@@ -428,14 +452,12 @@ class Presenter():
         '''Add a toggle frame in the plot manager pane.'''
         self.view.mainTabColl.plotter.plotManagerPane.plotManager 
         
-        
     # Save functions
     def SaveGearGenData(self)->None:
         '''Initiate the routing that saves all the data of the GearGen model.'''
         print('Save data')
         self.SaveGearGenInputs()
         self.SaveGearGenProfiles()
-
 
     def SaveGearGenInputs(self)->None:
         '''Save the GearGen inputs file in the working folder.'''
@@ -455,7 +477,6 @@ class Presenter():
             inputFile.write('\n')
             inputFile.write('\n')
         inputFile.close()
-
 
     def SaveGearGenProfiles(self)->None:
         '''Save the GearGen gear profile in the working folder.'''
@@ -486,7 +507,6 @@ class Presenter():
             profile2File.write(valy)
             profile2File.write('\n')
         profile2File.close()
-        
 
     def UpdateDictionariesFromEntries(self)->None:
         '''Take the content of the input entries and store them in the GearGen dictionaries collection.'''
@@ -495,7 +515,6 @@ class Presenter():
             correspondingLabelHelpEntry = self.view.mainTabColl.geomPreproc.geomPreprocTabs.gearGenInputs.inputsPanel.LabelHelpEntryList[idx]
             # Update the dictionariy
             dict["value"] = correspondingLabelHelpEntry.get()
-
 
     # Plot functions 
     def PlotGearSet(self)->None:
@@ -514,35 +533,29 @@ class Presenter():
         # Update the canvas
         self.view.mainTabColl.geomPreproc.plot.canv.draw()
 
-
     def AddCurveToGearSetPlot(self,curve)->None:
         '''Add a curve to the gear set plot.'''
         self.view.mainTabColl.geomPreproc.plot.ax.plot(curve.xMod, curve.yMod)
-
 
     def SetAxisOfGearSetPlot(self)->None:
         '''Set the limits of the axes of the GerGenPlot.'''
         self.view.mainTabColl.geomPreproc.plot.ax.set_xlim(self.model.gearSet.xMin,self.model.gearSet.xMax)
         self.view.mainTabColl.geomPreproc.plot.ax.set_ylim(self.model.gearSet.yMin,self.model.gearSet.yMax)
 
-
     def SetLabelOfGearSetPlot(self)->None:
         '''Set the labels of the gear gen plot.'''
         self.view.mainTabColl.geomPreproc.plot.ax.set_xlabel('Length [mm]')
         self.view.mainTabColl.geomPreproc.plot.ax.set_ylabel('Length [mm]')
-
 
     def SetGearGenPlotGrid(self)->None:
         '''Take set the grid on the plot according to the property isGridOn.'''
         isGridOn = self.model.gearGenPlot.isGridOn
         self.view.mainTabColl.geomPreproc.plot.ax.grid(isGridOn)
 
-
     # Run model
     def CreateGearGenThread(self)->None:
         '''Create a thread to run the gear generator in parallel with the UI.'''
         threading.Thread(target=self.RunGearGen, daemon=True).start()
-
 
     def RunGearGen(self):
         '''Run the GearGenerator.'''
@@ -585,7 +598,6 @@ class Presenter():
         
         # self.plot.DrawGearSet()
 
-
     # Plot controls
     def RotateGearSet(self,rotValue=0)->None:
         '''Rotate the gearset profile coordinates by a value and update the GearGen plot.'''
@@ -603,7 +615,6 @@ class Presenter():
         self.PlotGearSet()
         # Update control entry 
         self.UpdateEntry(self.view.mainTabColl.gearGen.plotControls.rotationGearSet.entry,nextRotValueDeg)
-
         
     def RotateGearSetProfile(self,gearSet,rotValue)->None:
         '''This function is intermediary between RotateGearSet and RotateProfile. 
@@ -618,7 +629,6 @@ class Presenter():
         # Rotate gear
         self.RotateProfile(profile2,rotValue*gearRatio,0,-interaxis)
 
-
     def RotateProfile(self,profile,ang, dx = 0, dy = 0)->None:
         '''This function rotates the curve profile. The use can specify the rotatoin angle, and the center of rotation of the profile'''
         # dx and dy are the components of the vector that connects the origin 
@@ -631,7 +641,6 @@ class Presenter():
         ySecond = xFirst*np.sin(ang) + yFirst*np.cos(ang)
         profile.xMod = xSecond+dx
         profile.yMod = ySecond+dy
-
     
     def ChangeGridState(self)->None:
         '''Add or remove the grid of the plot.'''
