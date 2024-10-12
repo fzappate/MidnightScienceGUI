@@ -31,8 +31,6 @@ class ResFileManager(tk.Frame):
         
         self.noOfRows +=1
         self.xAxisSelect = ttk.Combobox(self,state='readonly',values=listOfSignals)
-        if len(listOfSignals)>0:
-            self.xAxisSelect.current(self.current)
         self.xAxisSelect.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
