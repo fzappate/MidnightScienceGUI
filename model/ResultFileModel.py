@@ -1,4 +1,4 @@
-from model.Signal import Signal
+from model.SignalModel import Signal
 
 class ResultFileModel():
     def __init__(self)->None:

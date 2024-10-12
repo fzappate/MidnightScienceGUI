@@ -13,8 +13,9 @@ class SubplotModel():
         self.plottedSignals = []
         self.xAxisSignals = []
         self.xAxisSignalsName = []
-        self.xAxisSelectedIndx = 0 
-        self.xAxisSelectedName = '' 
+        self.xAxisSelectedIndx = 0 # TO BE DELETED
+        self.xAxisSelectedName = '' # TO BE DELETED
+        self.xAxisSignal = []
         
         self.xLabel = ''
         self.yLabel = ''

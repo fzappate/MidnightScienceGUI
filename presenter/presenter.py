@@ -229,6 +229,7 @@ class Presenter():
         # Redraw PlotManager
         self.RedrawPlotManager()
         # Redraw PlotUI
+        self.RedrawPlotCanvas()
          
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
@@ -237,21 +238,23 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
            
     def SelectXAxis(self,event,resFileManager)->None:
         '''Function invoked when an item is selected from the subplot X axis selection.'''
         # Identify the subplot indx
         subplotIndx = resFileManager.master.master.indx
-        
+        # Extract the list of signals tht can be selected as x axis
+        xAxisSignals = self.model.plotModel.containedSubplots[subplotIndx].xAxisSignals
         # Find the index of the signal selected
-        selectedSigNo = resFileManager.xAxisSelect.current
-        
+        selectedSigNo = resFileManager.xAxisSelect.current()        
         # Update the subplotModel 
-        self.model.plotModel.containedSubplots[subplotIndx].xAxisSelectedIndx = selectedSigNo
-        signalsName = self.model.plotModel.containedSubplots[subplotIndx].xAxisSignalsName
-        self.model.plotModel.containedSubplots[subplotIndx].xAxisSelectedName = signalsName[selectedSigNo]
+        self.model.plotModel.containedSubplots[subplotIndx].xAxisSignal = xAxisSignals[selectedSigNo]
         
-        
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
+                
             
     # ResultFile Handling
         
@@ -271,6 +274,8 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
         
     def DeleteResultFile(self,resFilePane)->None:
         '''Delete ResultFile from the model and redraw the PlotManager.'''
@@ -281,6 +286,8 @@ class Presenter():
         
         # Redraw PlotManager
         self.RedrawPlotManager()
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
         
     def BrowseResFile(self,fileSelector,resFilePane) -> None:
         '''This function allows the selection of a file.'''
@@ -327,8 +334,10 @@ class Presenter():
                 self.model.plotModel.containedSubplots[subplotIndx].xAxisSignals.append(signal)
                 self.model.plotModel.containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
         
+        # Redraw PlotManager
         self.RedrawPlotManager()
-        print('Result file added.')
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
 
         
     # Signal Handling
@@ -349,7 +358,10 @@ class Presenter():
         # Add it to the SubplotModel plottedSignals list
         self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.append(signalToPlot)
         
+        # Redraw PlotManager
         self.RedrawPlotManager()
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
         
     def DeleteSignal(self, signalPane)->None:
         '''Delete signal.'''
@@ -364,7 +376,10 @@ class Presenter():
         # Remove the signal from the SubplotModel plottedSignals list
         self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.pop(signalIndx)
         
+        # Redraw PlotManager
         self.RedrawPlotManager()
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
         
         
     # Plot Manager
@@ -429,23 +444,25 @@ class Presenter():
             
         # Calculate the number of subplots that must be generated
         noOfSubplots = self.model.plotModel.noOfSubplots
-        self.fig, axList = plt.subplots(noOfSubplots,1)
+        fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
         
-        if noOfSubplots == 1:
-            plottedSignal = self.model.plotModel.containedSubplots[0].plottedSignals
-            for sig in plottedSignal:
-                axList.plot(0,0) 
-        elif noOfSubplots > 1:
-            for ii in range(0,noOfSubplots):
-                s = 5
-                
-        else:
-            f = 9
-                # axList[ii].plot(x,y1) 
+        a = 2
+        for spNo in range(noOfSubplots):
+            # Extract x axis signal 
+            xAxisSignal = self.model.plotModel.containedSubplots[spNo].xAxisSignal
+            
+            # Do not plot anything if the x axis is not selected
+            if xAxisSignal == []:
+                continue
+            
+            # Extract plotted signals
+            plottedSignals = self.model.plotModel.containedSubplots[spNo].plottedSignals
+            for plottedSig in plottedSignals:
+                axList[spNo,0].plot(xAxisSignal.data,plottedSig.data)
             
         # Draw the canvas and toolbar
-        self.view.mainTabColl.plotter.plot.canvas = FigureCanvasTkAgg(self.fig, master=self)
-        self.view.mainTabColl.plotter.plot.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.view.mainTabColl.plotter.plot.canvas = FigureCanvasTkAgg(fig, master=self.view.mainTabColl.plotter.plot)
+        self.view.mainTabColl.plotter.plot.toolbar = NavigationToolbar2Tk(self.view.mainTabColl.plotter.plot.canvas, self.view.mainTabColl.plotter.plot)
         self.view.mainTabColl.plotter.plot.toolbar.update()
         self.view.mainTabColl.plotter.plot.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
         self.view.mainTabColl.plotter.plot.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
