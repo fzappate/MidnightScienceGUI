@@ -1,4 +1,4 @@
-from model.Signal import Signal
+from model.SignalModel import Signal
 
 class PlottedSignals(Signal):
     def __init__(self,
