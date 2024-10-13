@@ -453,7 +453,7 @@ class Presenter():
         # Calculate the number of subplots that must be generated
         noOfSubplots = self.model.plotModel.noOfSubplots
         fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
-        fig.subplots_adjust(left=0.05, bottom=0.1, right=0.95, top=0.90, wspace=0.1, hspace=0.2)
+        fig.subplots_adjust(left=0.05, bottom=0.05, right=0.95, top=0.95, wspace=0.1, hspace=0.2)
         
         for spNo in range(noOfSubplots):
             # Extract x axis signal 

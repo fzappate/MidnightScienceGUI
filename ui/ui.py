@@ -43,8 +43,8 @@ class UI(tk.Tk):
         '''Set up the element in the graphical interface.'''
 
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(3,weight=1)
-        self.rowconfigure(4,weight=0)
+        self.rowconfigure(2,weight=1)
+        self.rowconfigure(3,weight=0)
 
         self.pathSelector = PathSelector(self,presenter, background = 'gray30')
         self.pathSelector.grid(row=0,column=0,sticky='EW', padx = (3,3),pady = (2,2))
