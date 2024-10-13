@@ -15,6 +15,11 @@ class ResultFileModel():
         self.signalNames = []
         self.selectedSignals = []
         
+    def RemoveDataFromResultSignals(self)->None:
+        '''Delete the data from singals.'''
+        for sig in self.signals:
+            sig.data = []
+            
     def LoadResults(self,filePath)->None:
         '''Load results.'''       
         # Read results file

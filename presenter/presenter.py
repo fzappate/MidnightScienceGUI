@@ -213,6 +213,7 @@ class Presenter():
         '''Reload results.'''
         for ii,sp in enumerate(self.model.plotModel.containedSubplots):
             for jj, rf in enumerate(sp.resultFiles):
+                rf.RemoveDataFromResultSignals()
                 rf.LoadResults(rf.absPath)
         
         # Redraw PlotManager
