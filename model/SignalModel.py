@@ -1,5 +1,8 @@
 class Signal():
-    def __init__(self,name = '',unit = '',indx = 0)->None:
+    def __init__(self,
+                 name = '',
+                 units = '',
+                 indx = 0)->None:
         '''
         Class that generates the model of a Signal class.
         The purpose of this class is to store all the information 
@@ -7,7 +10,7 @@ class Signal():
         '''
         # Dictionary with signal names and values
         self.name = name
-        self.unit = unit
+        self.unit = units
         self.data = []
         self.indx = indx
         

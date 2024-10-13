@@ -32,7 +32,11 @@ class ResultFileModel():
         headerTokens = headerTokens[:-1]
         for i, headerToken in enumerate(headerTokens):
             headerToken = headerToken.strip() 
-            sigTemp = Signal(headerToken, indx = i)
+            signalTokens = headerToken.split(':')
+            name = signalTokens[:-1]
+            name = ":".join(name)
+            units = signalTokens[-1]
+            sigTemp = Signal(name=name,units=units,indx = i)
             self.signals.append(sigTemp)
             self.signalNames.append(headerToken)
         
