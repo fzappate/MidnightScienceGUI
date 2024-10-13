@@ -11,6 +11,11 @@ class SubplotModel():
         self.noOfResFile = 0
         self.resultFiles = []
         self.plottedSignals = []
+        self.xAxisSignals = []
+        self.xAxisSignalsName = []
+        self.xAxisSelected = []
+        self.xAxisSelectedIndx = 0 
+        self.xAxisSelectedName = '' # TO BE DELETED
         
         self.xLabel = ''
         self.yLabel = ''
