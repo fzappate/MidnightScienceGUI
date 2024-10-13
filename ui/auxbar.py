@@ -23,13 +23,24 @@ class AuxBar(tk.Frame):
         self.loadIcon = Image.open(loadIconPath)
         self.loadIcon = self.loadIcon.resize(iconSize)
         self.loadIcon = ImageTk.PhotoImage(self.loadIcon)
+        
+        # Load reload image
+        reloadIconPath = os.path.join(os.getcwd(),'./images/reloadIcon.png')
+        self.reloadIcon = Image.open(reloadIconPath)
+        self.reloadIcon = self.reloadIcon.resize(iconSize)
+        self.reloadIcon = ImageTk.PhotoImage(self.reloadIcon)
 
         # Save button 
         save_button = ttk.Button(self, image=self.saveIcon)
         # save_button = ttk.Button(self, image=self.saveIcon,command=presenter.SaveGearGenData)
         save_button.grid(row=0, column=0, padx=(3,3), ipady=1, ipadx=1)
 
-        # Load buttion
+        # Load button
         load_button = ttk.Button(self, image=self.loadIcon)
         # load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadData)
         load_button.grid(row=0, column=1, padx=(3,3), ipady=1, ipadx=1)
+        
+        # Reload button
+        reload_button = ttk.Button(self, image=self.reloadIcon)
+        # reload_button = ttk.Button(self, image=self.reloadIcon,command=xxx)
+        reload_button.grid(row=0, column=2, padx=(3,3), ipady=1, ipadx=1)
