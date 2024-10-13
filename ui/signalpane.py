@@ -38,8 +38,11 @@ class SignalPane(tk.Frame):
         self.label = ttk.Label(self,text=sigName)
         self.label.grid(row=0,column=0,sticky='W',padx = (4,0))
         
+        self.unitsCb = ttk.Combobox(self,width = 7,state='readonly')
+        self.unitsCb.grid(row=0,column=1,sticky='EW', padx=(3,0))
+        
         self.optBtn = ttk.Button(self,text = self.optIcon, width=3)
-        self.optBtn.grid(row=0,column=1,sticky='EW', padx=(3,0))
+        self.optBtn.grid(row=0,column=2,sticky='EW', padx=(3,0))
         
         self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal( self))
-        self.delBtn.grid(row=0,column=2,sticky='EW', padx = 3)
+        self.delBtn.grid(row=0,column=3,sticky='EW', padx = 3)
