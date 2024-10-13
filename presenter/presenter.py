@@ -209,6 +209,17 @@ class Presenter():
         file.writelines(lines)
         file.close()
 
+    def ReloadResults(self)->None:
+        '''Reload results.'''
+        for ii,sp in enumerate(self.model.plotModel.containedSubplots):
+            for jj, rf in enumerate(sp.resultFiles):
+                rf.LoadResults(rf.absPath)
+        
+        # Redraw PlotManager
+        self.RedrawPlotManager()
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()        
+        
      
     # Subplot Handling
     
