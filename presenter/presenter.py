@@ -250,7 +250,8 @@ class Presenter():
         # Find the index of the signal selected
         selectedSigNo = resFileManager.xAxisSelect.current()        
         # Update the subplotModel 
-        self.model.plotModel.containedSubplots[subplotIndx].xAxisSignal = xAxisSignals[selectedSigNo]
+        self.model.plotModel.containedSubplots[subplotIndx].xAxisSelected = xAxisSignals[selectedSigNo]
+        self.model.plotModel.containedSubplots[subplotIndx].xAxisSelectedIndx = selectedSigNo
         
         # Redraw PlotUI
         self.RedrawPlotCanvas()
@@ -329,7 +330,10 @@ class Presenter():
         
         # If the first result pane is added
         if resFilePane.indx == 0:
-        # Add the signals to the x axis selection 
+            # Load the first signal for the x axis
+            self.model.plotModel.containedSubplots[subplotIndx].xAxisSelected = signals[0]
+            self.model.plotModel.containedSubplots[subplotIndx].xAxisSelectedIndx = 0
+            # Add the signals to the x axis selection 
             for signal, signalName in zip(signals, signalNames):
                 self.model.plotModel.containedSubplots[subplotIndx].xAxisSignals.append(signal)
                 self.model.plotModel.containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
@@ -450,19 +454,18 @@ class Presenter():
         noOfSubplots = self.model.plotModel.noOfSubplots
         fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
         
-        a = 2
         for spNo in range(noOfSubplots):
             # Extract x axis signal 
-            xAxisSignal = self.model.plotModel.containedSubplots[spNo].xAxisSignal
+            xAxisSelected = self.model.plotModel.containedSubplots[spNo].xAxisSelected
             
             # Do not plot anything if the x axis is not selected
-            if xAxisSignal == []:
+            if xAxisSelected == []:
                 continue
             
             # Extract plotted signals
             plottedSignals = self.model.plotModel.containedSubplots[spNo].plottedSignals
             for plottedSig in plottedSignals:
-                axList[spNo,0].plot(xAxisSignal.data,plottedSig.data)
+                axList[spNo,0].plot(xAxisSelected.data,plottedSig.data)
             
         # Draw the canvas and toolbar
         self.view.mainTabColl.plotter.plot.canvas = FigureCanvasTkAgg(fig, master=self.view.mainTabColl.plotter.plot)
