@@ -16,7 +16,7 @@ from ui.signalpane import SignalPane
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
-
+from model.PlottedSignalModel import PlottedSignal
 
 
 
@@ -353,10 +353,13 @@ class Presenter():
         selectedSigNo = resFilePane.signalCollection.current()
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals[selectedSigNo]
+        # Create a PlottedSignal instance 
+        plottedSignal = PlottedSignal()
+        plottedSignal.CopySignalProperties(signalToPlot)
         # Add it to the ResultFilePane selectedSignals list 
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.append(signalToPlot)
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.append(plottedSignal)
         # Add it to the SubplotModel plottedSignals list
-        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.append(signalToPlot)
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals.append(plottedSignal)
         
         # Redraw PlotManager
         self.RedrawPlotManager()
@@ -437,7 +440,8 @@ class Presenter():
             
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
-        # Destroy toolbar and canvas
+        # Close all the figures, destroy toolbar and canvas
+        plt.close('all') 
         plotManagerChildren = self.view.mainTabColl.plotter.plot.winfo_children()
         for ii,child in enumerate(plotManagerChildren):
             child.destroy()

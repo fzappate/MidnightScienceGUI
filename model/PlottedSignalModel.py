@@ -1,6 +1,6 @@
 from model.SignalModel import Signal
 
-class PlottedSignals(Signal):
+class PlottedSignal(Signal):
     def __init__(self,
                  lineThickness = 1,
                  lineStyle = '-',
@@ -19,4 +19,12 @@ class PlottedSignals(Signal):
         self.lineStyle = lineStyle
         self.marker = marker
         self.color = color
+        
+    def CopySignalProperties(self,signal)->None:
+        '''Take a signal of the Signal class, copy its properties into 
+        a PlottedSignal instance.'''
+        self.name = signal.name
+        self.unit = signal.unit
+        self.data = signal.data
+        self.indx = signal.indx
         
