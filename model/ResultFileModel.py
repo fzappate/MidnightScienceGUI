@@ -18,7 +18,8 @@ class ResultFileModel():
     def RemoveDataFromResultSignals(self)->None:
         '''Delete the data from singals.'''
         for sig in self.signals:
-            sig.data = []
+            sig.rawData = []
+            sig.scaledData = []
             
     def LoadResults(self,filePath)->None:
         '''Load results.'''       
@@ -36,7 +37,8 @@ class ResultFileModel():
             name = signalTokens[:-1]
             name = ":".join(name)
             units = signalTokens[-1]
-            sigTemp = Signal(name=name,units=units,indx = i)
+            sigQuantity = self.DetermineSignalQuantity(name,units)
+            sigTemp = Signal(name=name,units=units,quantity=sigQuantity,indx = i)
             self.signals.append(sigTemp)
             self.signalNames.append(name)
         
@@ -47,3 +49,35 @@ class ResultFileModel():
             for i, valueStr in enumerate(valueTokens):
                 value = float(valueStr) 
                 self.signals[i].AppendData(value)
+                
+    def DetermineSignalQuantity(self,name,units)->str:
+        '''Take the unit of the signal, and determine its quantity.'''
+        if units == 's':
+            return 'Time'
+        
+        elif units == 'm':
+            return 'Length'
+        
+        elif units == 'm^2':
+            return 'Area'
+        
+        elif units == 'm^3':
+            return 'Volume'
+        
+        elif units == 'm^3/s':
+            return 'Flow'
+        
+        elif units == 'Pa':
+            return 'Pressure'
+        
+        elif units == 'Pa*s':
+            return 'BulkModulus'
+        
+        elif units == '-':
+            return 'Ratio'        
+        
+        else:
+            print('Units of signal ' + name + ' not found.')
+        
+        
+        

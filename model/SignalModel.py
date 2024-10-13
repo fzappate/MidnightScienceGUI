@@ -2,6 +2,7 @@ class Signal():
     def __init__(self,
                  name = '',
                  units = '',
+                 quantity = '',
                  indx = 0)->None:
         '''
         Class that generates the model of a Signal class.
@@ -10,11 +11,12 @@ class Signal():
         '''
         # Dictionary with signal names and values
         self.name = name
+        self.indx = indx
+        self.quantity = quantity
         self.unit = units
         self.rawData = []
         self.scalingFactor = 1
         self.scaledData = []
-        self.indx = indx
         
     def AddData(self,data)->None:
         '''Add a full list of data to the signal overwriting the data already present.'''
