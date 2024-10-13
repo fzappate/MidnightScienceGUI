@@ -5,8 +5,8 @@ class SignalPane(tk.Frame):
     def __init__(self, 
                  parent, 
                  presenter,
+                 signal,
                  indx = 0,
-                 sigName = 'Signal',
                  *args,
                  **kwargs)->None:
         """
@@ -24,6 +24,9 @@ class SignalPane(tk.Frame):
         """  
         super().__init__(parent,*args,**kwargs)
         
+        self.signal = signal
+        
+        self.signalName = signal 
         self.indx = indx
         self.presenter = presenter
         # Define columns weight
@@ -35,10 +38,11 @@ class SignalPane(tk.Frame):
         self.delIcon = '\U0001F5D1' # 🗑
         self.optIcon = '\U0001F527' # 🔧
         
-        self.label = ttk.Label(self,text=sigName)
+        self.label = ttk.Label(self,text=self.signal.name)
         self.label.grid(row=0,column=0,sticky='W',padx = (4,0))
         
-        self.unitsCb = ttk.Combobox(self,width = 7,state='readonly')
+        unitList = self.ReturnUnitList(signal)
+        self.unitsCb = ttk.Combobox(self,width = 7,value=unitList,state='readonly')
         self.unitsCb.grid(row=0,column=1,sticky='EW', padx=(3,0))
         
         self.optBtn = ttk.Button(self,text = self.optIcon, width=3)
@@ -46,3 +50,16 @@ class SignalPane(tk.Frame):
         
         self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal( self))
         self.delBtn.grid(row=0,column=3,sticky='EW', padx = 3)
+
+    def ReturnUnitList(self,signal):
+        '''Depending on the signal units, create the list of of units
+        that the signal can be translated to. '''
+        
+        if signal.quantity == 'Time':
+            unitList = ['s','m','h']
+        elif signal.quantity == 'Pressure':
+            unitList = ['Pa','MPa','bar']
+        else:
+            unitList = [signal.units]
+            
+        return unitList

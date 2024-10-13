@@ -446,11 +446,10 @@ class Presenter():
                 # Iterate on the Signalpane
                 for kk, ss in enumerate(rf.selectedSignals):
                     ssRow = kk+2 # Skip the button and combobox row
-                    sigName = ss.name
                     sigPane = SignalPane(   resFile,
                                             self,
+                                            ss,
                                             indx = kk,
-                                            sigName = sigName,
                                             bg = 'red')
                     sigPane.grid(row=ssRow,column=0,sticky='EW')
             

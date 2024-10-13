@@ -13,7 +13,7 @@ class Signal():
         self.name = name
         self.indx = indx
         self.quantity = quantity
-        self.unit = units
+        self.units = units
         self.rawData = []
         self.scalingFactor = 1
         self.scaledData = []
