@@ -11,7 +11,9 @@ class Signal():
         # Dictionary with signal names and values
         self.name = name
         self.unit = units
-        self.data = []
+        self.rawData = []
+        self.scalingFactor = 1
+        self.scaledData = []
         self.indx = indx
         
     def AddData(self,data)->None:
@@ -19,4 +21,5 @@ class Signal():
         
     def AppendData(self,data)->None:
         '''Append data to the data already stored in the Signal object.'''
-        self.data.append(data)
+        self.rawData.append(data)
+        self.scaledData.append(data*self.scalingFactor)

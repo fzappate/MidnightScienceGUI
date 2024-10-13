@@ -478,7 +478,7 @@ class Presenter():
             # Extract plotted signals
             plottedSignals = self.model.plotModel.containedSubplots[spNo].plottedSignals
             for plottedSig in plottedSignals:
-                axList[spNo,0].plot(xAxisSelected.data,plottedSig.data)
+                axList[spNo,0].plot(xAxisSelected.scaledData,plottedSig.scaledData)
             
         # Draw the canvas and toolbar
         self.view.mainTabColl.plotter.plot.canvas = FigureCanvasTkAgg(fig, master=self.view.mainTabColl.plotter.plot)

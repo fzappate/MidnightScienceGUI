@@ -25,6 +25,7 @@ class PlottedSignal(Signal):
         a PlottedSignal instance.'''
         self.name = signal.name
         self.unit = signal.unit
-        self.data = signal.data
+        self.rawData = signal.rawData
+        self.scaledData = signal.scaledData
         self.indx = signal.indx
         
