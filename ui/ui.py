@@ -45,19 +45,16 @@ class UI(tk.Tk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(3,weight=1)
         self.rowconfigure(4,weight=0)
-        
-        self.fileBar = FileBar(self,presenter, background = 'gray30')
-        self.fileBar.grid(row=0,column=0,sticky = 'EW', padx = (3,3),pady = (2,2))
+
+        self.pathSelector = PathSelector(self,presenter, background = 'gray30')
+        self.pathSelector.grid(row=0,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
         self.auxBar = AuxBar(self,presenter, background = 'gray30')
         self.auxBar.grid(row = 1,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
-        self.pathSelector = PathSelector(self,presenter, background = 'gray30')
-        self.pathSelector.grid(row=2,column=0,sticky='EW', padx = (3,3),pady = (2,2))
-
         self.mainTabColl = HorizTabCollection(self,presenter, background = 'gray30')
-        self.mainTabColl.grid(row=3,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
+        self.mainTabColl.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
 
         self.text = VerticalScrollText(self,height = 150, background = 'gray30')
-        self.text.grid(row=4,column=0,sticky='EW', padx = (3,3),pady = (2,2))
+        self.text.grid(row=3,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
