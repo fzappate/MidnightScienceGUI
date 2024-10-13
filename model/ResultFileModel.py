@@ -38,7 +38,7 @@ class ResultFileModel():
             units = signalTokens[-1]
             sigTemp = Signal(name=name,units=units,indx = i)
             self.signals.append(sigTemp)
-            self.signalNames.append(headerToken)
+            self.signalNames.append(name)
         
         # Iterate on the lines - skip the first one
         for line in lines[1:]:
