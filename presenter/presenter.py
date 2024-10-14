@@ -268,7 +268,52 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()
                 
-            
+    def OpenSubplotOptions(self,subplotPane, subplotOptsBtn)->None:
+        '''Open subplot options.'''   
+        optsWindowX = subplotOptsBtn.winfo_rootx()
+        optsWindowY = subplotOptsBtn.winfo_rooty()
+        # root = self.master 
+        optsWindow = tk.Toplevel(self.view)
+        optsWindow.geometry(f"+{optsWindowX}+{optsWindowY}")
+        
+        # This goes in a separate widget
+        rowNo = 0 
+        titleLab = tk.Label(optsWindow, text = 'Title')
+        titleLab.grid(row=rowNo,column=0)
+        titleEntry = tk.Entry(optsWindow)
+        titleEntry.grid(row = rowNo, column=1)
+        gridLab = tk.Label(optsWindow, text = 'Grid')
+        gridLab.grid(row=rowNo,column=2)
+        gridCheckbox = tk.Checkbutton(optsWindow)
+        gridCheckbox.grid(row=rowNo,column=3)
+        
+        rowNo = rowNo+1
+        xAxisLabLab = tk.Label(optsWindow, text = 'X Axis Label')
+        xAxisLabLab.grid(row=rowNo,column=0)
+        xAxisLabEntry = tk.Entry(optsWindow)
+        xAxisLabEntry.grid(row = rowNo, column=1)
+        
+        xAxisLimLab = tk.Label(optsWindow, text = 'X Axis Limits')
+        xAxisLimLab.grid(row=rowNo,column=2)
+        xAxisLowLimEntry = tk.Entry(optsWindow)
+        xAxisLowLimEntry.grid(row=rowNo,column=3)
+        xAxisUpLimEntry = tk.Entry(optsWindow)
+        xAxisUpLimEntry.grid(row=rowNo,column=4)
+        
+        rowNo = rowNo+1
+        yAxisLabLab = tk.Label(optsWindow, text = 'Y Axis Label')
+        yAxisLabLab.grid(row=rowNo,column=0)
+        yAxisLabEntry = tk.Entry(optsWindow)
+        yAxisLabEntry.grid(row = rowNo, column=1)
+        
+        yAxisLimLab = tk.Label(optsWindow, text = 'Y Axis Limits')
+        yAxisLimLab.grid(row=rowNo,column=2)
+        yAxisLowLimEntry = tk.Entry(optsWindow)
+        yAxisLowLimEntry.grid(row=rowNo,column=3)
+        yAxisUpLimEntry = tk.Entry(optsWindow)
+        yAxisUpLimEntry.grid(row=rowNo,column=4)
+        
+        
     # ResultFile Handling
         
     def AddResultFile(self, resFileManager)->None:
