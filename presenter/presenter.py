@@ -13,6 +13,7 @@ from ui.collapsiblepanes import TogglePaneDelOpts
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
 from ui.signalpane import SignalPane
+from ui.SubplotOptions import SubplotOptions
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
@@ -276,42 +277,16 @@ class Presenter():
         optsWindow = tk.Toplevel(self.view)
         optsWindow.geometry(f"+{optsWindowX}+{optsWindowY}")
         
-        # This goes in a separate widget
-        rowNo = 0 
-        titleLab = tk.Label(optsWindow, text = 'Title')
-        titleLab.grid(row=rowNo,column=0)
-        titleEntry = tk.Entry(optsWindow)
-        titleEntry.grid(row = rowNo, column=1)
-        gridLab = tk.Label(optsWindow, text = 'Grid')
-        gridLab.grid(row=rowNo,column=2)
-        gridCheckbox = tk.Checkbutton(optsWindow)
-        gridCheckbox.grid(row=rowNo,column=3)
+        optsWindow.columnconfigure(0,weight=1)
+        optsWindow.columnconfigure(1,weight=1)
+        # optsWindow.rowconfigure(0,weight=1)
+        # optsWindow.rowconfigure(1,weight=1)
+        # optsWindow.rowconfigure(2,weight=1)
+        optsWindow.rowconfigure(3,weight=1)
         
-        rowNo = rowNo+1
-        xAxisLabLab = tk.Label(optsWindow, text = 'X Axis Label')
-        xAxisLabLab.grid(row=rowNo,column=0)
-        xAxisLabEntry = tk.Entry(optsWindow)
-        xAxisLabEntry.grid(row = rowNo, column=1)
+        subplotOption = SubplotOptions(optsWindow)
         
-        xAxisLimLab = tk.Label(optsWindow, text = 'X Axis Limits')
-        xAxisLimLab.grid(row=rowNo,column=2)
-        xAxisLowLimEntry = tk.Entry(optsWindow)
-        xAxisLowLimEntry.grid(row=rowNo,column=3)
-        xAxisUpLimEntry = tk.Entry(optsWindow)
-        xAxisUpLimEntry.grid(row=rowNo,column=4)
         
-        rowNo = rowNo+1
-        yAxisLabLab = tk.Label(optsWindow, text = 'Y Axis Label')
-        yAxisLabLab.grid(row=rowNo,column=0)
-        yAxisLabEntry = tk.Entry(optsWindow)
-        yAxisLabEntry.grid(row = rowNo, column=1)
-        
-        yAxisLimLab = tk.Label(optsWindow, text = 'Y Axis Limits')
-        yAxisLimLab.grid(row=rowNo,column=2)
-        yAxisLowLimEntry = tk.Entry(optsWindow)
-        yAxisLowLimEntry.grid(row=rowNo,column=3)
-        yAxisUpLimEntry = tk.Entry(optsWindow)
-        yAxisUpLimEntry.grid(row=rowNo,column=4)
         
         
     # ResultFile Handling
