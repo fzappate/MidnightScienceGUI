@@ -18,7 +18,8 @@ class ResultFileModel():
     def RemoveDataFromResultSignals(self)->None:
         '''Delete the data from singals.'''
         for sig in self.signals:
-            sig.data = []
+            sig.rawData = []
+            sig.scaledData = []
             
     def LoadResults(self,filePath)->None:
         '''Load results.'''       
@@ -32,9 +33,14 @@ class ResultFileModel():
         headerTokens = headerTokens[:-1]
         for i, headerToken in enumerate(headerTokens):
             headerToken = headerToken.strip() 
-            sigTemp = Signal(headerToken, indx = i)
+            signalTokens = headerToken.split(':')
+            name = signalTokens[:-1]
+            name = ":".join(name)
+            units = signalTokens[-1]
+            sigQuantity = self.DetermineSignalQuantity(name,units)
+            sigTemp = Signal(name=name,units=units,quantity=sigQuantity,indx = i)
             self.signals.append(sigTemp)
-            self.signalNames.append(headerToken)
+            self.signalNames.append(name)
         
         # Iterate on the lines - skip the first one
         for line in lines[1:]:
@@ -43,3 +49,35 @@ class ResultFileModel():
             for i, valueStr in enumerate(valueTokens):
                 value = float(valueStr) 
                 self.signals[i].AppendData(value)
+                
+    def DetermineSignalQuantity(self,name,units)->str:
+        '''Take the unit of the signal, and determine its quantity.'''
+        if units == 's':
+            return 'Time'
+        
+        elif units == 'm':
+            return 'Length'
+        
+        elif units == 'm^2':
+            return 'Area'
+        
+        elif units == 'm^3':
+            return 'Volume'
+        
+        elif units == 'm^3/s':
+            return 'Flow'
+        
+        elif units == 'Pa':
+            return 'Pressure'
+        
+        elif units == 'Pa*s':
+            return 'BulkModulus'
+        
+        elif units == '-':
+            return 'Ratio'        
+        
+        else:
+            print('Units of signal ' + name + ' not found.')
+        
+        
+        

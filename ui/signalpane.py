@@ -5,8 +5,8 @@ class SignalPane(tk.Frame):
     def __init__(self, 
                  parent, 
                  presenter,
+                 signal,
                  indx = 0,
-                 sigName = 'Signal',
                  *args,
                  **kwargs)->None:
         """
@@ -24,6 +24,9 @@ class SignalPane(tk.Frame):
         """  
         super().__init__(parent,*args,**kwargs)
         
+        self.signal = signal
+        
+        self.signalName = signal 
         self.indx = indx
         self.presenter = presenter
         # Define columns weight
@@ -35,11 +38,20 @@ class SignalPane(tk.Frame):
         self.delIcon = '\U0001F5D1' # 🗑
         self.optIcon = '\U0001F527' # 🔧
         
-        self.label = ttk.Label(self,text=sigName)
+        self.label = ttk.Label(self,text=self.signal.name)
         self.label.grid(row=0,column=0,sticky='W',padx = (4,0))
         
+        unitList, scalingList = self.presenter.GetUnitsList(signal)
+        
+        self.unitsCb = ttk.Combobox(self,width = 7,value=unitList,state='readonly')
+        self.unitsCb.grid(row=0,column=1,sticky='EW', padx=(3,0))
+        # if len(unitList)>0:
+        self.unitsCb.current(0)
+        self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
+            
         self.optBtn = ttk.Button(self,text = self.optIcon, width=3)
-        self.optBtn.grid(row=0,column=1,sticky='EW', padx=(3,0))
+        self.optBtn.grid(row=0,column=2,sticky='EW', padx=(3,0))
         
         self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal( self))
-        self.delBtn.grid(row=0,column=2,sticky='EW', padx = 3)
+        self.delBtn.grid(row=0,column=3,sticky='EW', padx = 3)
+
