@@ -501,6 +501,15 @@ class Presenter():
                                             indx = kk,
                                             bg = 'red')
                     sigPane.grid(row=ssRow,column=0,sticky='EW')
+                # Separator between result files 
+                separatorRow = 2+len(rf.selectedSignals)+1
+                separator = tk.Frame(resFile, bg = 'green', height=5)
+                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+                
+            # Separator between subplots
+                separatorRow = 3+len(sp.resultFiles)+1
+                separator = tk.Frame(resFile, bg = 'green', height=5)
+                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
             
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
