@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
-from ui.collapsiblepanes import TogglePaneDel
+from ui.collapsiblepanes import TogglePaneDelOpts
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
 from ui.signalpane import SignalPane
@@ -468,7 +468,7 @@ class Presenter():
         # Iterate on the Subplots
         for ii,sp in enumerate(self.model.plotModel.containedSubplots):
             spRow = ii+1 # Skip the 'Add subplot' button
-            toggleFrame = TogglePaneDel(self.view.mainTabColl.plotter.plotManager,
+            toggleFrame = TogglePaneDelOpts(self.view.mainTabColl.plotter.plotManager,
                                         self,
                                         label = sp.name,
                                         indx=ii,
@@ -507,9 +507,9 @@ class Presenter():
                 separator.grid(row=separatorRow,column = 0, sticky = 'EW')
                 
             # Separator between subplots
-                separatorRow = 3+len(sp.resultFiles)+1
-                separator = tk.Frame(resFile, bg = 'green', height=5)
-                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+            separatorRow = 3+len(sp.resultFiles)+1
+            separator = tk.Frame(toggleFrame.interior, bg = 'red', height=10)
+            separator.grid(row=separatorRow,column = 0, sticky = 'EW')
             
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
