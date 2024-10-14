@@ -27,6 +27,7 @@ class PlottedSignal(Signal):
         self.units = signal.units
         self.rawData = signal.rawData
         self.scaledData = signal.scaledData
+        self.scalingFactor = signal.scalingFactor 
         self.quantity = signal.quantity
         self.indx = signal.indx
         

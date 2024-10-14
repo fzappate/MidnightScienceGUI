@@ -41,25 +41,17 @@ class SignalPane(tk.Frame):
         self.label = ttk.Label(self,text=self.signal.name)
         self.label.grid(row=0,column=0,sticky='W',padx = (4,0))
         
-        unitList = self.ReturnUnitList(signal)
+        unitList, scalingList = self.presenter.GetUnitsList(signal)
+        
         self.unitsCb = ttk.Combobox(self,width = 7,value=unitList,state='readonly')
         self.unitsCb.grid(row=0,column=1,sticky='EW', padx=(3,0))
-        
+        # if len(unitList)>0:
+        self.unitsCb.current(0)
+        self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
+            
         self.optBtn = ttk.Button(self,text = self.optIcon, width=3)
         self.optBtn.grid(row=0,column=2,sticky='EW', padx=(3,0))
         
         self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal( self))
         self.delBtn.grid(row=0,column=3,sticky='EW', padx = 3)
 
-    def ReturnUnitList(self,signal):
-        '''Depending on the signal units, create the list of of units
-        that the signal can be translated to. '''
-        
-        if signal.quantity == 'Time':
-            unitList = ['s','m','h']
-        elif signal.quantity == 'Pressure':
-            unitList = ['Pa','MPa','bar']
-        else:
-            unitList = [signal.units]
-            
-        return unitList

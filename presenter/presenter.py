@@ -400,6 +400,55 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()
         
+    def ModifySignalScaling(self,event,signalPane, scalingList)->None:
+        '''Change the scaling of the signal.'''
+        # Get the index of the result file and subplot
+        optSelected = signalPane.unitsCb.current()
+        scalingFactor = scalingList[optSelected]
+        
+        subplotIndx = signalPane.master.master.master.master.indx
+        signalIndx = signalPane.indx
+        
+        rawData = self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[signalIndx].rawData
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[signalIndx].scalingFactor = scalingFactor
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[signalIndx].scaledData = [scalingFactor*val for val in rawData] 
+        
+        # Redraw PlotUI
+        self.RedrawPlotCanvas()
+        
+    def GetUnitsList(self,signal):
+        '''Depending on the signal units, create the list of the possible units that
+        the signal can be converted to. '''
+        
+        # First unit is always the default units
+        if signal.quantity == 'Time':
+            unitList = ['s','m','h']
+            scalingList = [1, 0.01666666666, 0.00027777777]
+            
+        elif signal.quantity == 'Length':
+            unitList = ['m','cm','mm','um']
+            scalingList = [1, 1e-2, 1e-3, 1e-6]
+            
+        elif signal.quantity == 'Area':
+            unitList = ['m^2','cm^2','mm^2','um^2']
+            scalingList = [1, 1e-4, 1e-6, 1e-12]
+            
+        elif signal.quantity == 'Volume':
+            unitList = ['m^3','cm^3','mm^3','um^3']
+            scalingList = [1, 1e-6, 1e-9, 1e-18]
+            
+        elif signal.quantity == 'Flow':
+            unitList = ['m^3/s','cm^3/s','mm^3/s','L/s','L/min','gal/min']
+            scalingList = [1, 1e6, 1e9, 1e3, 1e3/60,  264.172052/60]
+            
+        elif signal.quantity == 'Pressure':
+            unitList = ['Pa','MPa','bar']
+            scalingList = [1, 1e-6, 1e-5]
+        else:
+            unitList = [signal.units]
+            scalingList = [1]            
+
+        return unitList, scalingList
         
     # Plot Manager
     
