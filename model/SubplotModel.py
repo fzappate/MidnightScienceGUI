@@ -28,6 +28,7 @@ class SubplotModel():
         self.yTick = 0.2
         self.xTickUser = 0.0
         self.yTickUser = 0.0
+        self.useUserTicks = False
         self.setGrid = True
         # self.xAxis = ''
         

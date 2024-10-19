@@ -122,8 +122,19 @@ class SubplotOptions(tk.Frame):
         self.userLimVar = tk.BooleanVar(value=self.useUserLim)
         
         self.userLimCheckbox = ttk.Checkbutton(self.userLimFrame,variable=self.userLimVar)
-        # self.userLimCheckbox.state(['unselected'])
         self.userLimCheckbox.grid(row=0,column=2)
+        
+        # Set Use User Ticks
+        rowNo +=1
+        self.userTicksFrame = tk.Frame(parent, pady=3, bg = 'green')
+        self.userTicksFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        
+        self.userTicksLab = ttk.Label(self.userTicksFrame, text = 'Set Axis Ticks',width=labelSize)
+        self.userTicksLab.grid(row=0,column=1)
+        self.userTicksVar = tk.BooleanVar(value=self.useUserLim)
+        
+        self.userTicksCheckbox = ttk.Checkbutton(self.userTicksFrame,variable=self.userTicksVar)
+        self.userTicksCheckbox.grid(row=0,column=2)
         
         # Grid frame
         rowNo +=1

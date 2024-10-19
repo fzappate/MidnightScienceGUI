@@ -321,6 +321,7 @@ class Presenter():
         self.model.plotModel.containedSubplots[subplotIndx].useUserLim = subplotOptionsPane.userLimVar.get()
         self.model.plotModel.containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
         self.model.plotModel.containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
+        self.model.plotModel.containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
         self.model.plotModel.containedSubplots[subplotIndx].grid = subplotOptionsPane.gridVar.get()
         
         # Redraw plot manager 
@@ -612,8 +613,8 @@ class Presenter():
                 axList[spNo,0].plot(xAxisSelected.scaledData,plottedSig.scaledData)
            
             # Extract subplot default settings
-            self.model.plotModel.containedSubplots[spNo].xLim = axList[spNo,0].get_xlim()
-            self.model.plotModel.containedSubplots[spNo].yLim = axList[spNo,0].get_ylim()
+            self.model.plotModel.containedSubplots[spNo].xLim = list(axList[spNo,0].get_xlim())
+            self.model.plotModel.containedSubplots[spNo].yLim = list(axList[spNo,0].get_ylim())
             yTicksArray = axList[spNo,0].get_yticks()
             xTicksArray = axList[spNo,0].get_xticks()
             xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
@@ -622,34 +623,28 @@ class Presenter():
             self.model.plotModel.containedSubplots[spNo].yTick = yTicks
             
             # Set subplot properties
+            # Title
             axList[spNo,0].title.set_text(subplot.name)
+            # Labels
             axList[spNo,0].set_xlabel(subplot.xLabel)
             axList[spNo,0].set_ylabel(subplot.yLabel)
+            # Grid
             axList[spNo,0].grid(subplot.setGrid)
-            
+            # Axis Limits
             if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
                 axList[spNo,0].set_xlim(subplot.xLimUser)
             if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
                 axList[spNo,0].set_ylim(subplot.yLimUser)
+            # Ticks
+            if subplot.useUserTicks & (subplot.xTickUser!=0):
+                currTickX = list(axList[spNo,0].get_xlim())
+                tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                axList[spNo,0].set_xticks(tickVectX)
                 
-            
-            # if not float(subplot.xTick) == 0.0:
-            #     currTickX = subplot.xLimUser[0]
-            #     tickVectX = []
-            #     while currTickX < subplot.xLimUser[1]:
-            #         tickVectX.append(currTickX)
-            #         currTickX = currTickX + subplot.xTick                
-            #     axList[spNo,0].set_xticks(tickVectX)
-                
-            # if not float(subplot.yTick) == 0:
-            #     currTickY = subplot.yLimUser[0]
-            #     tickVectY = []
-            #     while currTickY < subplot.yLimUser[1]:
-            #         tickVectY.append(currTickY)
-            #         currTickY = currTickY + subplot.yTick            
-            #     axList[spNo,0].set_yticks(tickVectY)
-                
-                
+            if subplot.useUserTicks & (subplot.yTickUser!=0):
+                currTickY = list(axList[spNo,0].get_ylim())
+                tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                axList[spNo,0].set_yticks(tickVectY)
                  
 
             
