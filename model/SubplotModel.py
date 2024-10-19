@@ -19,10 +19,10 @@ class SubplotModel():
         self.name = ''
         self.xLabel = ''
         self.yLabel = ''
-        self.xLim = [0, 1]
-        self.yLim = [0, 1]
-        self.xLimUser = [0, 0]
-        self.yLimUser = [0, 0]
+        self.xLim = [0.0, 1.0]
+        self.yLim = [0.0, 1.0]
+        self.xLimUser = [0.0, 0.0]
+        self.yLimUser = [0.0, 0.0]
         self.useUserLim = False
         self.xTick = 0.2
         self.yTick = 0.2

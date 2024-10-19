@@ -307,6 +307,7 @@ class Presenter():
                                        useUserLim = subplot.useUserLim,
                                        xTick = 0,
                                        yTick = 0,
+                                       useUserTicks=subplot.useUserTicks,
                                        setGrid = subplot.setGrid)
         subplotOption.grid(row=0,column=0,sticky = 'NEWS')
     

@@ -14,9 +14,11 @@ class SubplotOptions(tk.Frame):
                  useUserLim = False, 
                  xTick = 0,
                  yTick = 0,
+                 useUserTicks = False,
                  setGrid = True,
                  *args,
                  **kwargs):
+        
         ''' Initialize a subplot options pane.'''
         super().__init__(parent,*args,**kwargs)
         
@@ -119,9 +121,9 @@ class SubplotOptions(tk.Frame):
         
         self.gridLab = ttk.Label(self.userLimFrame, text = 'Set Axis Limits',width=labelSize)
         self.gridLab.grid(row=0,column=1)
-        self.userLimVar = tk.BooleanVar(value=self.useUserLim)
+        self.userLimVar = tk.BooleanVar(value=useUserLim)
         
-        self.userLimCheckbox = ttk.Checkbutton(self.userLimFrame,variable=self.userLimVar)
+        self.userLimCheckbox = ttk.Checkbutton(self.userLimFrame,variable=self.userLimVar, command = self.SetLimEntryState)
         self.userLimCheckbox.grid(row=0,column=2)
         
         # Set Use User Ticks
@@ -133,7 +135,7 @@ class SubplotOptions(tk.Frame):
         self.userTicksLab.grid(row=0,column=1)
         self.userTicksVar = tk.BooleanVar(value=self.useUserLim)
         
-        self.userTicksCheckbox = ttk.Checkbutton(self.userTicksFrame,variable=self.userTicksVar)
+        self.userTicksCheckbox = ttk.Checkbutton(self.userTicksFrame,variable=self.userTicksVar,command = self.SetTicksEntryState)
         self.userTicksCheckbox.grid(row=0,column=2)
         
         # Grid frame
@@ -172,5 +174,29 @@ class SubplotOptions(tk.Frame):
         entry.delete(0,tk.END)
         entry.insert(0,txt)
         
-    def GetEntry(self)->None:
-        '''Get the content of one entry'''
+    def SetLimEntryState(self)->None:
+        '''Set the state of the user limits entries.'''
+        
+        if self.userLimVar.get():
+            self.yAxisLowLimEntry.config(state="normal")
+            self.yAxisUpLimEntry.config(state="normal")
+            self.xAxisLowLimEntry.config(state="normal")
+            self.xAxisUpLimEntry.config(state="normal")
+            
+        else:
+            self.yAxisLowLimEntry.config(state="disabled")
+            self.yAxisUpLimEntry.config(state="disabled")
+            self.xAxisLowLimEntry.config(state="disabled")
+            self.xAxisUpLimEntry.config(state="disabled")
+            
+    def SetTicksEntryState(self)->None:
+        '''Set the state of the user ticks entries.'''
+        
+        if self.userTicksVar.get():
+            self.xAxisTicksEntry.config(state="normal")
+            self.yAxisTicksEntry.config(state="normal")
+            
+        else:
+            self.xAxisTicksEntry.config(state="disabled")
+            self.yAxisTicksEntry.config(state="disabled")
+            
