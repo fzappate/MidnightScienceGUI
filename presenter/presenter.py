@@ -289,6 +289,7 @@ class Presenter():
         optsWindow.columnconfigure(0,weight=1)
         optsWindow.rowconfigure(0,weight=1)
         optsWindow.resizable(False, False)
+        optsWindow.grab_set()        
         
         # Extract subplot options
         subplotIndx = subplotPane.indx
@@ -310,7 +311,7 @@ class Presenter():
         subplotOption.grid(row=0,column=0,sticky = 'NEWS')
     
     def ApplySubplotOptions(self,subplotOptionsPane)->None:
-        '''Apply the subplot options.'''
+        '''Apply the subplot options to the subplot model.'''
         # Store options in the subplot model
         subplotIndx = subplotOptionsPane.indx
         self.model.plotModel.containedSubplots[subplotIndx].name = subplotOptionsPane.titleEntry.get()
