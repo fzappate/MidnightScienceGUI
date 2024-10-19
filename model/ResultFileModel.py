@@ -47,6 +47,9 @@ class ResultFileModel():
             valueTokens = line.split(',')
             valueTokens = valueTokens[:-1]
             for i, valueStr in enumerate(valueTokens):
+                if valueStr == "":
+                    continue
+                
                 value = float(valueStr) 
                 self.signals[i].AppendData(value)
                 
