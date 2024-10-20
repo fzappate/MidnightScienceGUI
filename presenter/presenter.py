@@ -14,6 +14,7 @@ from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
 from ui.signalpane import SignalPane
 from ui.SubplotOptions import SubplotOptions
+from ui.SignalOptions import SignalOptions
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
@@ -524,7 +525,22 @@ class Presenter():
 
         return unitList, scalingList
         
+     # Signal Options
+    
+    def OpenSignalOptions(self,signalPane, signalOptsBtn)->None:
+        '''Open subplot options.'''   
+        # Create new window
+        optsWindowX = signalOptsBtn.winfo_rootx()
+        optsWindowY = signalOptsBtn.winfo_rooty()
+        optsWindow = tk.Toplevel(self.view)
+        optsWindow.geometry(f"+{optsWindowX}+{optsWindowY}")
+        optsWindow.columnconfigure(0,weight=1)
+        optsWindow.rowconfigure(0,weight=1)
+        optsWindow.resizable(False, False)
+        optsWindow.grab_set()  
         
+        signalOpts = SignalOptions(optsWindow, bg ='cyan')
+        signalOpts.grid(row=0,column=0)
         
     # Plot Manager
     
