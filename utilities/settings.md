@@ -1,3 +1,3 @@
 # Settings
-- workingFolder, C:/Software/MACnCheese/build/Debug
+- workingFolder, 
 - resultsFilePath, C:/Software/MACnCheese/build/Debug/ResultsPrinter.csv

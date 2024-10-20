@@ -6,7 +6,6 @@ class SubplotModel():
         information necessary to draw a subplot.
         '''
         # Dictionary with signal names and values
-        self.name = ''
         self.indx = 0
         self.noOfResFile = 0
         self.resultFiles = []
@@ -17,12 +16,20 @@ class SubplotModel():
         self.xAxisSelectedIndx = 0 
         self.xAxisSelectedName = '' # TO BE DELETED
         
+        self.name = ''
         self.xLabel = ''
         self.yLabel = ''
-        self.xTick = 0
-        self.yTick = 0
-        self.grid = 1
-        self.xAxis = ''
+        self.xLim = [0.0, 1.0]
+        self.yLim = [0.0, 1.0]
+        self.xLimUser = [0.0, 1.0]
+        self.yLimUser = [0.0, 1.0]
+        self.useUserLim = False
+        self.xTick = 0.2
+        self.yTick = 0.2
+        self.xTickUser = 0.2
+        self.yTickUser = 0.2
+        self.useUserTicks = False
+        self.setGrid = True
         
     def AddResultFile(self,resultFileModel):
         '''Add ResultFileModel to SubplotModel.'''

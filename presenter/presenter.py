@@ -9,10 +9,11 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
-from ui.collapsiblepanes import TogglePaneDel
+from ui.collapsiblepanes import TogglePaneDelOpts
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
 from ui.signalpane import SignalPane
+from ui.SubplotOptions import SubplotOptions
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
@@ -56,6 +57,7 @@ class Presenter():
         # Delete and rewrite the entry text 
         entry.delete(0,tk.END)
         entry.insert(0,txt)
+
 
 
     # GUI Initialization
@@ -116,6 +118,11 @@ class Presenter():
                 headerTokens = lineTokens
             else:
                 valueTokens = lineTokens
+                
+                # If the line is empty, move to another line
+                if valueTokens[0] == "":
+                    continue
+                
                 values = [float(x) for x in valueTokens]
                 for i, key in enumerate(headerTokens):
                     resDict[key].append(values[i])
@@ -124,8 +131,7 @@ class Presenter():
                     
         self.model.results = resDict
         
-        # Update the combobox
-        # self.view.mainTabColl.plotter.plotManagerPane.plotManager.signalCollection['values'] = tuple(self.model.results.keys())
+    
     
     
     # Working Folder Selection
@@ -221,6 +227,7 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()        
         
+        
      
     # Subplot Handling
     
@@ -268,7 +275,73 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()
                 
-            
+                
+                
+    # Subplot Options
+    
+    def OpenSubplotOptions(self,subplotPane, subplotOptsBtn)->None:
+        '''Open subplot options.'''   
+        # Create new window
+        optsWindowX = subplotOptsBtn.winfo_rootx()
+        optsWindowY = subplotOptsBtn.winfo_rooty()
+        optsWindow = tk.Toplevel(self.view)
+        optsWindow.geometry(f"+{optsWindowX}+{optsWindowY}")
+        optsWindow.columnconfigure(0,weight=1)
+        optsWindow.rowconfigure(0,weight=1)
+        optsWindow.resizable(False, False)
+        optsWindow.grab_set()        
+        
+        # Extract subplot options
+        subplotIndx = subplotPane.indx
+        subplot=self.model.plotModel.containedSubplots[subplotIndx]
+        
+        # Populate the subplotOptions 
+        subplotOption = SubplotOptions(optsWindow,
+                                       self,
+                                       subplotIndx,
+                                       title = subplot.name,
+                                       xLabel = subplot.xLabel,
+                                       yLabel = subplot.yLabel,
+                                       xLim = subplot.xLimUser,
+                                       yLim = subplot.yLimUser,
+                                       useUserLim = subplot.useUserLim,
+                                       xTick = 0,
+                                       yTick = 0,
+                                       useUserTicks=subplot.useUserTicks,
+                                       setGrid = subplot.setGrid)
+        subplotOption.grid(row=0,column=0,sticky = 'NEWS')
+    
+    def ApplySubplotOptions(self,subplotOptionsPane)->None:
+        '''Apply the subplot options to the subplot model.'''
+        # Store options in the subplot model
+        subplotIndx = subplotOptionsPane.indx
+        self.model.plotModel.containedSubplots[subplotIndx].name = subplotOptionsPane.titleEntry.get()
+        self.model.plotModel.containedSubplots[subplotIndx].xLabel = subplotOptionsPane.xAxisLabEntry.get()
+        self.model.plotModel.containedSubplots[subplotIndx].yLabel = subplotOptionsPane.yAxisLabEntry.get()
+        self.model.plotModel.containedSubplots[subplotIndx].xLimUser = [float(subplotOptionsPane.xAxisLowLimEntry.get()), float(subplotOptionsPane.xAxisUpLimEntry.get())]
+        self.model.plotModel.containedSubplots[subplotIndx].yLimUser = [float(subplotOptionsPane.yAxisLowLimEntry.get()), float(subplotOptionsPane.yAxisUpLimEntry.get())]
+        self.model.plotModel.containedSubplots[subplotIndx].useUserLim = subplotOptionsPane.userLimVar.get()
+        self.model.plotModel.containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
+        self.model.plotModel.containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
+        self.model.plotModel.containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
+        self.model.plotModel.containedSubplots[subplotIndx].grid = subplotOptionsPane.gridVar.get()
+        
+        # Redraw plot manager 
+        self.RedrawPlotManager()
+        # Redraw plot canvas
+        self.RedrawPlotCanvas()
+        
+    def CloseSubplotOptions(self,subplotOptionsPane)->None:
+        '''Close subplot options.'''
+        subplotOptionsPane.parent.destroy()
+        
+    def OkSubplotOptions(self, subplotOptionsPane)->None:
+        '''Ok Subplot Options'''
+        self.ApplySubplotOptions(subplotOptionsPane)
+        self.CloseSubplotOptions(subplotOptionsPane)
+        
+        
+        
     # ResultFile Handling
         
     def AddResultFile(self, resFileManager)->None:
@@ -355,6 +428,7 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()
 
+        
         
     # Signal Handling
     
@@ -450,6 +524,8 @@ class Presenter():
 
         return unitList, scalingList
         
+        
+        
     # Plot Manager
     
     def RedrawPlotManager(self)->None:
@@ -468,7 +544,7 @@ class Presenter():
         # Iterate on the Subplots
         for ii,sp in enumerate(self.model.plotModel.containedSubplots):
             spRow = ii+1 # Skip the 'Add subplot' button
-            toggleFrame = TogglePaneDel(self.view.mainTabColl.plotter.plotManager,
+            toggleFrame = TogglePaneDelOpts(self.view.mainTabColl.plotter.plotManager,
                                         self,
                                         label = sp.name,
                                         indx=ii,
@@ -501,6 +577,15 @@ class Presenter():
                                             indx = kk,
                                             bg = 'red')
                     sigPane.grid(row=ssRow,column=0,sticky='EW')
+                # Separator between result files 
+                separatorRow = 2+len(rf.selectedSignals)+1
+                separator = tk.Frame(resFile, bg = 'green', height=5)
+                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+                
+            # Separator between subplots
+            separatorRow = 3+len(sp.resultFiles)+1
+            separator = tk.Frame(toggleFrame.interior, bg = 'red', height=10)
+            separator.grid(row=separatorRow,column = 0, sticky = 'EW')
             
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
@@ -511,22 +596,59 @@ class Presenter():
             child.destroy()
             
         # Calculate the number of subplots that must be generated
+        subplots = self.model.plotModel.containedSubplots
         noOfSubplots = self.model.plotModel.noOfSubplots
         fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
         fig.subplots_adjust(left=0.05, bottom=0.05, right=0.95, top=0.95, wspace=0.1, hspace=0.2)
         
-        for spNo in range(noOfSubplots):
+        for spNo, subplot in enumerate(subplots):
             # Extract x axis signal 
             xAxisSelected = self.model.plotModel.containedSubplots[spNo].xAxisSelected
-            
+                       
             # Do not plot anything if the x axis is not selected
             if xAxisSelected == []:
                 continue
             
-            # Extract plotted signals
+            # Extract plotted signals and plot them
             plottedSignals = self.model.plotModel.containedSubplots[spNo].plottedSignals
             for plottedSig in plottedSignals:
                 axList[spNo,0].plot(xAxisSelected.scaledData,plottedSig.scaledData)
+           
+            # Extract subplot default settings
+            self.model.plotModel.containedSubplots[spNo].xLim = list(axList[spNo,0].get_xlim())
+            self.model.plotModel.containedSubplots[spNo].yLim = list(axList[spNo,0].get_ylim())
+            yTicksArray = axList[spNo,0].get_yticks()
+            xTicksArray = axList[spNo,0].get_xticks()
+            xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
+            yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
+            self.model.plotModel.containedSubplots[spNo].xTick = xTicks
+            self.model.plotModel.containedSubplots[spNo].yTick = yTicks
+            
+            # Set subplot properties
+            # Title
+            axList[spNo,0].title.set_text(subplot.name)
+            # Labels
+            axList[spNo,0].set_xlabel(subplot.xLabel)
+            axList[spNo,0].set_ylabel(subplot.yLabel)
+            # Grid
+            axList[spNo,0].grid(subplot.setGrid)
+            # Axis Limits
+            if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
+                axList[spNo,0].set_xlim(subplot.xLimUser)
+            if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
+                axList[spNo,0].set_ylim(subplot.yLimUser)
+            # Ticks
+            if subplot.useUserTicks & (subplot.xTickUser!=0):
+                currTickX = list(axList[spNo,0].get_xlim())
+                tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                axList[spNo,0].set_xticks(tickVectX)
+                
+            if subplot.useUserTicks & (subplot.yTickUser!=0):
+                currTickY = list(axList[spNo,0].get_ylim())
+                tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                axList[spNo,0].set_yticks(tickVectY)
+                 
+
             
         # Draw the canvas and toolbar
         self.view.mainTabColl.plotter.plot.canvas = FigureCanvasTkAgg(fig, master=self.view.mainTabColl.plotter.plot)

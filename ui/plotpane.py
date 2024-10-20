@@ -32,29 +32,29 @@ class PlotUI(tk.Frame):
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
                
         
-    def CreateSubplots(self,plotModel):
-        '''
-        Add a subplot to the plot.
-        '''
-        self.toolbar.destroy()
-        self.canvas.get_tk_widget().destroy()
+    # def CreateSubplots(self,plotModel):
+    #     '''
+    #     Add a subplot to the plot.
+    #     '''
+    #     self.toolbar.destroy()
+    #     self.canvas.get_tk_widget().destroy()
         
-        # self.fig.
-        self.fig, axList = plt.subplots(plotModel.noOfSubplots,1)
-        x = [1, 2, 3, 4]
-        y1 = [1, 2, 3, 4]
+    #     # self.fig.
+    #     self.fig, axList = plt.subplots(plotModel.noOfSubplots,1)
+    #     x = [1, 2, 3, 4]
+    #     y1 = [1, 2, 3, 4]
         
-        if plotModel.noOfSubplots == 1:
-            axList.plot(x,y1) 
-        else:
-            for ii in range(0,plotModel.noOfSubplots):
-                axList[ii].plot(x,y1) 
+    #     if plotModel.noOfSubplots == 1:
+    #         axList.plot(x,y1) 
+    #     else:
+    #         for ii in range(0,plotModel.noOfSubplots):
+    #             axList[ii].plot(x,y1) 
             
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
-        self.toolbar.update()
-        self.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    #     self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+    #     self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+    #     self.toolbar.update()
+    #     self.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+    #     self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
     def DeleteSubplot(self):
         '''
