@@ -134,7 +134,7 @@ class Presenter():
     
     
     
-    # Working Folder Selection
+    # Project Folder Selection
     
     def BrowseWorkingFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
@@ -305,8 +305,8 @@ class Presenter():
                                        xLim = subplot.xLimUser,
                                        yLim = subplot.yLimUser,
                                        useUserLim = subplot.useUserLim,
-                                       xTick = 0,
-                                       yTick = 0,
+                                       xTick = subplot.xTickUser,
+                                       yTick = subplot.yTickUser,
                                        useUserTicks=subplot.useUserTicks,
                                        setGrid = subplot.setGrid)
         subplotOption.grid(row=0,column=0,sticky = 'NEWS')

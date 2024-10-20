@@ -82,7 +82,9 @@ class SubplotOptions(tk.Frame):
         self.UpdateEntry(self.xAxisUpLimEntry, str(xLim[1]))
         
         self.xAxisLowLimEntry.bind("<FocusOut>",lambda event: self.ValidateLowLimEntries(event, self.xAxisUpLimEntry, str(xLim[0])))
+        self.xAxisLowLimEntry.bind("<Return>",lambda event: self.ValidateLowLimEntries(event, self.xAxisUpLimEntry, str(xLim[0])))
         self.xAxisUpLimEntry.bind("<FocusOut>",lambda event: self.ValidateUpLimEntries(event, self.xAxisLowLimEntry, str(xLim[1])))
+        self.xAxisUpLimEntry.bind("<Return>",lambda event: self.ValidateUpLimEntries(event, self.xAxisLowLimEntry, str(xLim[1])))
         
         # Y Axis limits frame
         rowNo +=1
@@ -101,7 +103,9 @@ class SubplotOptions(tk.Frame):
         self.UpdateEntry(self.yAxisUpLimEntry, str(yLim[1]))
         
         self.yAxisLowLimEntry.bind("<FocusOut>",lambda event: self.ValidateLowLimEntries(event, self.yAxisUpLimEntry, str(yLim[0])))
+        self.yAxisLowLimEntry.bind("<Return>",lambda event: self.ValidateLowLimEntries(event, self.yAxisUpLimEntry, str(yLim[0])))
         self.yAxisUpLimEntry.bind("<FocusOut>",lambda event: self.ValidateUpLimEntries(event, self.yAxisLowLimEntry, str(yLim[1])))
+        self.yAxisUpLimEntry.bind("<Return>",lambda event: self.ValidateUpLimEntries(event, self.yAxisLowLimEntry, str(yLim[1])))
 
         # X Axis Ticks
         rowNo +=1
@@ -113,6 +117,7 @@ class SubplotOptions(tk.Frame):
         self.xAxisTicksEntry.grid(row=1,column=1,padx=3)
         self.UpdateEntry(self.xAxisTicksEntry, str(xTick))
         self.xAxisTicksEntry.bind("<FocusOut>", lambda event: self.ValidateTicksEntry(event,str(xTick)))
+        self.xAxisTicksEntry.bind("<Return>", lambda event: self.ValidateTicksEntry(event,str(xTick)))
         
                     
         # Y Axis Ticks
@@ -125,6 +130,7 @@ class SubplotOptions(tk.Frame):
         self.yAxisTicksEntry.grid(row=1,column=1,padx=3)
         self.UpdateEntry(self.yAxisTicksEntry, str(yTick))
         self.yAxisTicksEntry.bind("<FocusOut>", lambda event: self.ValidateTicksEntry(event,str(yTick)))
+        self.yAxisTicksEntry.bind("<Return>", lambda event: self.ValidateTicksEntry(event,str(yTick)))
         
         # Set Use User Limits
         rowNo +=1
@@ -218,6 +224,7 @@ class SubplotOptions(tk.Frame):
         '''Validate entries.'''
         # Check if the entry is a number, and if it is right with respect to 
         # its counterpart
+        print("validate")
         try:
             currentEntry = float(event.widget.get())
             otherEntry = float(otherLimit.get())
