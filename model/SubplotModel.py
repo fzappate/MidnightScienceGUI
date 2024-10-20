@@ -21,16 +21,15 @@ class SubplotModel():
         self.yLabel = ''
         self.xLim = [0.0, 1.0]
         self.yLim = [0.0, 1.0]
-        self.xLimUser = [0.0, 0.0]
-        self.yLimUser = [0.0, 0.0]
+        self.xLimUser = [0.0, 1.0]
+        self.yLimUser = [0.0, 1.0]
         self.useUserLim = False
         self.xTick = 0.2
         self.yTick = 0.2
-        self.xTickUser = 0.0
-        self.yTickUser = 0.0
+        self.xTickUser = 0.2
+        self.yTickUser = 0.2
         self.useUserTicks = False
         self.setGrid = True
-        # self.xAxis = ''
         
     def AddResultFile(self,resultFileModel):
         '''Add ResultFileModel to SubplotModel.'''

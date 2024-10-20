@@ -65,33 +65,43 @@ class SubplotOptions(tk.Frame):
         self.yAxisLabEntry.grid(row=1,column=1,padx=3,sticky='EW')
         self.UpdateEntry(self.yAxisLabEntry, yLabel)
                 
-        # Axis limits frame
+        # X Axis limits frame
         rowNo +=1
         self.frame4 = tk.Frame(parent, pady=3, bg = 'red')
         self.frame4.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.xAxisLimLab = ttk.Label(self.frame4, text = 'X Axis Limits',width=labelSize)
         self.xAxisLimLab.grid(row=0,column=0)
+        
         self.xAxisLowLimEntry = tk.Entry(self.frame4)
         self.xAxisLowLimEntry.grid(row=0,column=1,padx=3)
         self.UpdateEntry(self.xAxisLowLimEntry, str(xLim[0]))
+        
         self.xAxisUpLimEntry = tk.Entry(self.frame4)
         self.xAxisUpLimEntry.grid(row=0,column=2,padx=3)    
         self.UpdateEntry(self.xAxisUpLimEntry, str(xLim[1]))
         
-        # X Axis limits frame
+        self.xAxisLowLimEntry.bind("<FocusOut>",lambda event: self.ValidateLowLimEntries(event, self.xAxisUpLimEntry, str(xLim[0])))
+        self.xAxisUpLimEntry.bind("<FocusOut>",lambda event: self.ValidateUpLimEntries(event, self.xAxisLowLimEntry, str(xLim[1])))
+        
+        # Y Axis limits frame
         rowNo +=1
         self.frame5 = tk.Frame(parent, pady=3, bg = 'red')
         self.frame5.grid(row=rowNo,column=0, sticky = 'NEW')
+        
         self.yAxisLimLab = ttk.Label(self.frame5, text = 'Y Axis Limits',width=labelSize)
         self.yAxisLimLab.grid(row=1,column=0)
+        
         self.yAxisLowLimEntry = tk.Entry(self.frame5)
         self.yAxisLowLimEntry.grid(row=1,column=1,padx=3)
         self.UpdateEntry(self.yAxisLowLimEntry, str(yLim[0]))
+        
         self.yAxisUpLimEntry = tk.Entry(self.frame5)
         self.yAxisUpLimEntry.grid(row=1,column=2,padx=3)
         self.UpdateEntry(self.yAxisUpLimEntry, str(yLim[1]))
-
+        
+        self.yAxisLowLimEntry.bind("<FocusOut>",lambda event: self.ValidateLowLimEntries(event, self.yAxisUpLimEntry, str(yLim[0])))
+        self.yAxisUpLimEntry.bind("<FocusOut>",lambda event: self.ValidateUpLimEntries(event, self.yAxisLowLimEntry, str(yLim[1])))
 
         # X Axis Ticks
         rowNo +=1
@@ -102,6 +112,7 @@ class SubplotOptions(tk.Frame):
         self.xAxisTicksEntry = tk.Entry(self.frame6)
         self.xAxisTicksEntry.grid(row=1,column=1,padx=3)
         self.UpdateEntry(self.xAxisTicksEntry, str(xTick))
+        self.xAxisTicksEntry.bind("<FocusOut>", lambda event: self.ValidateTicksEntry(event,str(xTick)))
         
                     
         # Y Axis Ticks
@@ -113,6 +124,7 @@ class SubplotOptions(tk.Frame):
         self.yAxisTicksEntry = tk.Entry(self.frame7)
         self.yAxisTicksEntry.grid(row=1,column=1,padx=3)
         self.UpdateEntry(self.yAxisTicksEntry, str(yTick))
+        self.yAxisTicksEntry.bind("<FocusOut>", lambda event: self.ValidateTicksEntry(event,str(yTick)))
         
         # Set Use User Limits
         rowNo +=1
@@ -126,6 +138,8 @@ class SubplotOptions(tk.Frame):
         self.userLimCheckbox = ttk.Checkbutton(self.userLimFrame,variable=self.userLimVar, command = self.SetLimEntryState)
         self.userLimCheckbox.grid(row=0,column=2)
         
+        self.SetLimEntryState()
+        
         # Set Use User Ticks
         rowNo +=1
         self.userTicksFrame = tk.Frame(parent, pady=3, bg = 'green')
@@ -137,6 +151,8 @@ class SubplotOptions(tk.Frame):
         
         self.userTicksCheckbox = ttk.Checkbutton(self.userTicksFrame,variable=self.userTicksVar,command = self.SetTicksEntryState)
         self.userTicksCheckbox.grid(row=0,column=2)
+        
+        self.SetTicksEntryState()
         
         # Grid frame
         rowNo +=1
@@ -164,8 +180,6 @@ class SubplotOptions(tk.Frame):
         okBtn = ttk.Button(btnFrame,text = 'Ok', width = btnSize, command=lambda:self.presenter.OkSubplotOptions(self))
         okBtn.grid(row = 0, column=2, sticky = 'E')
         
-    def SwitchState(self)->None:
-        self.gridCheckbox
         
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
         """This function takes whatever entry, deleted the text, and write the new 
@@ -199,4 +213,40 @@ class SubplotOptions(tk.Frame):
         else:
             self.xAxisTicksEntry.config(state="disabled")
             self.yAxisTicksEntry.config(state="disabled")
+            
+    def ValidateUpLimEntries(self,event,otherLimit, previousVal)->None:
+        '''Validate entries.'''
+        # Check if the entry is a number, and if it is right with respect to 
+        # its counterpart
+        try:
+            currentEntry = float(event.widget.get())
+            otherEntry = float(otherLimit.get())
+            
+            if currentEntry<=otherEntry:
+                self.UpdateEntry(event.widget,previousVal)
+        except:
+            self.UpdateEntry(event.widget,previousVal)
+                      
+    def ValidateLowLimEntries(self,event,otherLimit, previousVal)->None:
+        '''Validate entries.'''
+        # Check if the entry is a number, and if it is right with respect to 
+        # its counterpart
+        try:
+            currentEntry = float(event.widget.get())
+            otherEntry = float(otherLimit.get())
+            
+            if currentEntry>=otherEntry:
+                self.UpdateEntry(event.widget,previousVal)
+        except:
+            self.UpdateEntry(event.widget,previousVal)
+                        
+    def ValidateTicksEntry(self,event, previousVal)->None:
+        '''Validate the ticks entry.'''
+        try:
+            currentEntry = float(event.widget.get())
+            if currentEntry <= 0:
+                self.UpdateEntry(event.widget,previousVal)
+        except:
+            self.UpdateEntry(event.widget,previousVal)
+            
             
