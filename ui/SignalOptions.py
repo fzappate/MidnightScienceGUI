@@ -5,14 +5,26 @@ class SignalOptions(tk.Frame):
     def __init__(self,
                  parent,
                  presenter,
-                 indx,
+                 signal,
+                 sigIndx,
+                 resIndx,
+                 subplotIndx,
                  *args,
                  **kwargs):
         '''Initialzie signal options widget.'''
         super().__init__(parent,*args,**kwargs)
         
+        self.signal = signal
+        self.parent = parent
+        self.sigIndx = sigIndx
+        self.resIndx = resIndx
+        self.subplotIndx = subplotIndx
+        self.presenter = presenter
+        self.selectedColor = signal.color
+        
         self.columnconfigure(0,weight=1)
-        self.indx = indx
+        self.rowconfigure(1,weight=1)
+        
         # Handy numbers
         self.optsWidth=10
         self.btnSize = 6
@@ -21,17 +33,24 @@ class SignalOptions(tk.Frame):
         self.lineMarkerOptsList = ['','.','o','s','^','v','*','+','x','D','>','<']
         
         # OPTIONS FRAME
-        self.optsFrame = tk.Frame(self)
+        self.optsFrame = tk.Frame(self,width=self.optsWidth,bg='blue')
         self.optsFrame.columnconfigure(0,weight=1)
-        self.optsFrame.grid(row=0,column=0)
+        self.optsFrame.grid(row=0,column=0,sticky='NEWS')
         
         # Select color
         rowNo = 0
         self.colorLabel = ttk.Label(self.optsFrame,text='Select Color')
         self.colorLabel.grid(row=rowNo,column=0,pady=3,sticky='EW')
         
-        self.colorButton = ttk.Button(self.optsFrame,text='Color',command=self.OpenColorChooser)
-        self.colorButton.grid(row=rowNo,column=1,padx=3,pady=3,sticky='EW')
+        self.colorFrame = ttk.Frame(self.optsFrame)
+        self.colorFrame.grid(row=rowNo,column=1,sticky='EW')
+        self.colorFrame.columnconfigure(0,weight=1)
+        
+        self.colorSample = ttk.Label(self.colorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedColor)
+        self.colorSample.grid(row=0,column=0)
+        
+        self.colorButton = ttk.Button(self.colorFrame,text='Color',width=self.btnSize,command=self.OpenColorChooser)
+        self.colorButton.grid(row=rowNo,column=1,padx=3,pady=3,sticky='E')
         
         # Select line width
         rowNo+=1
@@ -40,7 +59,7 @@ class SignalOptions(tk.Frame):
         
         self.lineWidthCb = ttk.Combobox(self.optsFrame,values=self.lineWidthOptsList,width=self.optsWidth,state="readonly")
         self.lineWidthCb.grid(row = rowNo, column=1,padx=3,pady=3)
-        self.lineWidthCb.current(1)
+        self.lineWidthCb.set(self.signal.lineWidth)
         
         # Select line style
         rowNo+=1
@@ -49,7 +68,7 @@ class SignalOptions(tk.Frame):
         
         self.lineStyleCb = ttk.Combobox(self.optsFrame,values=self.lineStyleOptsList,width=self.optsWidth,state="readonly")
         self.lineStyleCb.grid(row=rowNo,column=1,padx=3,pady=3)
-        self.lineStyleCb.current(0)
+        self.lineStyleCb.set(self.signal.lineStyle)
         
         # Select line marker
         rowNo+=1
@@ -58,26 +77,42 @@ class SignalOptions(tk.Frame):
         
         self.lineMarkerCb = ttk.Combobox(self.optsFrame,values=self.lineMarkerOptsList, width = self.optsWidth,state="readonly")
         self.lineMarkerCb.grid(row=rowNo,column=1,padx=3,pady=3)
-        self.lineMarkerCb.current(0)
+        self.lineMarkerCb.set(self.signal.marker)
         
         # BUTTON FRAME
-        self.buttonFrame = tk.Frame(self)
+        self.buttonFrame = tk.Frame(self,bg = 'black')
         self.buttonFrame.grid(row=1,column=0,sticky='EW')
         self.buttonFrame.columnconfigure(0,weight=1)
         
-        self.cancelButton = ttk.Button(self.buttonFrame,text='Cancel',width=self.btnSize)
+        self.cancelButton = ttk.Button(self.buttonFrame,
+                                       text='Cancel',
+                                       width=self.btnSize,
+                                      command=lambda: self.presenter.CloseSignalOptions(self))
         self.cancelButton.grid(row=0,column=0,sticky='E')
         
         self.applyButton = ttk.Button(self.buttonFrame,
                                       text='Apply',
                                       width=self.btnSize,
-                                      command=lambda event: self.presenter.ApplySignalOptions(event,self))
+                                      command=lambda: self.presenter.ApplySignalOptions(self))
         self.applyButton.grid(row=0,column=1)
         
-        self.okButton = ttk.Button(self.buttonFrame,text='Ok',width=self.btnSize)
+        self.okButton = ttk.Button(self.buttonFrame,
+                                   text='Ok',
+                                   width=self.btnSize,
+                                   command=lambda: self.presenter.OkSignalOptions(self))
         self.okButton.grid(row=0,column=2)
         
-    def OpenColorChooser(self)->None:
+    def OpenColorChooser(self):
         '''Open color chooser.'''
         colorCode = colorchooser.askcolor(title='Select a color')
+        try:
+            print("color selected")
+            self.selectedColor=colorCode[1]
+            self.colorSample.config(foreground=colorCode[1])
+            
+        except:
+            print("color not selected")
+            
+            
+        
     

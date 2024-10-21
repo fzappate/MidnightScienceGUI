@@ -545,14 +545,14 @@ class Presenter():
         plotted in that specific plot. Colors taken from the color-blind friendly palette Okabe-Ito.
         https://siegal.bio.nyu.edu/color-palette/'''
         
-        colorList = ['#000000', 
-                     '#E69F00', 
-                     '#56B4E9', 
-                     '#009E73',
-                     '#F0E442', 
-                     '#0072B2', 
-                     '#D55E00', 
-                     '#CC79A7']
+        colorList = ['#000000',     # Black
+                     '#E69F00',     # Orange    
+                     '#56B4E9',     # Light blue
+                     '#009E73',     # Green
+                     '#F0E442',     # Yellow    
+                     '#0072B2',     # Blue
+                     '#D55E00',     # Red
+                     '#CC79A7']     # Pink
         
         noOfColors = len(colorList)
         colorCounterRem = colorCounter%noOfColors
@@ -570,32 +570,70 @@ class Presenter():
         optsWindowX = signalOptsBtn.winfo_rootx()
         optsWindowY = signalOptsBtn.winfo_rooty()
         optsWindow = tk.Toplevel(self.view)
+        optsWindow.title("Signal Options")
+        optsWindow.geometry("260x150")
         optsWindow.geometry(f"+{optsWindowX}+{optsWindowY}")
         optsWindow.columnconfigure(0,weight=1)
         optsWindow.rowconfigure(0,weight=1)
         optsWindow.resizable(False, False)
         optsWindow.grab_set()  
         
-        indx = signalPane.indx
-        signalOpts = SignalOptions(optsWindow,self,indx, bg ='cyan')
-        signalOpts.grid(row=0,column=0)
+        
+        # Get the signal, result file, and subplot index
+        sigIndx = signalPane.indx
+        resIndx = signalPane.master.indx
+        subplotIndx = signalPane.master.master.master.master.indx
+        
+        # Get the PlottedSignal object to retrieve its property
+        signal = self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx]
+        
+        # Create a SignalOptions pane
+        signalOpts = SignalOptions(optsWindow,
+                                   self,
+                                   signal,
+                                   sigIndx= sigIndx,
+                                   resIndx = resIndx,
+                                   subplotIndx = subplotIndx,
+                                   bg ='cyan')
+        signalOpts.grid(row=0,column=0,sticky='NEWS')
     
-    def ApplySignalOptions(self,signalPane)->None:
+    def ApplySignalOptions(self,signalOptions)->None:
         '''Apply signal options.'''    
         # Get the index of the subplot, result file, and signal
-        subplotIndx = signalPane.master.master.master.master.indx
-        resFileIndx = signalPane.master.indx
-        signalIndx = signalPane.indx
+        
+        sigIndx = signalOptions.sigIndx
+        resIndx = signalOptions.resIndx
+        subplotIndx = signalOptions.subplotIndx
+        
         
         # Get the signal options values
-        lineWidth = float(signalPane.lineWidthCb.current())
-        lineStyle = signalPane.lineStyleCb.current()
-        lineMarker = signalPane.lineMarkerCb.current()
+        lineWidth = float(signalOptions.lineWidthCb.get())
+        lineStyle = signalOptions.lineStyleCb.get()
+        lineMarker = signalOptions.lineMarkerCb.get()
+        color= signalOptions.selectedColor
         
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals[signalIndx].lineWidth=lineWidth
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals[signalIndx].lineStyle=lineStyle
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals[signalIndx].lineMarker=lineMarker
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].color=color
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].lineWidth=lineWidth
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].lineStyle=lineStyle
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].lineMarker=lineMarker
         
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].color=color
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].lineWidth=lineWidth
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].lineStyle=lineStyle
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].lineMarker=lineMarker
+        # Redraw plot canvas
+        self.RedrawPlotCanvas()
+        # Redraw plot manager 
+        self.RedrawPlotManager()
+        
+    def CloseSignalOptions(self,signalOptionsPane)->None:
+        '''Close signal options.'''
+        signalOptionsPane.parent.destroy()
+        
+    def OkSignalOptions(self,signalOptionsPane)->None:
+        '''Apply the changes and close the window.'''
+        self.ApplySignalOptions(signalOptionsPane)
+        self.CloseSignalOptions(signalOptionsPane)
         
     # Plot Manager
     
@@ -626,10 +664,12 @@ class Presenter():
             for plottedSig in plottedSignals:
                 psCol=plottedSig.color
                 psWidth=plottedSig.lineWidth
+                psStyle=plottedSig.lineStyle
                 psMarker=plottedSig.marker
                 axList[spNo,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
                                     color=psCol,
                                     linewidth=psWidth,
+                                    linestyle=psStyle,
                                     marker=psMarker)
            
             # Extract subplot default settings
