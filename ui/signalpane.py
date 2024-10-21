@@ -47,7 +47,7 @@ class SignalPane(tk.Frame):
         
         # Signal color
         colNo+=1
-        self.colorBox = ttk.Label(self,text = '\u2588\u2588\u2588\u2588')
+        self.colorBox = ttk.Label(self,text = '\u2588\u2588\u2588\u2588',foreground=self.signal.color)
         self.colorBox.grid(row=0,column=colNo)
         
         # Signal units
@@ -67,4 +67,7 @@ class SignalPane(tk.Frame):
         colNo+=1
         self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal(self))
         self.delBtn.grid(row=0,column=colNo,sticky='EW', padx = 3)
+        
+    def rgbToHex(self, r, g, b):
+        return f'#{r:02x}{g:02x}{b:02x}'
 

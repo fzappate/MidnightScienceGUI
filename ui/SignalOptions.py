@@ -4,13 +4,15 @@ from tkinter import ttk, colorchooser
 class SignalOptions(tk.Frame):
     def __init__(self,
                  parent,
+                 presenter,
+                 indx,
                  *args,
                  **kwargs):
         '''Initialzie signal options widget.'''
         super().__init__(parent,*args,**kwargs)
         
         self.columnconfigure(0,weight=1)
-        
+        self.indx = indx
         # Handy numbers
         self.optsWidth=10
         self.btnSize = 6
@@ -66,7 +68,10 @@ class SignalOptions(tk.Frame):
         self.cancelButton = ttk.Button(self.buttonFrame,text='Cancel',width=self.btnSize)
         self.cancelButton.grid(row=0,column=0,sticky='E')
         
-        self.applyButton = ttk.Button(self.buttonFrame,text='Apply',width=self.btnSize)
+        self.applyButton = ttk.Button(self.buttonFrame,
+                                      text='Apply',
+                                      width=self.btnSize,
+                                      command=lambda event: self.presenter.ApplySignalOptions(event,self))
         self.applyButton.grid(row=0,column=1)
         
         self.okButton = ttk.Button(self.buttonFrame,text='Ok',width=self.btnSize)
