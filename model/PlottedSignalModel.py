@@ -2,8 +2,8 @@ from model.SignalModel import Signal
 
 class PlottedSignal(Signal):
     def __init__(self,
-                 lineWidth = 1,
-                 lineStyle = '-',
+                 width = 1,
+                 style = '-',
                  marker = 'None',
                  color = '#000000',
                  *args,
@@ -15,8 +15,8 @@ class PlottedSignal(Signal):
         '''
         super().__init__(*args,**kwargs)
         
-        self.lineWidth = lineWidth
-        self.lineStyle = lineStyle
+        self.width = width
+        self.style = style
         self.marker = marker
         self.color = color
         

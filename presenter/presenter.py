@@ -613,14 +613,14 @@ class Presenter():
         color= signalOptions.selectedColor
         
         self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].color=color
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].lineWidth=lineWidth
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].lineStyle=lineStyle
-        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].lineMarker=lineMarker
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].width=lineWidth
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].style=lineStyle
+        self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].marker=lineMarker
         
         self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].color=color
-        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].lineWidth=lineWidth
-        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].lineStyle=lineStyle
-        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].lineMarker=lineMarker
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].width=lineWidth
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].style=lineStyle
+        self.model.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].marker=lineMarker
         # Redraw plot canvas
         self.RedrawPlotCanvas()
         # Redraw plot manager 
@@ -663,8 +663,8 @@ class Presenter():
             plottedSignals = self.model.plotModel.containedSubplots[spNo].plottedSignals
             for plottedSig in plottedSignals:
                 psCol=plottedSig.color
-                psWidth=plottedSig.lineWidth
-                psStyle=plottedSig.lineStyle
+                psWidth=plottedSig.width
+                psStyle=plottedSig.style
                 psMarker=plottedSig.marker
                 axList[spNo,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
                                     color=psCol,

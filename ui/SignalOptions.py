@@ -59,7 +59,7 @@ class SignalOptions(tk.Frame):
         
         self.lineWidthCb = ttk.Combobox(self.optsFrame,values=self.lineWidthOptsList,width=self.optsWidth,state="readonly")
         self.lineWidthCb.grid(row = rowNo, column=1,padx=3,pady=3)
-        self.lineWidthCb.set(self.signal.lineWidth)
+        self.lineWidthCb.set(self.signal.width)
         
         # Select line style
         rowNo+=1
@@ -68,7 +68,7 @@ class SignalOptions(tk.Frame):
         
         self.lineStyleCb = ttk.Combobox(self.optsFrame,values=self.lineStyleOptsList,width=self.optsWidth,state="readonly")
         self.lineStyleCb.grid(row=rowNo,column=1,padx=3,pady=3)
-        self.lineStyleCb.set(self.signal.lineStyle)
+        self.lineStyleCb.set(self.signal.style)
         
         # Select line marker
         rowNo+=1
