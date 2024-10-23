@@ -609,7 +609,7 @@ class Presenter():
         # Get the signal options values
         lineWidth = float(signalOptions.lineWidthCb.get())
         lineStyle = signalOptions.lineStyleCb.get()
-        lineMarker = signalOptions.lineMarkerCb.get()
+        lineMarker = signalOptions.GetMarkerOpts()
         color= signalOptions.selectedColor
         
         self.model.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].color=color

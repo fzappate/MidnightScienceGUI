@@ -30,7 +30,21 @@ class SignalOptions(tk.Frame):
         self.btnSize = 6
         self.lineWidthOptsList = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]
         self.lineStyleOptsList = ['-','--',':','-.']
-        self.lineMarkerOptsList = ['','.','o','s','^','v','*','+','x','D','>','<']
+        self.lineMarkerSymbolList = ['',
+                                     '\u2022', # •
+                                     '\u25CF', # ●
+                                     '\u25A0', # ■ 
+                                     '\u25B2', # ▲
+                                     '\u25BC', # ▼
+                                     '\u2731', # ✱ 
+                                     '\u271A', # ✚
+                                     '\u2716', # ✖
+                                     '\u25C6', # ◆
+                                     '\u25B7', # ▶ 
+                                     '\u25C1'] # ◀
+                                     
+        
+        self.lineMarkerOptsList = ['None','.','o','s','^','v','*','+','x','D','>','<']
         
         # OPTIONS FRAME
         self.optsFrame = tk.Frame(self,width=self.optsWidth,bg='blue')
@@ -75,9 +89,11 @@ class SignalOptions(tk.Frame):
         self.lineMarkerLabel = ttk.Label(self.optsFrame,text='Select Line Marker')
         self.lineMarkerLabel.grid(row=rowNo,column=0,pady=3,sticky='EW')
         
-        self.lineMarkerCb = ttk.Combobox(self.optsFrame,values=self.lineMarkerOptsList, width = self.optsWidth,state="readonly")
+        self.lineMarkerCb = ttk.Combobox(self.optsFrame,values=self.lineMarkerSymbolList, width = self.optsWidth,state="readonly")
         self.lineMarkerCb.grid(row=rowNo,column=1,padx=3,pady=3)
-        self.lineMarkerCb.set(self.signal.marker)
+        markerIndx = self.lineMarkerOptsList.index(self.signal.marker)
+        markerSymbol = self.lineMarkerSymbolList[markerIndx]
+        self.lineMarkerCb.set(markerSymbol)
         
         # BUTTON FRAME
         self.buttonFrame = tk.Frame(self,bg = 'black')
@@ -112,6 +128,13 @@ class SignalOptions(tk.Frame):
             
         except:
             print("color not selected")
+            
+    def GetMarkerOpts(self):
+        '''Get marker options.'''
+        markerSymbol = self.lineMarkerCb.get()
+        symbolIndx = self.lineMarkerSymbolList.index(markerSymbol)
+        return self.lineMarkerOptsList[symbolIndx]
+        
             
             
         
