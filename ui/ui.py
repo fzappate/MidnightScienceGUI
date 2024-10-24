@@ -6,7 +6,7 @@ from ui.notebook import HorizTabCollection
 from ui.filebar import FileBar
 from ui.customtext import VerticalScrollText
 from ui.auxbar import AuxBar
-
+from ui.TabManager import TabManager
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -46,15 +46,27 @@ class UI(tk.Tk):
         self.rowconfigure(2,weight=1)
         self.rowconfigure(3,weight=0)
 
+        # Path selector
         self.pathSelector = PathSelector(self,presenter, background = 'gray30')
         self.pathSelector.grid(row=0,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
-        self.auxBar = AuxBar(self,presenter, background = 'gray30')
-        self.auxBar.grid(row = 1,column=0,sticky='EW', padx = (3,3),pady = (2,2))
+        # Icon frame
+        self.iconFrame = tk.Frame(self,bg='blue')
+        self.iconFrame.grid(row=1,column=0,sticky='EW')
+        self.iconFrame.columnconfigure(0,weight=1)
+        
+        self.auxBar = AuxBar(self.iconFrame,presenter, background = 'gray30')
+        self.auxBar.grid(row = 0,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
+        self.tabManager = TabManager(self.iconFrame)
+        self.tabManager.grid(row=0,column=1, sticky='EW')
+        self.tabManager.columnconfigure(0,weight=1)
+        
+        # Main tabs
         self.mainTabColl = HorizTabCollection(self,presenter, background = 'gray30')
         self.mainTabColl.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
 
+        # Text widget
         self.text = VerticalScrollText(self,height = 150, background = 'gray30')
         self.text.grid(row=3,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
