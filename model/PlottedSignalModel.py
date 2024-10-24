@@ -2,10 +2,11 @@ from model.SignalModel import Signal
 
 class PlottedSignal(Signal):
     def __init__(self,
-                 lineThickness = 1,
-                 lineStyle = '-',
-                 marker = '',
-                 color = [1, 1, 1],
+                 width = 1,
+                 style = '-',
+                 marker = 'None',
+                 color = '#000000',
+                 label = '',
                  *args,
                  **kwargs)->None:
         '''
@@ -15,15 +16,17 @@ class PlottedSignal(Signal):
         '''
         super().__init__(*args,**kwargs)
         
-        self.lineThickness = lineThickness 
-        self.lineStyle = lineStyle
+        self.width = width
+        self.style = style
         self.marker = marker
         self.color = color
+        self.label = label
         
     def CopySignalProperties(self,signal)->None:
         '''Take a signal of the Signal class, copy its properties into 
         a PlottedSignal instance.'''
         self.name = signal.name
+        self.label = signal.name
         self.units = signal.units
         self.rawData = signal.rawData
         self.scaledData = signal.scaledData

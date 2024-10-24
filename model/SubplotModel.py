@@ -10,6 +10,7 @@ class SubplotModel():
         self.noOfResFile = 0
         self.resultFiles = []
         self.plottedSignals = []
+        
         self.xAxisSignals = []
         self.xAxisSignalsName = []
         self.xAxisSelected = []
@@ -30,6 +31,8 @@ class SubplotModel():
         self.yTickUser = 0.2
         self.useUserTicks = False
         self.setGrid = True
+        
+        self.colorCounter = 0
         
     def AddResultFile(self,resultFileModel):
         '''Add ResultFileModel to SubplotModel.'''
