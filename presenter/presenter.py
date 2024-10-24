@@ -666,11 +666,14 @@ class Presenter():
                 psWidth=plottedSig.width
                 psStyle=plottedSig.style
                 psMarker=plottedSig.marker
+                psLabel=plottedSig.label
                 axList[spNo,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
                                     color=psCol,
                                     linewidth=psWidth,
                                     linestyle=psStyle,
-                                    marker=psMarker)
+                                    marker=psMarker,
+                                    label=psLabel)
+                axList[spNo,0].legend()
            
             # Extract subplot default settings
             self.model.plotModel.containedSubplots[spNo].xLim = list(axList[spNo,0].get_xlim())

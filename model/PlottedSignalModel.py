@@ -6,6 +6,7 @@ class PlottedSignal(Signal):
                  style = '-',
                  marker = 'None',
                  color = '#000000',
+                 label = '',
                  *args,
                  **kwargs)->None:
         '''
@@ -19,11 +20,13 @@ class PlottedSignal(Signal):
         self.style = style
         self.marker = marker
         self.color = color
+        self.label = label
         
     def CopySignalProperties(self,signal)->None:
         '''Take a signal of the Signal class, copy its properties into 
         a PlottedSignal instance.'''
         self.name = signal.name
+        self.label = signal.name
         self.units = signal.units
         self.rawData = signal.rawData
         self.scaledData = signal.scaledData
