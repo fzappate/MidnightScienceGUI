@@ -5,3 +5,4 @@ class ProjectModel():
         '''
         
         self.containedPlots = []
+        self.tabSelected = 0

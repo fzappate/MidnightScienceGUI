@@ -23,7 +23,7 @@ class PlotUI(tk.Frame):
         
         # Create a blank canvas to start
         self.fig, axs = plt.subplots(1)
-        self.fig.subplots_adjust(left=0.05, bottom=0.05, right=0.95, top=0.95, wspace=0.1, hspace=0.2)
+        # self.fig.subplots_adjust(left=0.05, bottom=0.05, right=0.95, top=0.95, wspace=0.1, hspace=0.2)
         
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)

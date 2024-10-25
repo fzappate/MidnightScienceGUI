@@ -58,7 +58,7 @@ class UI(tk.Tk):
         self.auxBar = AuxBar(self.iconFrame,presenter, background = 'gray30')
         self.auxBar.grid(row = 0,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
-        self.tabManager = TabManager(self.iconFrame)
+        self.tabManager = TabManager(self.iconFrame,presenter)
         self.tabManager.grid(row=0,column=1, sticky='EW')
         self.tabManager.columnconfigure(0,weight=1)
         

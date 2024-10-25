@@ -9,12 +9,14 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
+from ui.plotter import Plotter
 from ui.collapsiblepanes import TogglePaneDelOpts
 from ui.resfilemanager import ResFileManager
 from ui.resfilepane import ResFilePane
 from ui.signalpane import SignalPane
 from ui.SubplotOptions import SubplotOptions
 from ui.SignalOptions import SignalOptions
+
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
@@ -228,6 +230,16 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()        
         
+    # Plot Handling
+    def AddPlotTab(self)->None:
+        '''Add a Plot in the ProjectModel containedPlots list.'''
+        plot = PlotModel()
+        noOfPlots = len(self.model.projectModel.containedPlots)
+        plot.indx = noOfPlots+1
+        self.model.projectModel.containedPlots.append(plot)
+        
+        # Redraw plot notebook 
+        self.RedrawPlotNotebook()
         
      
     # Subplot Handling
@@ -636,7 +648,25 @@ class Presenter():
         self.CloseSignalOptions(signalOptionsPane)
         
     # Plot Manager
-    
+    def RedrawPlotNotebook(self)->None:
+        '''Redraw plot tab.'''
+        # Delete existing tabs
+        for ii, tab in enumerate(self.view.mainTabColl.plotNotebook.tabs()):
+             self.view.mainTabColl.plotNotebook.forget(tab)
+         
+         # Redraw tabs
+        for ii,plot in enumerate(self.model.projectModel.containedPlots):
+            tab = Plotter(self.view.mainTabColl.plotNotebook, self)
+            plotTitle = "Plot " + str(ii)
+            self.view.mainTabColl.plotNotebook.add(tab, text = plotTitle)
+            
+            for jj, subplot in enumerate(plot.containedSubplots):
+                
+                for kk, resultFile in enumerate(subplot.resultFiles):
+                    
+                    for hh, plottedSignal in enumerate(resultFile.selectedSignals): 
+        
+        
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
         # Close all the figures, destroy toolbar and canvas

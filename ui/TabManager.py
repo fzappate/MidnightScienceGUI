@@ -4,12 +4,13 @@ from tkinter import ttk
 class TabManager(tk.Frame):    
     def __init__(self,
                  parent,
+                 presenter,
                  *args,
                  **kwargs):
         '''Initialzie TabManager options widget.'''
         super().__init__(parent,*args,**kwargs)
         
-        self.addButton = ttk.Button(self,text='Add')
+        self.addButton = ttk.Button(self,text='Add',command=presenter.AddPlotTab)
         self.addButton.grid(row=0,column=0, sticky='NEWS')
         
         self.optsButton = ttk.Button(self,text='Opts')
