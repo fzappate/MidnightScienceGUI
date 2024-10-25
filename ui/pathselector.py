@@ -32,7 +32,7 @@ class PathSelector(tk.Frame):
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
 
-        self.navigate = ttk.Button(self, text="Browse..", command= lambda:presenter.BrowseWorkingFolder())
+        self.navigate = ttk.Button(self, text="Browse..", command= lambda:presenter.BrowseProjectFolder())
         
         self.lab.grid(row=0, column=0, padx = (3,3))
         self.pathEntry.grid(row=0,column=1,sticky = "EW", padx = (3,3))

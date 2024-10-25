@@ -46,7 +46,6 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initUI(self)
         self.LoadSettings()
-        self.LoadResultsFromSavedSettings()
         self.view.protocol("WM_DELETE_WINDOW", self._on_closing)  # Force closing when 
         self.view.mainloop()
 
@@ -95,14 +94,14 @@ class Presenter():
         file.close()
         
         # load setting dictionary in setting structure
-        self.model.settings.workingFolder = settingDict.get("workingFolder")
-        self.model.settings.resultsFilePath = settingDict.get("resultsFilePath")
+        self.model.settings.workingFolder = settingDict.get("ProjectFolder")
         
         # Update entries
+        self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
         # self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
         # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
     
-    def LoadResultsFromSavedSettings(self) -> None:
+    def LoadResultsFromSavedSettings(self) -> None: # DELETE
         '''Load results.'''
         # Read results file
         file = open(self.model.settings.resultsFilePath,'r')
@@ -139,7 +138,7 @@ class Presenter():
     
     # Project Folder Selection
     
-    def BrowseWorkingFolder(self)->None:
+    def BrowseProjectFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
         and store its path in the main control models. """
         # Open the dialog window
@@ -149,7 +148,7 @@ class Presenter():
         # Update model setting
         self.model.settings.workingFolder = folder
         # Set the workign folder of the setting object the same as the content of the entry 
-        self.UpdateSettingFile("workingFolder", folder)
+        self.UpdateSettingFile("ProjectFolder", folder)
                     
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
@@ -665,6 +664,7 @@ class Presenter():
                 for kk, resultFile in enumerate(subplot.resultFiles):
                     
                     for hh, plottedSignal in enumerate(resultFile.selectedSignals): 
+                        '''hjevuwfv'''
         
         
     def RedrawPlotCanvas(self)->None:
