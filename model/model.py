@@ -9,8 +9,6 @@ class Model():
         '''Initialize the model class.'''
 
         self.settings = Settings()
-        self.results = {}
-        self.plotData = SignalCollection()
         self.projectModel = ProjectModel()
         
         

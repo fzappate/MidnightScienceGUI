@@ -1,0 +1,227 @@
+{
+    "projectName": "ProjectModel",
+    "tabSelected": 1,
+    "containedPlots": [
+        {
+            "name": "Plot1",
+            "indx": 0,
+            "noOfSubplots": 1,
+            "containedSubplots": [
+                {
+                    "name": "Subplot1",
+                    "indx": 0,
+                    "isCollapsed": 1,
+                    "xLabel": "x label",
+                    "yLabel": "y label",
+                    "xLim": [0, 1],
+                    "yLim": [0, 10],
+                    "xLimUser": [0, 10],
+                    "yLimUser": [0, 10],
+                    "useUserLim": 1,
+                    "xTick": 0.2,
+                    "yTick": 0.2,
+                    "xTickUser": 0.1,
+                    "yTickUser": 0.1,
+                    "useUserTicks": 1,
+                    "setGrid": 1,
+                    "colorCounter": 1,
+
+                    "noOfResFile": 1,
+                    "resultFiles": [
+                        {
+                            "resFileName": "ResFile1",
+                            "indx": 0,
+                            "absPath": "C:/Software/MACnCheese/build/Debug/ResultsPrinter.csv",
+                            "signals": [],
+                            "signalNames": [],
+                            "selectedSignals": [
+                                {
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "Simulation:Time",
+                                    "name": "Simulation:Time",
+                                    "units": "s",
+                                    "scalingFactor": 1,
+                                    "quantity": "Time",
+                                    "indx": 0
+                                },
+                                {
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "inletChamber:Pressure",
+                                    "name": "inletChamber:Pressure",
+                                    "units": "bar",
+                                    "scalingFactor": 0.00001,
+                                    "quantity": "Pressure",
+                                    "indx": 1
+                                }
+                            ]
+                        },
+                        {
+                            "resFileName": "ResFile2",
+                            "indx": 1,
+                            "absPath": "C:/Software/MACnCheese/build/Debug/ResultsPrinter.csv",
+                            "signals": [],
+                            "signalNames": [],
+                            "selectedSignals": [
+                                {
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "inletChamber:Pressure",
+                                    "name": "inletChamber:Pressure",
+                                    "units": "bar",
+                                    "scalingFactor": 0.00001,
+                                    "quantity": "Pressure",
+                                    "indx": 1
+                                }
+                            ]
+                        }
+                    ],
+                    "PlottedSignal": [
+                        {
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "Simulation:Time",
+                            "name": "Simulation:Time",
+                            "units": "s",
+                            "scalingFactor": 1,
+                            "quantity": "Time",
+                            "indx": 0
+                        },
+                        {
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "inletChamber:Pressure",
+                            "name": "inletChamber:Pressure",
+                            "units": "bar",
+                            "scalingFactor": 0.00001,
+                            "quantity": "Pressure",
+                            "indx": 1
+                        }
+
+                    ],
+                    "xAxisSelextedIndx":0
+                }
+            ]
+        },
+        {
+            "plotName": "Plot2",
+            "indx": 1,
+            "noOfSubplots": 1,
+            "containedSubplots": [
+                {
+                    "subplotName": "Subplot1",
+                    "subplotIndx": 0,
+                    "noOfResFile": 1,
+                    "isCollapsed": 1,
+                    "resultFiles": [
+                        {
+                            "resFileName": "ResFile1",
+                            "indx": 0,
+                            "absPath": "C:/Software/MACnCheese/build/Debug/ResultsPrinter.csv",
+                            "signals": [],
+                            "signalNames": [],
+                            "selectedSignals": [
+                                {
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "Simulation:Time",
+                                    "name": "Simulation:Time",
+                                    "units": "s",
+                                    "scalingFactor": 1,
+                                    "quantity": "Time",
+                                    "indx": 0
+                                },
+                                {
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "inletChamber:Pressure",
+                                    "name": "inletChamber:Pressure",
+                                    "units": "bar",
+                                    "scalingFactor": 0.00001,
+                                    "quantity": "Pressure",
+                                    "indx": 1
+                                }
+                            ]
+                        },
+                        {
+                            "resFileName": "ResFile2",
+                            "indx": 1,
+                            "absPath": "C:/Software/MACnCheese/build/Debug/ResultsPrinter.csv",
+                            "signals": [],
+                            "signalNames": [],
+                            "selectedSignals": [
+                                {
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "inletChamber:Pressure",
+                                    "name": "inletChamber:Pressure",
+                                    "units": "bar",
+                                    "scalingFactor": 0.00001,
+                                    "quantity": "Pressure",
+                                    "indx": 1
+                                }
+                            ]
+                        }
+                    ],
+                    "plottedSignals":
+                    [
+                        {
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "Simulation:Time",
+                            "name": "Simulation:Time",
+                            "units": "s",
+                            "scalingFactor": 1,
+                            "quantity": "Time",
+                            "indx": 0
+                        },
+                        {
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "inletChamber:Pressure",
+                            "name": "inletChamber:Pressure",
+                            "units": "bar",
+                            "scalingFactor": 0.00001,
+                            "quantity": "Pressure",
+                            "indx": 1
+                        },
+                        {
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "inletChamber:Pressure",
+                            "name": "inletChamber:Pressure",
+                            "units": "bar",
+                            "scalingFactor": 0.00001,
+                            "quantity": "Pressure",
+                            "indx": 1
+                        }
+                    ]
+
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,109 @@
+{
+    "name": "ProjectModel",
+    "tabSelected": 1,
+    "containedPlots": [
+        {
+            "name": "Plot1",
+            "indx": 0,
+            "noOfSubplots": 1,
+            "containedSubplots": [
+                {
+                    "name": "Subplot1",
+                    "indx": 0,
+                    "isCollapsed": 1,
+                    "xLabel": "x label",
+                    "yLabel": "y label",
+                    "xLim": [
+                        0,
+                        1
+                    ],
+                    "yLim": [
+                        0,
+                        10
+                    ],
+                    "xLimUser": [
+                        0,
+                        10
+                    ],
+                    "yLimUser": [
+                        0,
+                        10
+                    ],
+                    "useUserLim": 1,
+                    "xTick": 0.2,
+                    "yTick": 0.2,
+                    "xTickUser": 0.1,
+                    "yTickUser": 0.1,
+                    "useUserTicks": 1,
+                    "setGrid": 1,
+                    "colorCounter": 1,
+                    "noOfResFile": 1,
+                    "xAxisSelectedIndx": 0,
+                    "containedResultFiles": [
+                        {
+                            "name": "ResFile1",
+                            "indx": 0,
+                            "absPath": "C:/Software/MACnCheese/build/Debug/ResultsPrinter.csv",
+                            "selectedSignals": [
+                                {
+                                    "name": "Simulation:Time",
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "Simulation:Time",
+                                    "units": "s",
+                                    "scalingFactor": 1,
+                                    "quantity": "Time",
+                                    "indx": 0,
+                                    "indxInResFile": 0
+                                },
+                                {
+                                    "name": "inletChamber:Pressure",
+                                    "width": 1,
+                                    "style": "-",
+                                    "marker": "None",
+                                    "color": "#000000",
+                                    "label": "inletChamber:Pressure",
+                                    "units": "bar",
+                                    "scalingFactor": 0.00001,
+                                    "quantity": "Pressure",
+                                    "indx": 1,
+                                    "indxInResFile": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "plottedSignals": [
+                        {
+                            "name": "Simulation:Time",
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "Simulation:Time",
+                            "units": "s",
+                            "scalingFactor": 1,
+                            "quantity": "Time",
+                            "indx": 0,
+                            "indxInResFile": 0
+                        },
+                        {
+                            "name": "inletChamber:Pressure",
+                            "width": 1,
+                            "style": "-",
+                            "marker": "None",
+                            "color": "#000000",
+                            "label": "inletChamber:Pressure",
+                            "units": "bar",
+                            "scalingFactor": 0.00001,
+                            "quantity": "Pressure",
+                            "indx": 1,
+                            "indxInResFile": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

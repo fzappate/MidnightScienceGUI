@@ -4,6 +4,7 @@ from collections import defaultdict
 import os
 import threading
 import subprocess
+import json
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -17,10 +18,12 @@ from ui.signalpane import SignalPane
 from ui.SubplotOptions import SubplotOptions
 from ui.SignalOptions import SignalOptions
 
+from model.ProjectModel import ProjectModel
 from model.PlotModel import PlotModel
 from model.SubplotModel import SubplotModel
 from model.ResultFileModel import ResultFileModel
-from model.PlottedSignalModel import PlottedSignal
+from model.SignalModel import SignalModel
+from model.PlottedSignalModel import PlottedSignalModel
 
 
 
@@ -46,7 +49,11 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initUI(self)
         self.LoadSettings()
-        self.view.protocol("WM_DELETE_WINDOW", self._on_closing)  # Force closing when 
+        self.LoadProjectModel()
+        self.RedrawPlotNotebook()
+        
+        # Force closing when using matplotlib
+        self.view.protocol("WM_DELETE_WINDOW", self._on_closing)   
         self.view.mainloop()
 
     def _on_closing(self):
@@ -94,45 +101,473 @@ class Presenter():
         file.close()
         
         # load setting dictionary in setting structure
-        self.model.settings.workingFolder = settingDict.get("ProjectFolder")
-        
+        self.model.settings.projectFolder = settingDict.get("ProjectFolder")
+
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
-        # self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("workingFolder"))
-        # self.UpdateEntry(self.view.mainTabColl.plotter.plotManagerPane.plotManager.fileSelector.pathEntry,settingDict.get("resultsFilePath"))
     
-    def LoadResultsFromSavedSettings(self) -> None: # DELETE
-        '''Load results.'''
+    def LoadProjectModel(self) -> None:
+        '''Load project from JSON.'''
+        # Check that a ProjectModel.json exists
+        projectModelPath = self.model.settings.projectFolder + "/ProjectModel.json"
+        projectModelFileExists = os.path.exists(projectModelPath)
+        if (projectModelFileExists):
+            print('Project file found at: ' + projectModelPath)
+        else:
+            print(' file not found at: ' + projectModelPath)
+            
+        # Load ProjectModel.json
+        f = open(projectModelPath,'r')
+        jsonProjMod = json.load(f)
+        
+        # Load project data
+        projModel = ProjectModel()
+        projModel.tabSelected = jsonProjMod["tabSelected"]
+        
+        # Load plot data        
+        jsonContainedPlots = jsonProjMod["containedPlots"]
+        for ii, jsonPlot in enumerate(jsonContainedPlots):
+            plotModel = PlotModel()
+            plotModel.name = jsonPlot["name"]
+            plotModel.indx = jsonPlot["indx"]
+            plotModel.noOfSubplots = jsonPlot["noOfSubplots"]
+            
+            # Load subplot data
+            jsonContainedSubplots = jsonPlot["containedSubplots"]
+            for jj, jsonSubplot in enumerate(jsonContainedSubplots):
+                subplotModel = SubplotModel()
+                subplotModel.name = jsonSubplot["name"]
+                subplotModel.indx = jsonSubplot["indx"]
+                subplotModel.isCollapsed = jsonSubplot["isCollapsed"]
+                
+                subplotModel.xLabel = jsonSubplot["xLabel"]
+                subplotModel.yLabel = jsonSubplot["yLabel"]
+                subplotModel.xLim = jsonSubplot["xLim"]
+                subplotModel.yLim = jsonSubplot["yLim"]
+                subplotModel.xLimUser = jsonSubplot["xLimUser"]
+                subplotModel.yLimUser = jsonSubplot["yLimUser"]
+                subplotModel.useUserLim = jsonSubplot["useUserLim"]
+                subplotModel.xTick = jsonSubplot["xTick"]
+                subplotModel.yTick = jsonSubplot["yTick"]
+                subplotModel.xTickUser = jsonSubplot["xTickUser"]
+                subplotModel.yTickUser = jsonSubplot["yTickUser"]
+                subplotModel.useUserTicks = jsonSubplot["useUserTicks"]
+                subplotModel.setGrid = jsonSubplot["setGrid"]
+                
+                subplotModel.colorCounter = jsonSubplot["colorCounter"]
+                
+                subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
+                # subplotModel.containedResultFiles = jsonSubplot["containedResultFiles"]
+                # subplotModel.plottedSignals = jsonSubplot["plottedSignals"]
+                
+                subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
+                
+                
+                # Load result files data
+                jsonContainedResFile = jsonSubplot["containedResultFiles"]
+                for kk, jsonResFile in enumerate(jsonContainedResFile):
+                    resFileModel = ResultFileModel()
+                    resFileModel.name = jsonResFile["name"]
+                    resFileModel.indx = jsonResFile["indx"]
+                    resFileModel.absPath = jsonResFile["absPath"]
+                                        
+                    resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
+                    
+                    # Load selected signal data
+                    jsonSelectedSignals = jsonResFile["selectedSignals"]
+                    for hh, jsonSelSign in enumerate(jsonSelectedSignals):
+                        selectedSignalModel = PlottedSignalModel()
+                        selectedSignalModel.name = jsonSelSign["name"]
+                        selectedSignalModel.indx = jsonSelSign["indx"]
+                        selectedSignalModel.width = jsonSelSign["width"]
+                        selectedSignalModel.style = jsonSelSign["style"]
+                        selectedSignalModel.marker = jsonSelSign["marker"]
+                        selectedSignalModel.color = jsonSelSign["color"]
+                        selectedSignalModel.label = jsonSelSign["label"]
+                        selectedSignalModel.label = jsonSelSign["name"]
+                        selectedSignalModel.units = jsonSelSign["units"]
+                        selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
+                        selectedSignalModel.quantity = jsonSelSign["quantity"]
+                        selectedSignalModel.indxInResFile = jsonSelSign["indxInResFile"]
+                        
+                        selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indxInResFile].rawData
+                        selectedSignalModel.scaledData = np.array(selectedSignalModel.rawData)*selectedSignalModel.scalingFactor
+                        
+                        # Append PlottedSignal inside the ResultFileModel.selectedSignals
+                        resFileModel.selectedSignals.append(selectedSignalModel)
+                    
+                    # Append ResultFileModel to SubplotModel.containedResultFiles
+                    subplotModel.containedResultFiles.append(resFileModel)
+
+                
+                subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
+                subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
+                subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
+                subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
+                
+                
+                # Load plotted signals data
+                jsonPlottedSignals = jsonSubplot["plottedSignals"]
+                for ll, jsonPlottedSignal in enumerate(jsonPlottedSignals):
+                    plottedSignalModel = PlottedSignalModel()
+                    plottedSignalModel.name = jsonPlottedSignal["name"]
+                    plottedSignalModel.indx = jsonPlottedSignal["indx"]
+                    plottedSignalModel.width = jsonPlottedSignal["width"]
+                    plottedSignalModel.style = jsonPlottedSignal["style"]
+                    plottedSignalModel.marker = jsonPlottedSignal["marker"]
+                    plottedSignalModel.color = jsonPlottedSignal["color"]
+                    plottedSignalModel.label = jsonPlottedSignal["label"]
+                    plottedSignalModel.label = jsonPlottedSignal["name"]
+                    plottedSignalModel.units = jsonPlottedSignal["units"]
+                    plottedSignalModel.scalingFactor = jsonPlottedSignal["scalingFactor"] 
+                    plottedSignalModel.quantity = jsonPlottedSignal["quantity"]
+                    selectedSignalModel.indxInResFile = jsonSelSign["indxInResFile"]
+                    
+                    selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indxInResFile].rawData
+                    selectedSignalModel.scaledData = np.array(selectedSignalModel.rawData)*selectedSignalModel.scalingFactor
+                    
+                    subplotModel.plottedSignals.append(plottedSignalModel)
+                    
+                # Append the SubplotModel inside the PlotModel.containedSubplots
+                plotModel.containedSubplots.append(subplotModel)
+                
+            # Append the PlotModel inside the ProjectModel.containedPlots
+            projModel.containedPlots.append(plotModel)      
+            
+        self.model.projectModel = projModel
+         
+        # Plot Manager
+    
+    def SaveProjectModel(self)->None:
+        '''Save project model.'''
+        
+        f = open("ProjectModelSave.json", "w")
+        
+        self.SaveProjectToJson(self.model.projectModel,f)
+        
+        
+    def SaveProjectToJson(self,projectModel,f)->None:
+        f.write('{')
+        f.write('"name": "'+ projectModel.name +'",\n')
+        f.write('"tabSelected": '+ str(projectModel.tabSelected) +',\n')
+        f.write('"containedPlots": [\n')
+        
+        noOfContainedPlots = len(self.model.projectModel.containedPlots)-1
+        for ii,plot in enumerate(self.model.projectModel.containedPlots):
+            self.SavePlotToJson(plot,f)
+            
+            if ii < noOfContainedPlots:
+                f.write('}\n,\n') # Close PlotModel object
+            else:
+                f.write('}\n]\n') # Close containedPlots list
+                    
+            f.write('}') # Close the ProjectModel
+                
+    def SavePlotToJson(self,plotModel,f)->None:
+        '''Save PlotModel object to Json.'''
+        f.write('{')
+        f.write('"name": "'+ plotModel.name +'",\n')
+        f.write('"indx": '+ str(plotModel.indx) +',\n')
+        f.write('"noOfSubplots": '+ str(plotModel.noOfSubplots) +',\n')
+        f.write('"containedSubplots": [\n')
+        
+        # print subplots
+        noOfContainedSubplots = len(plotModel.containedSubplots)-1
+        for jj, subplot in enumerate(plotModel.containedSubplots):
+            self.SaveSubplotToJson(subplot,f)
+            
+            if jj < noOfContainedSubplots:
+                f.write('}\n,\n') # Close SubplotModel object
+            else:
+                f.write('}\n]\n') # Close containedSubplots list
+               
+    def SaveSubplotToJson(self,subplotModel,f)->None:
+        '''Save SubplotModel to Json.'''
+        f.write('{')
+        f.write('"name": "'+ subplotModel.name +'",\n')
+        f.write('"indx": '+ str(subplotModel.indx)+',\n')
+        f.write('"isCollapsed": '+ str(subplotModel.isCollapsed) +',\n')
+        f.write('"xLabel": "'+ subplotModel.xLabel +'",\n')
+        f.write('"yLabel": "'+ subplotModel.yLabel +'",\n')
+        f.write('"xLim": '+ str(subplotModel.xLim) + ',\n')
+        f.write('"yLim": '+ str(subplotModel.yLim) + ',\n')
+        f.write('"xLimUser": '+ str(subplotModel.xLimUser) + ',\n')
+        f.write('"yLimUser": '+ str(subplotModel.yLimUser) + ',\n')
+        f.write('"useUserLim": '+ str(subplotModel.useUserLim) + ',\n')
+        f.write('"xTick": '+ str(subplotModel.xTick)+',\n')
+        f.write('"yTick": '+ str(subplotModel.yTick)+',\n')
+        f.write('"xTickUser": '+ str(subplotModel.xTickUser)+',\n')
+        f.write('"yTickUser": '+ str(subplotModel.yTickUser)+',\n')
+        f.write('"useUserTicks": '+ str(subplotModel.useUserTicks)+',\n')
+        f.write('"setGrid": '+ str(subplotModel.setGrid)+',\n')
+        f.write('"colorCounter": '+ str(subplotModel.colorCounter)+',\n')
+        f.write('"noOfResFile": '+ str(subplotModel.noOfResFile)+',\n')
+        f.write('"xAxisSelectedIndx": '+ str(subplotModel.xAxisSelectedIndx)+',\n')
+        
+        # Print Result files
+        f.write('"containedResultFiles": [\n')
+        noOfResltFile = len(subplotModel.containedResultFiles)-1
+        for kk, resultFile in enumerate(subplotModel.containedResultFiles):
+            self.SaveResultFileToJson(resultFile,f)
+
+            if kk < noOfResltFile:
+                f.write('}\n,\n') # Close ResultFile object
+            else:
+                f.write('}\n],\n') # Close containedResultFiles list
+                
+        # Print Plotted signals
+        f.write('"plottedSignals": [\n')        
+        noOfPlottedSignals = len(subplotModel.plottedSignals)-1
+        for kk, plottedSignal in enumerate(subplotModel.plottedSignals):
+            self.SavePlottedSignalToJson(plottedSignal,f)
+
+            if kk < noOfPlottedSignals:
+                f.write(',\n') # Close ResultFile object
+            else:
+                f.write(']\n') # Close containedResultFiles list
+                        
+        
+    def SaveResultFileToJson(self,resultFile,f)->None:
+        '''Save ResultFile object to Json.'''
+        f.write('{')
+        f.write('"name": "'+ resultFile.name +'",\n')
+        f.write('"indx": '+ str(resultFile.indx) +',\n')
+        f.write('"absPath": "'+ resultFile.absPath +'",\n')
+        f.write('"selectedSignals": [\n')
+        
+        # Print selected signals
+        noOfSelSignals = len(resultFile.selectedSignals)-1
+        for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
+            self.SavePlottedSignalToJson(selectedSignal,f)
+            
+            if hh < noOfSelSignals:
+                f.write(',\n') # Close SelectedSignal object
+            else:
+                f.write(']\n') # Close SelectedSignals list
+        
+    def SavePlottedSignalToJson(self, plottedSignal, f)->None:
+        '''Save PlottedSignal object to Json.'''
+        f.write('{')
+        f.write('"name": "'+ plottedSignal.name +'",\n')
+        f.write('"width": '+ str(plottedSignal.width) +',\n')
+        f.write('"style": "'+ plottedSignal.style +'",\n')
+        f.write('"marker": "'+ plottedSignal.marker +'",\n')
+        f.write('"color": "'+ plottedSignal.color +'",\n')
+        f.write('"label": "'+ plottedSignal.label +'",\n')
+        f.write('"units": "'+ plottedSignal.units +'",\n')
+        f.write('"scalingFactor": '+ str(plottedSignal.scalingFactor)+',\n')
+        f.write('"quantity": "'+ plottedSignal.quantity +'"'+',\n')
+        f.write('"indx": '+ str(plottedSignal.indx)+',\n')
+        f.write('"indxInResFile": '+ str(plottedSignal.indxInResFile)+'\n')
+        f.write('}'+'\n')
+                                        
+                                        
+                                        
+        
+    
+    def RedrawPlotNotebook(self)->None:
+        '''Redraw plot tab.'''
+        # Delete existing tabs
+        for ii, tab in enumerate(self.view.mainTabColl.plotNotebook.tabs()):
+             self.view.mainTabColl.plotNotebook.forget(tab)
+        
+         
+        # Redraw tabs
+        for ii,plot in enumerate(self.model.projectModel.containedPlots):
+            tab = Plotter(self.view.mainTabColl.plotNotebook, self)
+            
+            
+            # Redraw subplots
+            for jj, subplot in enumerate(plot.containedSubplots):
+                spRow = ii+1 # Skip the 'Add subplot' button
+                toggleFrame = TogglePaneDelOpts(tab.plotManager,
+                                            self,
+                                            label = subplot.name,
+                                            indx=ii,
+                                            isCollapsed=bool(subplot.isCollapsed),
+                                            bg = 'cyan')
+                toggleFrame.grid(row = spRow, column = 0, sticky='EW')
+                resFileManager = ResFileManager(toggleFrame.interior, 
+                                                self, 
+                                                current = subplot.xAxisSelectedIndx,
+                                                listOfSignals = subplot.xAxisSignalsName,
+                                                bg = 'blue')
+                resFileManager.grid(row=0,column=0,sticky='EW')
+                
+                
+                 # Redraw result files 
+                for kk, resultFile in enumerate(subplot.containedResultFiles):
+                    rfRow=jj+3 # Skip the label, combobox, and 'Add result file' button
+                    resFile = ResFilePane(resFileManager,
+                                        self,
+                                        indx = jj,
+                                        entryText=resultFile.absPath,
+                                        comboboxList=resultFile.signalNames)
+                    resFile.grid(row=rfRow,column=0,sticky='EW')
+                    
+                    # Redraw selected signals
+                    for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
+                        ssRow = kk+2 # Skip the button and combobox row
+                        sigPane = SignalPane(   resFile,
+                                                self,
+                                                selectedSignal,
+                                                indx = kk,
+                                                bg = 'red')
+                        sigPane.grid(row=ssRow,column=0,sticky='EW')
+                        
+                        
+                    # Separator between result files 
+                    separatorRow = 2+len(resultFile.selectedSignals)+1
+                    separator = tk.Frame(resFile, bg = 'green', height=5)
+                    separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+                    
+                # Separator between subplots
+                separatorRow = 3+len(subplot.containedResultFiles)+1
+                separator = tk.Frame(toggleFrame.interior, bg = 'red', height=10)
+                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+                        
+            plotTitle = "Plot " + str(ii)
+            self.view.mainTabColl.plotNotebook.add(tab, text = plotTitle)
+                               
+    def RedrawPlotManager(self)->None:
+        '''
+        Redraw the plot manager time.
+        '''
+        # Delete everything in the plot manager but the first row
+        plotManagerChildren = self.view.mainTabColl.plotNotebook.winfo_children()
+        for ii,child in enumerate(plotManagerChildren):
+            if ii == 0:
+                continue
+            child.destroy()
+            
+        # Redraw everything in the plot manager
+        areCollapsed = self.model.plotModel.areCollapsed
+        # Iterate on the Subplots
+        for ii,sp in enumerate(self.model.plotModel.containedSubplots):
+            spRow = ii+1 # Skip the 'Add subplot' button
+            toggleFrame = TogglePaneDelOpts(self.view.mainTabColl.plotter.plotManager,
+                                        self,
+                                        label = sp.name,
+                                        indx=ii,
+                                        isCollapsed=areCollapsed[ii],
+                                        bg = 'cyan')
+            toggleFrame.grid(row = spRow, column = 0, sticky='EW')
+            resFileManager = ResFileManager(toggleFrame.interior, 
+                                            self, 
+                                            current = sp.xAxisSelectedIndx,
+                                            listOfSignals = sp.xAxisSignalsName,
+                                            bg = 'blue')
+            resFileManager.grid(row=0,column=0,sticky='EW')
+            
+            # Iterate on the ResultFile
+            for jj,rf in enumerate(sp.resultFiles):
+                rfRow=jj+3 # Skip the label, combobox, and 'Add result file' button
+                resFile = ResFilePane(resFileManager,
+                                      self,
+                                      indx = jj,
+                                      entryText=rf.absPath,
+                                      comboboxList=rf.signalNames)
+                resFile.grid(row=rfRow,column=0,sticky='EW')
+                
+                # Iterate on the Signalpane
+                for kk, ss in enumerate(rf.selectedSignals):
+                    ssRow = kk+2 # Skip the button and combobox row
+                    sigPane = SignalPane(   resFile,
+                                            self,
+                                            ss,
+                                            indx = kk,
+                                            bg = 'red')
+                    sigPane.grid(row=ssRow,column=0,sticky='EW')
+                # Separator between result files 
+                separatorRow = 2+len(rf.selectedSignals)+1
+                separator = tk.Frame(resFile, bg = 'green', height=5)
+                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+                
+            # Separator between subplots
+            separatorRow = 3+len(sp.resultFiles)+1
+            separator = tk.Frame(toggleFrame.interior, bg = 'red', height=10)
+            separator.grid(row=separatorRow,column = 0, sticky = 'EW')
+
+      
+    
+      
+      
+      
+      
+      
+      
+             
+    def LoadSignalsFromResFile(self,filePath):
+        '''Load results.'''       
         # Read results file
-        file = open(self.model.settings.resultsFilePath,'r')
+        file = open(filePath,'r')
         lines = file.readlines()
         file.close()
         
-        # Update the model dictionary containing the results 
-        resDict = defaultdict(list)
-        counter = 0
-        for line in lines:
-            lineTokens = line.split(',')
-            lineTokens = [lineToken.strip() for lineToken in lineTokens ]
-            lineTokens = lineTokens[:-1]
-            
-            if counter == 0:
-                headerTokens = lineTokens
-            else:
-                valueTokens = lineTokens
-                
-                # If the line is empty, move to another line
-                if valueTokens[0] == "":
+        # Initialize lists 
+        signals = []
+        signalNames = []
+        
+        # Create the list of signals
+        headerTokens = lines[0].split(',')
+        headerTokens = headerTokens[:-1]
+        for i, headerToken in enumerate(headerTokens):
+            headerToken = headerToken.strip() 
+            signalTokens = headerToken.split(':')
+            name = signalTokens[:-1]
+            name = ":".join(name)
+            units = signalTokens[-1]
+            sigQuantity = self.DetermineSignalQuantity(name,units)
+            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indx = i)
+            signals.append(sigTemp)
+            signalNames.append(name)
+        
+        # Iterate on the lines - skip the first one
+        for line in lines[1:]:
+            valueTokens = line.split(',')
+            valueTokens = valueTokens[:-1]
+            for i, valueStr in enumerate(valueTokens):
+                if valueStr == "":
                     continue
                 
-                values = [float(x) for x in valueTokens]
-                for i, key in enumerate(headerTokens):
-                    resDict[key].append(values[i])
+                value = float(valueStr) 
+                signals[i].AppendData(value)
                 
-            counter +=1
-                    
-        self.model.results = resDict
+        return signals, signalNames
+            
+            
+            
+            
+            
+            
+    def DetermineSignalQuantity(self,name,units)->str:
+        '''Take the unit of the signal, and determine its quantity.'''
+        if units == 's':
+            return 'Time'
         
+        elif units == 'm':
+            return 'Length'
+        
+        elif units == 'm^2':
+            return 'Area'
+        
+        elif units == 'm^3':
+            return 'Volume'
+        
+        elif units == 'm^3/s':
+            return 'Flow'
+        
+        elif units == 'Pa':
+            return 'Pressure'
+        
+        elif units == 'Pa*s':
+            return 'BulkModulus'
+        
+        elif units == '-':
+            return 'Ratio'        
+        
+        else:
+            print('Units of signal ' + name + ' not found.')
     
     
     
@@ -646,25 +1081,7 @@ class Presenter():
         self.ApplySignalOptions(signalOptionsPane)
         self.CloseSignalOptions(signalOptionsPane)
         
-    # Plot Manager
-    def RedrawPlotNotebook(self)->None:
-        '''Redraw plot tab.'''
-        # Delete existing tabs
-        for ii, tab in enumerate(self.view.mainTabColl.plotNotebook.tabs()):
-             self.view.mainTabColl.plotNotebook.forget(tab)
-         
-         # Redraw tabs
-        for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            tab = Plotter(self.view.mainTabColl.plotNotebook, self)
-            plotTitle = "Plot " + str(ii)
-            self.view.mainTabColl.plotNotebook.add(tab, text = plotTitle)
-            
-            for jj, subplot in enumerate(plot.containedSubplots):
-                
-                for kk, resultFile in enumerate(subplot.resultFiles):
-                    
-                    for hh, plottedSignal in enumerate(resultFile.selectedSignals): 
-                        '''hjevuwfv'''
+
         
         
     def RedrawPlotCanvas(self)->None:
@@ -818,8 +1235,9 @@ class Presenter():
     def UpdatedCollapsiblePaneModel(self, collapsiblePane)->None:
         '''Update the PlotModel areCollapsed property.'''
         indx = collapsiblePane.indx
+        collapsiblePane.master
         isCollapsed = collapsiblePane.isCollapsed
-        self.model.plotModel.areCollapsed[indx] = isCollapsed
+        self.model.projectModel.containedPlots[0].containedSubplots[0].isCollapsed[indx] = isCollapsed
     
     def DelResFilePane(self, fileSelector):
         fileSelector.master.destroy()

@@ -28,7 +28,7 @@ class PathSelector(tk.Frame):
         self.lab = ttk.Label(self, text = 'Working Folder', width = 20)
 
         self.pathEntry = ttk.Entry(self)
-        self.pathEntry.insert(0,presenter.model.settings.workingFolder)
+        self.pathEntry.insert(0,presenter.model.settings.projectFolder)
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
 

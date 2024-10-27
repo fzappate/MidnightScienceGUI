@@ -1,9 +1,11 @@
-class Signal():
+class SignalModel():
     def __init__(self,
                  name = '',
                  units = '',
                  quantity = '',
-                 indx = 0)->None:
+                 indx = 0,
+                 indxInResFile = 0,
+                 scalingFactor = 1)->None:
         '''
         Class that generates the model of a Signal class.
         The purpose of this class is to store all the information 
@@ -15,8 +17,9 @@ class Signal():
         self.quantity = quantity
         self.units = units
         self.rawData = []
-        self.scalingFactor = 1
         self.scaledData = []
+        self.indxInResFile = indxInResFile
+        self.scalingFactor = scalingFactor
         
     def AddData(self,data)->None:
         '''Add a full list of data to the signal overwriting the data already present.'''
