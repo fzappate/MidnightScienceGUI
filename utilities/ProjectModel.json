@@ -1,14 +1,14 @@
 {
     "name": "ProjectModel",
-    "tabSelected": 1,
+    "tabSelected": 0,
     "containedPlots": [
         {
-            "name": "Plot1",
+            "name": "Plot0",
             "indx": 0,
             "noOfSubplots": 1,
             "containedSubplots": [
                 {
-                    "name": "Subplot1",
+                    "name": "Subplot0",
                     "indx": 0,
                     "isCollapsed": 0,
                     "xLabel": "x label",
