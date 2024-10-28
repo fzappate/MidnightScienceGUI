@@ -14,7 +14,7 @@ except:
         pass
 
 
-class UI(tk.Tk):
+class View(tk.Tk):
     '''Main UI of the application and view element of the MVP framework.'''
 
     def __init__(self) -> None:

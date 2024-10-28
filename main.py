@@ -1,5 +1,5 @@
 from model.model import Model 
-from ui.ui import UI
+from ui.View import View
 from presenter.presenter import Presenter
 
 
@@ -15,7 +15,7 @@ def main() -> None:
     '''Build the application.'''
     
     model = Model()
-    view = UI()
+    view = View()
     presenter = Presenter(model,view)
     presenter.RunUI()
 
