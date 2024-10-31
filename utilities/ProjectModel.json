@@ -19,22 +19,22 @@
                     ],
                     "yLim": [
                         0,
-                        10
+                        100
                     ],
                     "xLimUser": [
                         0,
-                        10
+                        1
                     ],
                     "yLimUser": [
                         0,
-                        10
+                        70
                     ],
                     "useUserLim": 1,
-                    "xTick": 0.2,
-                    "yTick": 0.2,
+                    "xTick": 1,
+                    "yTick": 1,
                     "xTickUser": 0.1,
                     "yTickUser": 0.1,
-                    "useUserTicks": 1,
+                    "useUserTicks": 0,
                     "setGrid": 1,
                     "colorCounter": 1,
                     "noOfResFile": 1,
