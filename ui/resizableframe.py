@@ -103,7 +103,7 @@ class ResizableFrameRightEdge(ResizableFrame):
 
 
 
-class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
+class ResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
     def __init__(self, parent, *args, **kw):
         """
         Initialize an instance of the class of ResizeScrollVFrameRightEdge. 
@@ -137,46 +137,41 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
         
         # Create a canvas object and a vertical scrollbar for scrolling it
         self.vscrollbar = ttk.Scrollbar(self, orient='vertical')
-        # self.vscrollbar.pack(fill='y', side='right', expand=False,padx = (0,self.dragBandWidth),pady = (3,3))
         self.vscrollbar.grid(row=0,column=1,sticky='NWS',padx = (0,self.dragBandWidth),pady = (3,3))
         
         self.canvas = tk.Canvas(self,highlightthickness=0, yscrollcommand=self.vscrollbar.set)
         self.canvas.grid(row=0,column=0,sticky='NEWS',padx = (3,3),pady = (3,3))
-        # self.canvas.pack(side='left', fill='both', expand=True,padx = (0,self.dragBandWidth),pady = (3,3))
-        
-        # There is no need to bond the scrollbar to the canvas because boundToMouseWheel is used
-        # self.vscrollbar.config(command=self.canvas.yview)
         
         # Reset the canvas view
         self.canvas.xview_moveto(0)
         self.canvas.yview_moveto(0)
 
         # Create a frame inside the canvas which will be scrolled with it
-        self.interior = tk.Frame(self.canvas, bg = 'red')
-        self.interior.columnconfigure(0,weight=1)
-        self.interior.rowconfigure(0,weight=1)
-        self.interior_id = self.canvas.create_window(0, 0, window=self.interior, anchor='nw')
+        self.scrollFrame = tk.Frame(self.canvas, bg = 'red')
+        self.scrollFrame.columnconfigure(0,weight=1)
+        self.scrollFrame.rowconfigure(0,weight=1)
+        self.scrollFrame_id = self.canvas.create_window(0, 0, window=self.scrollFrame, anchor='nw')
 
         # Bind the frame to the scrollbar so that it can be scrolled while paning over it
         self.bind('<Enter>', self.boundToMouseWheel)
         self.bind('<Leave>', self.unboundToMouseWheel)
         
         # Bind canvas to frame and viceversa
-        self.interior.bind('<Configure>', self._configure_interior)
+        self.scrollFrame.bind('<Configure>', self._configure_scrollFrame)
         self.canvas.bind('<Configure>', self._configure_canvas)
         
-    def _configure_interior(self,event):
+    def _configure_scrollFrame(self,event):
         # Update the scrollbars to match the size of the inner frame.
-        size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
+        size = (self.scrollFrame.winfo_reqwidth(), self.scrollFrame.winfo_reqheight())
         self.canvas.config(scrollregion="0 0 %s %s" % size)
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+        if self.scrollFrame.winfo_reqwidth() != self.canvas.winfo_width():
             # Update the canvas's width to fit the inner frame.
-            self.canvas.config(width=self.interior.winfo_reqwidth())
+            self.canvas.config(width=self.scrollFrame.winfo_reqwidth())
         
     def _configure_canvas(self,event):
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+        if self.scrollFrame.winfo_reqwidth() != self.canvas.winfo_width():
             # Update the inner frame's width to fill the canvas.
-            self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
+            self.canvas.itemconfigure(self.scrollFrame_id, width=self.canvas.winfo_width())
         
     def boundToMouseWheel(self, event):
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
@@ -186,9 +181,9 @@ class ResizeScrollVFrameRightEdge(ResizableFrameRightEdge):
 
     def _on_mousewheel(self, event):
         # If frame is greater than canvas scroll, otherwise not.
-        interiorLength = self.interior.winfo_height()
+        scrollFrameLength = self.scrollFrame.winfo_height()
         canvasLength = self.canvas.winfo_height()
-        if (interiorLength > canvasLength):
+        if (scrollFrameLength > canvasLength):
             self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
 

@@ -1,43 +1,37 @@
 import tkinter as tk
 from tkinter import ttk 
 
-# Important order of import
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt
+# from ui.plotpane import PlotPane
+from ui.PlotCanvas import PlotCanvas
+from ui.ResizableFrame import ResizableFrameRightEdgeScrollV
+from ui.PlotManager import PlotManager
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except:
+        pass
 
-import numpy as np
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+
+class PlotPane(tk.Frame):
+    def __init__(self,parent,presenter,*args, **kwargs)->None:
+        """
+        Initialize Plotter. 
+        This is a frame containing all the widgets necessary to plot results. 
         
-class PlotUI(tk.Frame):
-    '''Class of plot where the GearGen gear set is plot.'''
-
-    def __init__(self,parent,*args, **kwargs)->None:
-        '''Initialize the PlotUI object.'''
+        -----USAGE-----
+        This widget can be used exactly as a frame. 
+        """
         super().__init__(parent,*args, **kwargs)
-                
-        self.columnconfigure(0,weight=1)
-        self.rowconfigure(0,weight=1)
+
+        # Set the grid configuration of this object
+        self.rowconfigure(0,weight=1)        
+        self.columnconfigure(0,weight=0)
+        self.columnconfigure(1,weight=1)
         
-        # Create a blank canvas to start
-        self.fig, axs = plt.subplots(1)
-        # self.fig.subplots_adjust(left=0.05, bottom=0.05, right=0.95, top=0.95, wspace=0.1, hspace=0.2)
+        # Plot manager        
+        self.plotManager = PlotManager(self,presenter,width=200,bg = 'green')
+        self.plotManager.grid(row=0,column=0,sticky='NEWS')
         
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
-        self.toolbar.update()
-        self.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-               
-        
-    def DeleteSubplot(self):
-        '''
-        Remove subplot.
-        '''
-
-
-
-
-
+        # Plot frame
+        self.plotCanvas=PlotCanvas(self, bg = 'green')
+        self.plotCanvas.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      

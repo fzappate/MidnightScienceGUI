@@ -7,6 +7,7 @@ from ui.filebar import FileBar
 from ui.customtext import VerticalScrollText
 from ui.auxbar import AuxBar
 from ui.TabManager import TabManager
+from ui.ProjectNotebook import ProjectNotebook
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -63,8 +64,8 @@ class View(tk.Tk):
         self.tabManager.columnconfigure(0,weight=1)
         
         # Main tabs
-        self.mainTabColl = HorizTabCollection(self,presenter, background = 'gray30')
-        self.mainTabColl.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
+        self.projectNotebook = ProjectNotebook(self)
+        self.projectNotebook.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
 
         # Text widget
         self.text = VerticalScrollText(self,height = 150, background = 'gray30')

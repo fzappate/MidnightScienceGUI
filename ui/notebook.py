@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk 
 
-from ui.plotter import Plotter
+from ui.PlotPane import PlotPane
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
