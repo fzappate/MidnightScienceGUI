@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
-from collections import defaultdict
 import os
-import threading
-import subprocess
 import json
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,9 +9,9 @@ from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
 from ui.PlotPane import PlotPane
 from ui.CollapsiblePane import TogglePaneDelOpts
-from ui.resfilemanager import ResFileManager
-from ui.resfilepane import ResFilePane
-from ui.signalpane import SignalPane
+from ui.ResFileManager import ResFileManager
+from ui.ResFilePane import ResFilePane
+from ui.SignalPane import SignalPane
 from ui.SubplotOptions import SubplotOptions
 from ui.SignalOptions import SignalOptions
 from ui.SubplotPane import SubplotPane
@@ -1077,7 +1074,8 @@ class Presenter():
             plotTitle = "Plot " + str(ii)
             self.view.projectNotebook.add(plotPane, text = plotTitle)
 
-    # Deprecated        
+    # Deprecated      
+      
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
         # Close all the figures, destroy toolbar and canvas

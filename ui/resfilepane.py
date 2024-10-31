@@ -1,6 +1,6 @@
 from tkinter import ttk
 import tkinter as tk
-from ui.signalpane import SignalPane
+from ui.SignalPane import SignalPane
 from ui.fileselector import FileSelectorDel
 
 class ResFilePane(tk.Frame):

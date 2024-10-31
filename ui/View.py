@@ -1,13 +1,12 @@
 import tkinter as tk
 
-from presenter.presenter import Presenter
+from presenter.Presenter import Presenter
 from ui.pathselector import PathSelector
-from ui.notebook import HorizTabCollection
-from ui.filebar import FileBar
 from ui.customtext import VerticalScrollText
 from ui.auxbar import AuxBar
 from ui.TabManager import TabManager
 from ui.ProjectNotebook import ProjectNotebook
+
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)

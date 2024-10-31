@@ -1,6 +1,6 @@
 from model.model import Model 
 from ui.View import View
-from presenter.presenter import Presenter
+from presenter.Presenter import Presenter
 
 
 

@@ -1,9 +1,7 @@
 import tkinter as tk
 from tkinter import ttk 
-from tkinter import filedialog
 
-from presenter.presenter import Presenter
-
+from presenter.Presenter import Presenter
 
 try:
     from ctypes import windll
