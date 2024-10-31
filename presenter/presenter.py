@@ -107,6 +107,10 @@ class Presenter():
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
     
+    
+    
+    # JSON HANDLING
+    
     def LoadProjectModel(self) -> None:
         '''Load project from JSON.'''
         # Check that a ProjectModel.json exists
@@ -246,7 +250,6 @@ class Presenter():
         
         self.SaveProjectToJson(self.model.projectModel,f)
         
-        
     def SaveProjectToJson(self,projectModel,f)->None:
         f.write('{')
         f.write('"name": "'+ projectModel.name +'",\n')
@@ -326,7 +329,6 @@ class Presenter():
                 f.write(',\n') # Close ResultFile object
             else:
                 f.write(']\n') # Close containedResultFiles list
-                        
         
     def SaveResultFileToJson(self,resultFile,f)->None:
         '''Save ResultFile object to Json.'''
@@ -361,275 +363,10 @@ class Presenter():
         f.write('"indx": '+ str(plottedSignal.indx)+',\n')
         f.write('"indxInResFile": '+ str(plottedSignal.indxInResFile)+'\n')
         f.write('}'+'\n')
-                                        
-                                        
-                                        
-        
-    
-    def RedrawPlotNotebook(self)->None:
-        '''Redraw plot tab.'''
-        # Delete existing tabs
-        for ii, tab in enumerate(self.view.projectNotebook.tabs()):
-             self.view.projectNotebook.forget(tab)
-        
-        # Redraw tabs
-        for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            plotPane = PlotPane(self.view.projectNotebook, self)
-            self.view.projectNotebook.add(plotPane)
-            
-            # Clear all the existing subplots, and create the axis for the new ones
-            plt.close('all') 
-            plotManagerChildren = plotPane.plotCanvas.winfo_children()
-            for ii,child in enumerate(plotManagerChildren):
-                child.destroy()
-                
-            noOfSubplots = len(plot.containedSubplots)
-            fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
-            
-            # REDRAW PLOT MANAGER ==========================
-            # Redraw subplots
-            for jj, subplot in enumerate(plot.containedSubplots):
-                subplotPane = SubplotPane(plotPane.plotManager.interior,
-                                          self, 
-                                          subplot,
-                                          bg = 'blue')
-                subplotPane.grid(row=jj,column=0,sticky='NEW')
-                
-                # Redraw result files 
-                for kk, resultFile in enumerate(subplot.containedResultFiles):
-                    resFile = ResFilePane(subplotPane.interior,
-                                        self,
-                                        indx = jj,
-                                        entryText=resultFile.absPath,
-                                        comboboxList=resultFile.signalNames)
-                    resFile.grid(row=kk,column=0,sticky='NEW')
-                    
-                    # Redraw selected signals
-                    for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
-                        sigPane = SignalPane(   resFile.interior,
-                                                self,
-                                                selectedSignal,
-                                                indx = kk,
-                                                bg = 'red')
-                        sigPane.grid(row=hh,column=0,sticky='EW')
-                        
-                    
-                  
-                # REDRAW PLOT CANVAS ==========================
-                # Extract x axis signal 
-                xAxisSelected = subplot.xAxisSelected
-                        
-                # Do not plot anything if the x axis is not selected
-                if xAxisSelected == []:
-                    continue
-                
-                # Extract plotted signals and plot them
-                plottedSignals = subplot.plottedSignals
-                for plottedSig in plottedSignals:
-                    psCol=plottedSig.color
-                    psWidth=plottedSig.width
-                    psStyle=plottedSig.style
-                    psMarker=plottedSig.marker
-                    psLabel=plottedSig.label
-                    axList[jj,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
-                                        color=psCol,
-                                        linewidth=psWidth,
-                                        linestyle=psStyle,
-                                        marker=psMarker,
-                                        label=psLabel)
-                    axList[jj,0].legend()
-            
-                # Extract subplot default settings
-                subplot.xLim = list(axList[jj,0].get_xlim())
-                subplot.yLim = list(axList[jj,0].get_ylim())
-                yTicksArray = axList[jj,0].get_yticks()
-                xTicksArray = axList[jj,0].get_xticks()
-                xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
-                yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
-                subplot.xTick = xTicks
-                subplot.yTick = yTicks
-                
-                # Set subplot properties
-                # Title
-                axList[jj,0].title.set_text(subplot.name)
-                # Labels
-                axList[jj,0].set_xlabel(subplot.xLabel)
-                axList[jj,0].set_ylabel(subplot.yLabel)
-                # Grid
-                axList[jj,0].grid(subplot.setGrid)
-                # Axis Limits
-                if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
-                    axList[jj,0].set_xlim(subplot.xLimUser)
-                if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
-                    axList[jj,0].set_ylim(subplot.yLimUser)
-                # Ticks
-                if subplot.useUserTicks & (subplot.xTickUser!=0):
-                    currTickX = list(axList[jj,0].get_xlim())
-                    tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
-                    axList[jj,0].set_xticks(tickVectX)
-                    
-                if subplot.useUserTicks & (subplot.yTickUser!=0):
-                    currTickY = list(axList[jj,0].get_ylim())
-                    tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
-                    axList[jj,0].set_yticks(tickVectY)
-                        
-                
-                # Draw the canvas and toolbar inside the Plotter object
-                plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar.update()
-                plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-                plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-                
-            # Add tab to notebook
-            plotTitle = "Plot " + str(ii)
-            self.view.projectNotebook.add(plotPane, text = plotTitle)
-            
-            
-                               
-    def RedrawPlotManager(self)->None:
-        '''
-        Redraw the plot manager time.
-        '''
-        # Delete everything in the plot manager but the first row
-        plotManagerChildren = self.view.mainTabColl.plotNotebook.winfo_children()
-        for ii,child in enumerate(plotManagerChildren):
-            if ii == 0:
-                continue
-            child.destroy()
-            
-        # Redraw everything in the plot manager
-        areCollapsed = self.model.projectModel.plotModel.areCollapsed
-        # Iterate on the Subplots
-        for ii,sp in enumerate(self.model.projectModel.plotModel.containedSubplots):
-            spRow = ii+1 # Skip the 'Add subplot' button
-            toggleFrame = TogglePaneDelOpts(self.view.mainTabColl.plotter.plotManager,
-                                        self,
-                                        label = sp.name,
-                                        indx=ii,
-                                        isCollapsed=areCollapsed[ii],
-                                        bg = 'cyan')
-            toggleFrame.grid(row = spRow, column = 0, sticky='EW')
-            resFileManager = ResFileManager(toggleFrame.interior, 
-                                            self, 
-                                            current = sp.xAxisSelectedIndx,
-                                            listOfSignals = sp.xAxisSignalsName,
-                                            bg = 'blue')
-            resFileManager.grid(row=0,column=0,sticky='EW')
-            
-            # Iterate on the ResultFile
-            for jj,rf in enumerate(sp.resultFiles):
-                rfRow=jj+3 # Skip the label, combobox, and 'Add result file' button
-                resFile = ResFilePane(resFileManager,
-                                      self,
-                                      indx = jj,
-                                      entryText=rf.absPath,
-                                      comboboxList=rf.signalNames)
-                resFile.grid(row=rfRow,column=0,sticky='EW')
-                
-                # Iterate on the Signalpane
-                for kk, ss in enumerate(rf.selectedSignals):
-                    ssRow = kk+2 # Skip the button and combobox row
-                    sigPane = SignalPane(   resFile,
-                                            self,
-                                            ss,
-                                            indx = kk,
-                                            bg = 'red')
-                    sigPane.grid(row=ssRow,column=0,sticky='EW')
-                # Separator between result files 
-                separatorRow = 2+len(rf.selectedSignals)+1
-                separator = tk.Frame(resFile, bg = 'green', height=5)
-                separator.grid(row=separatorRow,column = 0, sticky = 'EW')
-                
-            # Separator between subplots
-            separatorRow = 3+len(sp.resultFiles)+1
-            separator = tk.Frame(toggleFrame.interior, bg = 'red', height=10)
-            separator.grid(row=separatorRow,column = 0, sticky = 'EW')
-
-      
-    
-      
-      
-      
-      
-      
-      
-             
-    def LoadSignalsFromResFile(self,filePath):
-        '''Load results.'''       
-        # Read results file
-        file = open(filePath,'r')
-        lines = file.readlines()
-        file.close()
-        
-        # Initialize lists 
-        signals = []
-        signalNames = []
-        
-        # Create the list of signals
-        headerTokens = lines[0].split(',')
-        headerTokens = headerTokens[:-1]
-        for i, headerToken in enumerate(headerTokens):
-            headerToken = headerToken.strip() 
-            signalTokens = headerToken.split(':')
-            name = signalTokens[:-1]
-            name = ":".join(name)
-            units = signalTokens[-1]
-            sigQuantity = self.DetermineSignalQuantity(name,units)
-            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indx = i)
-            signals.append(sigTemp)
-            signalNames.append(name)
-        
-        # Iterate on the lines - skip the first one
-        for line in lines[1:]:
-            valueTokens = line.split(',')
-            valueTokens = valueTokens[:-1]
-            for i, valueStr in enumerate(valueTokens):
-                if valueStr == "":
-                    continue
-                
-                value = float(valueStr) 
-                signals[i].AppendData(value)
-                
-        return signals, signalNames
-            
-            
-            
-            
-            
-            
-    def DetermineSignalQuantity(self,name,units)->str:
-        '''Take the unit of the signal, and determine its quantity.'''
-        if units == 's':
-            return 'Time'
-        
-        elif units == 'm':
-            return 'Length'
-        
-        elif units == 'm^2':
-            return 'Area'
-        
-        elif units == 'm^3':
-            return 'Volume'
-        
-        elif units == 'm^3/s':
-            return 'Flow'
-        
-        elif units == 'Pa':
-            return 'Pressure'
-        
-        elif units == 'Pa*s':
-            return 'BulkModulus'
-        
-        elif units == '-':
-            return 'Ratio'        
-        
-        else:
-            print('Units of signal ' + name + ' not found.')
-    
-    
-    
-    # Project Folder Selection
+                              
+                              
+  
+    # PROJECT FOLDER SELECTION
     
     def BrowseProjectFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
@@ -722,7 +459,10 @@ class Presenter():
         # Redraw PlotUI
         self.RedrawPlotCanvas()        
         
-    # Plot Handling
+        
+        
+    # PLOT HANDLING
+    
     def AddPlotTab(self)->None:
         '''Add a Plot in the ProjectModel containedPlots list.'''
         plot = PlotModel()
@@ -734,7 +474,8 @@ class Presenter():
         self.RedrawPlotNotebook()
         
      
-    # Subplot Handling
+     
+    # SUBPLOT HANDLING
     
     def AddSubplot(self,plotManager)->None:
         '''Add subplot to PlotManager and Plot.
@@ -786,7 +527,7 @@ class Presenter():
                 
                 
                 
-    # Subplot Options
+    # SUBPLOT OPTIONS
     
     def OpenSubplotOptions(self,subplotPane, subplotOptsBtn)->None:
         '''Open subplot options.'''   
@@ -851,7 +592,7 @@ class Presenter():
         
         
         
-    # ResultFile Handling
+    # RESULT FILE HANDLING
         
     def AddResultFile(self, resFileManager)->None:
         '''Add ResultFile to Subplot.'''
@@ -939,7 +680,7 @@ class Presenter():
 
         
         
-    # Signal Handling
+    # SIGNAL HANDLING
     
     def AddSignal(self,event, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
@@ -1069,8 +810,7 @@ class Presenter():
         
         
         
-        
-    # Signal Options
+    # SIGNAL OPTIONS
     
     def OpenSignalOptions(self,signalPane, signalOptsBtn)->None:
         '''Open subplot options.'''   
@@ -1144,8 +884,200 @@ class Presenter():
         self.CloseSignalOptions(signalOptionsPane)
         
 
+
+  # LOAD SIGNALS
+             
+    def LoadSignalsFromResFile(self,filePath):
+        '''Load results.'''       
+        # Read results file
+        file = open(filePath,'r')
+        lines = file.readlines()
+        file.close()
         
+        # Initialize lists 
+        signals = []
+        signalNames = []
         
+        # Create the list of signals
+        headerTokens = lines[0].split(',')
+        headerTokens = headerTokens[:-1]
+        for i, headerToken in enumerate(headerTokens):
+            headerToken = headerToken.strip() 
+            signalTokens = headerToken.split(':')
+            name = signalTokens[:-1]
+            name = ":".join(name)
+            units = signalTokens[-1]
+            sigQuantity = self.DetermineSignalQuantity(name,units)
+            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indx = i)
+            signals.append(sigTemp)
+            signalNames.append(name)
+        
+        # Iterate on the lines - skip the first one
+        for line in lines[1:]:
+            valueTokens = line.split(',')
+            valueTokens = valueTokens[:-1]
+            for i, valueStr in enumerate(valueTokens):
+                if valueStr == "":
+                    continue
+                
+                value = float(valueStr) 
+                signals[i].AppendData(value)
+                
+        return signals, signalNames
+             
+    def DetermineSignalQuantity(self,name,units)->str:
+        '''Take the unit of the signal, and determine its quantity.'''
+        if units == 's':
+            return 'Time'
+        
+        elif units == 'm':
+            return 'Length'
+        
+        elif units == 'm^2':
+            return 'Area'
+        
+        elif units == 'm^3':
+            return 'Volume'
+        
+        elif units == 'm^3/s':
+            return 'Flow'
+        
+        elif units == 'Pa':
+            return 'Pressure'
+        
+        elif units == 'Pa*s':
+            return 'BulkModulus'
+        
+        elif units == '-':
+            return 'Ratio'        
+        
+        else:
+            print('Units of signal ' + name + ' not found.')
+
+
+
+    # REDRAW GUI
+    
+    def RedrawPlotNotebook(self)->None:
+        '''Redraw plot tab.'''
+        # Delete existing tabs
+        for ii, tab in enumerate(self.view.projectNotebook.tabs()):
+             self.view.projectNotebook.forget(tab)
+        
+        # Redraw tabs
+        for ii,plot in enumerate(self.model.projectModel.containedPlots):
+            plotPane = PlotPane(self.view.projectNotebook, self)
+            self.view.projectNotebook.add(plotPane)
+            
+            # Clear all the existing subplots, and create the axis for the new ones
+            plt.close('all') 
+            plotManagerChildren = plotPane.plotCanvas.winfo_children()
+            for ii,child in enumerate(plotManagerChildren):
+                child.destroy()
+                
+            noOfSubplots = len(plot.containedSubplots)
+            fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
+            
+            # REDRAW PLOT MANAGER ==========================
+            # Redraw subplots
+            for jj, subplot in enumerate(plot.containedSubplots):
+                subplotPane = SubplotPane(plotPane.plotManager.interior,
+                                          self, 
+                                          subplot,
+                                          bg = 'blue')
+                subplotPane.grid(row=jj,column=0,sticky='NEW')
+                
+                # Redraw result files 
+                for kk, resultFile in enumerate(subplot.containedResultFiles):
+                    resFile = ResFilePane(subplotPane.interior,
+                                        self,
+                                        indx = jj,
+                                        entryText=resultFile.absPath,
+                                        comboboxList=resultFile.signalNames)
+                    resFile.grid(row=kk,column=0,sticky='NEW')
+                    
+                    # Redraw selected signals
+                    for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
+                        sigPane = SignalPane(   resFile.interior,
+                                                self,
+                                                selectedSignal,
+                                                indx = kk,
+                                                bg = 'red')
+                        sigPane.grid(row=hh,column=0,sticky='EW')
+                        
+                    
+                  
+                # REDRAW PLOT CANVAS ==========================
+                # Extract x axis signal 
+                xAxisSelected = subplot.xAxisSelected
+                        
+                # Do not plot anything if the x axis is not selected
+                if xAxisSelected == []:
+                    continue
+                
+                # Extract plotted signals and plot them
+                plottedSignals = subplot.plottedSignals
+                for plottedSig in plottedSignals:
+                    psCol=plottedSig.color
+                    psWidth=plottedSig.width
+                    psStyle=plottedSig.style
+                    psMarker=plottedSig.marker
+                    psLabel=plottedSig.label
+                    axList[jj,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
+                                        color=psCol,
+                                        linewidth=psWidth,
+                                        linestyle=psStyle,
+                                        marker=psMarker,
+                                        label=psLabel)
+                    axList[jj,0].legend()
+            
+                # Extract subplot default settings
+                subplot.xLim = list(axList[jj,0].get_xlim())
+                subplot.yLim = list(axList[jj,0].get_ylim())
+                yTicksArray = axList[jj,0].get_yticks()
+                xTicksArray = axList[jj,0].get_xticks()
+                xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
+                yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
+                subplot.xTick = xTicks
+                subplot.yTick = yTicks
+                
+                # Set subplot properties
+                # Title
+                axList[jj,0].title.set_text(subplot.name)
+                # Labels
+                axList[jj,0].set_xlabel(subplot.xLabel)
+                axList[jj,0].set_ylabel(subplot.yLabel)
+                # Grid
+                axList[jj,0].grid(subplot.setGrid)
+                # Axis Limits
+                if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
+                    axList[jj,0].set_xlim(subplot.xLimUser)
+                if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
+                    axList[jj,0].set_ylim(subplot.yLimUser)
+                # Ticks
+                if subplot.useUserTicks & (subplot.xTickUser!=0):
+                    currTickX = list(axList[jj,0].get_xlim())
+                    tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                    axList[jj,0].set_xticks(tickVectX)
+                    
+                if subplot.useUserTicks & (subplot.yTickUser!=0):
+                    currTickY = list(axList[jj,0].get_ylim())
+                    tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                    axList[jj,0].set_yticks(tickVectY)
+                        
+                
+                # Draw the canvas and toolbar inside the Plotter object
+                plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
+                plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
+                plotPane.plotCanvas.toolbar.update()
+                plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+                plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                
+            # Add tab to notebook
+            plotTitle = "Plot " + str(ii)
+            self.view.projectNotebook.add(plotPane, text = plotTitle)
+
+    # Deprecated        
     def RedrawPlotCanvas(self)->None:
         '''This function redraws the plot canvas.'''
         # Close all the figures, destroy toolbar and canvas
