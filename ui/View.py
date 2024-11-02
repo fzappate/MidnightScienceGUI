@@ -41,7 +41,8 @@ class View(tk.Tk):
 
     def initUI(self,presenter:Presenter)->None:
         '''Set up the element in the graphical interface.'''
-
+        # Setup widget
+        self.presenter = presenter
         self.columnconfigure(0, weight=1)
         self.rowconfigure(2,weight=1)
         self.rowconfigure(3,weight=0)
@@ -65,6 +66,8 @@ class View(tk.Tk):
         # Main tabs
         self.projectNotebook = ProjectNotebook(self)
         self.projectNotebook.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
+        self.projectNotebook.bind("<<NotebookTabChanged>>", self.presenter.UpdateSelectedTabIndx)
+        # self.projectNotebook.bind("<<NotebookTabChanged>>", lambda event: self.presenter.UpdateSelectedTabIndx(event))
 
         # Text widget
         self.text = VerticalScrollText(self,height = 150, background = 'gray30')

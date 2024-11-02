@@ -16,5 +16,5 @@ class TabManager(tk.Frame):
         self.optsButton = ttk.Button(self,text='Opts')
         self.optsButton.grid(row=0,column=1, sticky='NEWS')
         
-        self.delButton = ttk.Button(self,text='Canc')
+        self.delButton = ttk.Button(self,text='Canc',command=presenter.DeletePlotTab)
         self.delButton.grid(row=0,column=2, sticky='NEWS')
