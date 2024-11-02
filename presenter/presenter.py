@@ -487,9 +487,27 @@ class Presenter():
         
     def DeletePlotTab(self)->None:
         '''Delete plot tab.'''
+        # Find the selected tab
         tabSelected = self.model.projectModel.tabSelected
+        # Find how many tabs are in the notebook
+        noOfTabs = len(self.model.projectModel.containedPlots)        
+        # Delete the selected tab
+        del self.model.projectModel.containedPlots[tabSelected]
+        # Unbind to avoid calling UpdateSelectedTabIndx during notebook redrawing
+        self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
+        # Redraw plot notebook 
+        self.RedrawPlotNotebook()
+        # Rebind
+        self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         
-        self.model.projectModel.containedPlots.remove(tabSelected)
+        # If the last tab is selected, cancel it and select the adjacent left
+        if noOfTabs>1:
+            if tabSelected == noOfTabs-1:
+                self.view.projectNotebook.select(tabSelected-1)
+            else:
+                self.view.projectNotebook.select(tabSelected)
+        else:
+            '''Don't select anything.'''
         
      
      
@@ -513,10 +531,6 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].AddSubplot(subplot)
         
         self.RedrawPlotNotebook()
-        # # Redraw PlotUI
-        # self.RedrawPlotCanvas()
-        # # Redraw PlotManager
-        # self.RedrawPlotManager()
          
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
@@ -713,7 +727,7 @@ class Presenter():
         signalToPlot = self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals[selectedSigNo]
         
         # Create a PlottedSignal instance 
-        plottedSignal = PlottedSignal()
+        plottedSignal = PlottedSignalModel()
         # Copy the signal properties into the PlottedSignal
         plottedSignal.CopySignalProperties(signalToPlot)
         # Extract color counter from subplot
