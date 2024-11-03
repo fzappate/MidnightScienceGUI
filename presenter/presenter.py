@@ -898,10 +898,10 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].style=lineStyle
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].marker=lineMarker
         
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].color=color
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].width=lineWidth
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].style=lineStyle
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].marker=lineMarker
+        # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].color=color
+        # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].width=lineWidth
+        # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].style=lineStyle
+        # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].marker=lineMarker
         
         
         self.RedrawPlotNotebook()
@@ -1041,18 +1041,17 @@ class Presenter():
                         sigPane.grid(row=hh,column=0,sticky='EW')
                         
                     
-                if noOfSubplots>0:
-                    # REDRAW PLOT CANVAS ==========================
-                    # Extract x axis signal 
-                    xAxisSelected = subplot.xAxisSelected
-                            
-                    # Do not plot anything if the x axis is not selected
-                    if xAxisSelected == []:
-                        continue
-                    
-                    # Extract plotted signals and plot them
-                    plottedSignals = subplot.plottedSignals
-                    for plottedSig in plottedSignals:
+                        # REDRAW PLOT CANVAS ==========================
+                        # Extract x axis signal 
+                        xAxisSelected = subplot.xAxisSelected
+                                
+                        # Do not plot anything if the x axis is not selected
+                        if xAxisSelected == []:
+                            continue
+                        
+                        # Extract plotted signals and plot them
+                        plottedSig = selectedSignal
+                        
                         psCol=plottedSig.color
                         psWidth=plottedSig.width
                         psStyle=plottedSig.style
@@ -1065,48 +1064,48 @@ class Presenter():
                                             marker=psMarker,
                                             label=psLabel)
                         axList[jj,0].legend()
-                
-                    # Extract subplot default settings
-                    subplot.xLim = list(axList[jj,0].get_xlim())
-                    subplot.yLim = list(axList[jj,0].get_ylim())
-                    yTicksArray = axList[jj,0].get_yticks()
-                    xTicksArray = axList[jj,0].get_xticks()
-                    xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
-                    yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
-                    subplot.xTick = xTicks
-                    subplot.yTick = yTicks
                     
-                    # Set subplot properties
-                    # Title
-                    axList[jj,0].title.set_text(subplot.name)
-                    # Labels
-                    axList[jj,0].set_xlabel(subplot.xLabel)
-                    axList[jj,0].set_ylabel(subplot.yLabel)
-                    # Grid
-                    axList[jj,0].grid(subplot.setGrid)
-                    # Axis Limits
-                    if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
-                        axList[jj,0].set_xlim(subplot.xLimUser)
-                    if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
-                        axList[jj,0].set_ylim(subplot.yLimUser)
-                    # Ticks
-                    if subplot.useUserTicks & (subplot.xTickUser!=0):
-                        currTickX = list(axList[jj,0].get_xlim())
-                        tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
-                        axList[jj,0].set_xticks(tickVectX)
+                        # Extract subplot default settings
+                        subplot.xLim = list(axList[jj,0].get_xlim())
+                        subplot.yLim = list(axList[jj,0].get_ylim())
+                        yTicksArray = axList[jj,0].get_yticks()
+                        xTicksArray = axList[jj,0].get_xticks()
+                        xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
+                        yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
+                        subplot.xTick = xTicks
+                        subplot.yTick = yTicks
                         
-                    if subplot.useUserTicks & (subplot.yTickUser!=0):
-                        currTickY = list(axList[jj,0].get_ylim())
-                        tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
-                        axList[jj,0].set_yticks(tickVectY)
+                        # Set subplot properties
+                        # Title
+                        axList[jj,0].title.set_text(subplot.name)
+                        # Labels
+                        axList[jj,0].set_xlabel(subplot.xLabel)
+                        axList[jj,0].set_ylabel(subplot.yLabel)
+                        # Grid
+                        axList[jj,0].grid(subplot.setGrid)
+                        # Axis Limits
+                        if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
+                            axList[jj,0].set_xlim(subplot.xLimUser)
+                        if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
+                            axList[jj,0].set_ylim(subplot.yLimUser)
+                        # Ticks
+                        if subplot.useUserTicks & (subplot.xTickUser!=0):
+                            currTickX = list(axList[jj,0].get_xlim())
+                            tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                            axList[jj,0].set_xticks(tickVectX)
                             
-                    
-                    # Draw the canvas and toolbar inside the Plotter object
-                    plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
-                    plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
-                    plotPane.plotCanvas.toolbar.update()
-                    plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-                    plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                        if subplot.useUserTicks & (subplot.yTickUser!=0):
+                            currTickY = list(axList[jj,0].get_ylim())
+                            tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                            axList[jj,0].set_yticks(tickVectY)
+                                
+                        
+                # Draw the canvas and toolbar inside the Plotter object
+                plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
+                plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
+                plotPane.plotCanvas.toolbar.update()
+                plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+                plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
                 
             # Add tab to notebook
             plotTitle = "Plot " + str(ii)
