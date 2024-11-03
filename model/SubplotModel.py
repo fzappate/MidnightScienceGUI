@@ -11,7 +11,6 @@ class SubplotModel():
         self.noOfResFile = 0
         self.isCollapsed = 1
         self.containedResultFiles = []
-        self.plottedSignals = []
         
         self.xAxisSignals = []
         self.xAxisSignalsName = []
