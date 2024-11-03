@@ -1,40 +1,40 @@
 {
     "name": "ProjectModel",
-    "tabSelected": 1,
+    "tabSelected": 0,
     "containedPlots": [
         {
-            "name": "Plot1",
+            "name": "Plot0",
             "indx": 0,
             "noOfSubplots": 1,
             "containedSubplots": [
                 {
-                    "name": "Subplot1",
+                    "name": "Subplot 0",
                     "indx": 0,
-                    "isCollapsed": 1,
+                    "isCollapsed": 0,
                     "xLabel": "x label",
                     "yLabel": "y label",
                     "xLim": [
-                        0,
-                        1
+                        -0.039,
+                        1.039
                     ],
                     "yLim": [
-                        0,
-                        10
+                        -298993.0857255,
+                        6278926.3374155
                     ],
                     "xLimUser": [
                         0,
-                        10
+                        1
                     ],
                     "yLimUser": [
                         0,
-                        10
+                        70
                     ],
-                    "useUserLim": 1,
+                    "useUserLim": "False",
                     "xTick": 0.2,
-                    "yTick": 0.2,
+                    "yTick": 1000000,
                     "xTickUser": 0.1,
                     "yTickUser": 0.1,
-                    "useUserTicks": 1,
+                    "useUserTicks": "False",
                     "setGrid": 1,
                     "colorCounter": 1,
                     "noOfResFile": 1,
@@ -86,7 +86,7 @@
                             "scalingFactor": 1,
                             "quantity": "Time",
                             "indx": 0,
-                            "indxInResFile": 0
+                            "indxInResFile": 2
                         },
                         {
                             "name": "inletChamber:Pressure",
@@ -99,7 +99,7 @@
                             "scalingFactor": 0.00001,
                             "quantity": "Pressure",
                             "indx": 1,
-                            "indxInResFile": 0
+                            "indxInResFile": 2
                         }
                     ]
                 }

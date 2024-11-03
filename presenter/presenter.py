@@ -449,10 +449,8 @@ class Presenter():
                 rf.RemoveDataFromResultSignals()
                 rf.LoadResults(rf.absPath)
         
-        # Redraw PlotManager
-        self.RedrawPlotManager()
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()        
+        
+        self.RedrawPlotNotebook()       
         
         
         
@@ -540,20 +538,21 @@ class Presenter():
         
         self.RedrawPlotNotebook()
            
-    def SelectXAxis(self,event,resFileManager)->None:
+    def SelectXAxis(self,event,subplotPane)->None:
         '''Function invoked when an item is selected from the subplot X axis selection.'''
-        # Identify the subplot indx
-        subplotIndx = resFileManager.master.master.indx
+        # Identify the widget indexes
+        plotIndx = self.model.projectModel.tabSelected
+        subplotIndx = subplotPane.index
         # Extract the list of signals tht can be selected as x axis
-        xAxisSignals = self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSignals
+        xAxisSignals = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignals
         # Find the index of the signal selected
-        selectedSigNo = resFileManager.xAxisSelect.current()        
+        selectedSigNo = subplotPane.xAxisSelect.current()        
         # Update the subplotModel 
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSelected = xAxisSignals[selectedSigNo]
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSelectedIndx = selectedSigNo
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelected = xAxisSignals[selectedSigNo]
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelectedIndx = selectedSigNo
         
         # Redraw PlotUI
-        self.RedrawPlotCanvas()
+        self.RedrawPlotNotebook()
                 
                 
                 
@@ -623,24 +622,22 @@ class Presenter():
         
     # RESULT FILE HANDLING
         
-    def AddResultFile(self, resFileManager)->None:
+    def AddResultFile(self, subplotPane)->None:
         '''Add ResultFile to Subplot.'''
         # Get useful information 
-        noOfResFile = resFileManager.noOfRows
-        subplotIndx = resFileManager.master.master.indx
-        
+        noOfResFile = subplotPane.noOfRows
+        plotIndx = self.model.projectModel.tabSelected
+        subplotIndx = subplotPane.index
         # Create ResFileModel
         resultFileModel = ResultFileModel()
         resultFileModel.name = str(noOfResFile)
         resultFileModel.indx = noOfResFile
         
         # Update SubplotModel adding a ResultFile
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].AddResultFile(resultFileModel)
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles.append(resultFileModel)
         
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()
-        # Redraw PlotManager
-        self.RedrawPlotManager()
+        
+        self.RedrawPlotNotebook()
         
     def DeleteResultFile(self,resFilePane)->None:
         '''Delete ResultFile from the model and redraw the PlotManager.'''
@@ -649,10 +646,8 @@ class Presenter():
         # Update SubplotModel adding a ResultFile
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
         
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()
-        # Redraw PlotManager
-        self.RedrawPlotManager()
+        
+        self.RedrawPlotNotebook()
         
     def BrowseResFile(self,fileSelector,resFilePane) -> None:
         '''This function allows the selection of a file.'''
@@ -675,37 +670,33 @@ class Presenter():
         if not pathExists:
             return
                 
-        # Update model setting 
-        self.model.settings.resultsFilePath = filePath
-        # Update setting file
-        self.UpdateSettingFile("resultsFilePath", filePath)
-        
         # Retrieve useful info
-        subplotIndx = resFilePane.master.master.master.indx
-        resFileIndx = resFilePane.indx
+        plotIndx = self.model.projectModel.tabSelected
+        subplotIndx = resFilePane.master.master.master.index
+        resFileIndx = resFilePane.index
         
-        # Load the signals into ResultFileModel
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].absPath = filePath
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].LoadResults(filePath)
+        # Store the filepath
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].absPath = filePath
         
-        # Extract signals and their names from the results file just loaded 
-        signals = self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals
-        signalNames = self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signalNames
+        # Load the signals into signal names
+        signals, signalNames = self.LoadSignalsFromResFile(filePath)
+        
+        # Store the signals and signal names in the model
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals = signals
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signalNames = signalNames
         
         # If the first result pane is added
-        if resFilePane.indx == 0:
+        if resFilePane.index == 0:
             # Load the first signal for the x axis
-            self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSelected = signals[0]
-            self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSelectedIndx = 0
+            self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelected = signals[0]
+            self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelectedIndx = 0
             # Add the signals to the x axis selection 
             for signal, signalName in zip(signals, signalNames):
-                self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSignals.append(signal)
-                self.model.projectModel.plotModel.containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
+                self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignals.append(signal)
+                self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
         
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()
-        # Redraw PlotManager
-        self.RedrawPlotManager()
+        
+        self.RedrawPlotNotebook()
 
         
         
@@ -715,34 +706,33 @@ class Presenter():
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
         
         # Get useful information
-        subplotIndx = resFilePane.master.master.master.indx
-        resFileIndx = resFilePane.indx
+        plotIndx = self.model.projectModel.tabSelected
+        subplotIndx = resFilePane.master.master.master.index
+        resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
         selectedSigNo = resFilePane.signalCollection.current()
         # Extract from the ResultFileModel the signal selected
-        signalToPlot = self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].signals[selectedSigNo]
+        signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigNo]
         
         # Create a PlottedSignal instance 
         plottedSignal = PlottedSignalModel()
         # Copy the signal properties into the PlottedSignal
         plottedSignal.CopySignalProperties(signalToPlot)
         # Extract color counter from subplot
-        colorCounter = self.model.projectModel.plotModel.containedSubplots[subplotIndx].colorCounter
+        colorCounter = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].colorCounter
         # Assign the PlottedSignal a color
         rgbTuple = self.ChooseSignalColor(colorCounter)
         plottedSignal.color=rgbTuple
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].colorCounter=colorCounter+1
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].colorCounter=colorCounter+1
         
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.append(plottedSignal)
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.append(plottedSignal)
         # Add it to the SubplotModel plottedSignals list (for the plot canvas)
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals.append(plottedSignal)
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].plottedSignals.append(plottedSignal)
         
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()
-        # Redraw PlotManager
-        self.RedrawPlotManager()
+        
+        self.RedrawPlotNotebook()
         
     def DeleteSignal(self, signalPane)->None:
         '''Delete signal.'''
@@ -757,10 +747,8 @@ class Presenter():
         # Remove the signal from the SubplotModel plottedSignals list
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals.pop(signalIndx)
         
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()
-        # Redraw PlotManager
-        self.RedrawPlotManager()
+        
+        self.RedrawPlotNotebook()
         
     def ModifySignalScaling(self,event,signalPane, scalingList)->None:
         '''Change the scaling of the signal.'''
@@ -780,7 +768,7 @@ class Presenter():
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals[signalIndx].scaledData = scaledData
         
         # Redraw PlotUI
-        self.RedrawPlotCanvas()
+        self.RedrawPlotNotebook()
         
     def GetUnitsList(self,signal):
         '''Depending on the signal units, create the list of the possible units that
@@ -898,10 +886,9 @@ class Presenter():
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].width=lineWidth
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].style=lineStyle
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].marker=lineMarker
-        # Redraw plot canvas
-        self.RedrawPlotCanvas()
-        # Redraw plot manager 
-        self.RedrawPlotManager()
+        
+        
+        self.RedrawPlotNotebook()
         
     def CloseSignalOptions(self,signalOptionsPane)->None:
         '''Close signal options.'''
@@ -1023,7 +1010,7 @@ class Presenter():
                 for kk, resultFile in enumerate(subplot.containedResultFiles):
                     resFile = ResFilePane(subplotPane.interior,
                                         self,
-                                        indx = jj,
+                                        index = jj,
                                         entryText=resultFile.absPath,
                                         comboboxList=resultFile.signalNames)
                     resFile.grid(row=kk,column=0,sticky='NEW')
