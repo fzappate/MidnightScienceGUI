@@ -854,7 +854,7 @@ class Presenter():
         optsWindow.grab_set()  
         
         # Extract indexes
-        signalIndx = signalPane.indx
+        signalIndx = signalPane.index
         resFilePaneIntern = signalPane.master
         resFilePane = signalPane.master.master
         resFileIndx = resFilePane.index
@@ -884,6 +884,7 @@ class Presenter():
         sigIndx = signalOptions.sigIndx
         resIndx = signalOptions.resIndx
         subplotIndx = signalOptions.subplotIndx
+        plotIndx = self.model.projectModel.tabSelected
         
         
         # Get the signal options values
@@ -892,15 +893,15 @@ class Presenter():
         lineMarker = signalOptions.GetMarkerOpts()
         color= signalOptions.selectedColor
         
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].color=color
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].width=lineWidth
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].style=lineStyle
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx].marker=lineMarker
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].color=color
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].width=lineWidth
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].style=lineStyle
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].marker=lineMarker
         
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].color=color
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].width=lineWidth
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].style=lineStyle
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[sigIndx].marker=lineMarker
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].color=color
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].width=lineWidth
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].style=lineStyle
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[sigIndx].marker=lineMarker
         
         
         self.RedrawPlotNotebook()
