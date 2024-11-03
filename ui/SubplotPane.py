@@ -8,6 +8,7 @@ class SubplotPane(CollapsiblePaneDelOpts):
     def __init__(self, 
                  parent, 
                  presenter,
+                 index,
                  subplotModel,
                  xAxisIndx = None,
                  *args,**kwargs):
@@ -16,6 +17,7 @@ class SubplotPane(CollapsiblePaneDelOpts):
         super().__init__(parent,*args,**kwargs)
         
         # Store the inputs
+        self.index = index
         self.presenter = presenter
         self.listOfSignals = subplotModel.xAxisSignalsName
         self.xAxisIndx = subplotModel.xAxisSelectedIndx

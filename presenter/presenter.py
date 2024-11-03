@@ -484,7 +484,7 @@ class Presenter():
         self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         # Move to the newly created tab
         self.view.projectNotebook.select(plot.indx-1)
-        
+                
     def DeletePlotTab(self)->None:
         '''Delete plot tab.'''
         # Find the selected tab
@@ -517,8 +517,8 @@ class Presenter():
         '''Add subplot to PlotManager and Plot.
         Add a toggle frame to the plot manager pane.'''
         # Get useful information 
-        notebook = self.view.mainTabColl.plotNotebook
-        plotIndx = notebook.index(notebook.select())
+        notebook = self.view.projectNotebook
+        plotIndx = self.model.projectModel.tabSelected
 
         noOfSubplot = self.model.projectModel.containedPlots[plotIndx].noOfSubplots
         
@@ -535,12 +535,10 @@ class Presenter():
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
         # Update PlotModel deleting the SubplotModel
-        self.model.projectModel.plotModel.DeleteSubplot(subplotPane)
+        plotIndx = self.model.projectModel.tabSelected
+        del self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotPane.index]
         
-        # Redraw PlotUI
-        self.RedrawPlotCanvas()
-        # Redraw PlotManager
-        self.RedrawPlotManager()
+        self.RedrawPlotNotebook()
            
     def SelectXAxis(self,event,resFileManager)->None:
         '''Function invoked when an item is selected from the subplot X axis selection.'''
@@ -999,7 +997,7 @@ class Presenter():
         
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            plotPane = PlotPane(self.view.projectNotebook, self)
+            plotPane = PlotPane(self.view.projectNotebook, self,ii)
             self.view.projectNotebook.add(plotPane)
             
             # Clear all the existing subplots, and create the axis for the new ones
@@ -1017,6 +1015,7 @@ class Presenter():
             for jj, subplot in enumerate(plot.containedSubplots):
                 subplotPane = SubplotPane(plotPane.plotManager.interior,
                                           self, 
+                                          jj,
                                           subplot,
                                           bg = 'blue')
                 subplotPane.grid(row=jj,column=0,sticky='NEW')

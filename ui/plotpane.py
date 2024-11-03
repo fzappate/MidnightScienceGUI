@@ -13,7 +13,7 @@ except:
 
 
 class PlotPane(tk.Frame):
-    def __init__(self,parent,presenter,*args, **kwargs)->None:
+    def __init__(self,parent,presenter,index,*args, **kwargs)->None:
         """
         Initialize Plotter. 
         This is a frame containing all the widgets necessary to plot results. 
@@ -22,6 +22,7 @@ class PlotPane(tk.Frame):
         This widget can be used exactly as a frame. 
         """
         super().__init__(parent,*args, **kwargs)
+        self.index = index
 
         # Set the grid configuration of this object
         self.rowconfigure(0,weight=1)        
