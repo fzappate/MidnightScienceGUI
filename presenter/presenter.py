@@ -752,20 +752,30 @@ class Presenter():
         
     def ModifySignalScaling(self,event,signalPane, scalingList)->None:
         '''Change the scaling of the signal.'''
-        # Get the index of the result file and subplot
-        optSelected = signalPane.unitsCb.current()
-        scalingFactor = scalingList[optSelected]
+        # Get the combobox index, string, and scaling factor
+        optNoSelected = signalPane.unitsCb.current()
+        optStrSelected = event.widget.get()
+        scalingFactor = scalingList[optNoSelected]
         
-        subplotIndx = signalPane.master.master.master.master.indx
-        resFileIndx = signalPane.master.indx
-        signalIndx = signalPane.indx
-        # Calculate the scaled data
-        rawData = self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[signalIndx].rawData
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[signalIndx].scalingFactor = scalingFactor
+        # Extract indexes
+        signalIndx = signalPane.index
+        resFilePaneIntern = signalPane.master
+        resFilePane = signalPane.master.master
+        resFileIndx = resFilePane.index
+        collapsPaneIntern = signalPane.master.master.master
+        collapsPane = signalPane.master.master.master.master
+        subplotPane = signalPane.master.master.master.master.master
+        subplotIndx = subplotPane.index
+        plotIndx = self.model.projectModel.tabSelected
+        
+        # Extract row data and calculate scaled data
+        rawData = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].rawData
         scaledData = [scalingFactor*val for val in rawData] 
-        # Save the scaled data in the PlottedSignal and SelectedSignals list
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals[signalIndx].scaledData = scaledData 
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals[signalIndx].scaledData = scaledData
+        # Save new units, scaling factor, and scaled data
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].units = optStrSelected
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scalingFactor = scalingFactor
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].plottedSignals[signalIndx].scaledData = scaledData 
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scaledData = scaledData
         
         # Redraw PlotUI
         self.RedrawPlotNotebook()
@@ -843,21 +853,26 @@ class Presenter():
         optsWindow.resizable(False, False)
         optsWindow.grab_set()  
         
-        
-        # Get the signal, result file, and subplot index
-        sigIndx = signalPane.indx
-        resIndx = signalPane.master.indx
-        subplotIndx = signalPane.master.master.master.master.indx
+        # Extract indexes
+        signalIndx = signalPane.indx
+        resFilePaneIntern = signalPane.master
+        resFilePane = signalPane.master.master
+        resFileIndx = resFilePane.index
+        collapsPaneIntern = signalPane.master.master.master
+        collapsPane = signalPane.master.master.master.master
+        subplotPane = signalPane.master.master.master.master.master
+        subplotIndx = subplotPane.index
+        plotIndx = self.model.projectModel.tabSelected
         
         # Get the PlottedSignal object to retrieve its property
-        signal = self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resIndx].selectedSignals[sigIndx]
+        signal = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx]
         
         # Create a SignalOptions pane
         signalOpts = SignalOptions(optsWindow,
                                    self,
                                    signal,
-                                   sigIndx= sigIndx,
-                                   resIndx = resIndx,
+                                   sigIndx= signalIndx,
+                                   resIndx = resFileIndx,
                                    subplotIndx = subplotIndx,
                                    bg ='cyan')
         signalOpts.grid(row=0,column=0,sticky='NEWS')
@@ -1020,8 +1035,8 @@ class Presenter():
                         sigPane = SignalPane(   resFile.interior,
                                                 self,
                                                 selectedSignal,
-                                                indx = kk,
-                                                bg = 'red')
+                                                index = hh,
+                                                bg = 'gray18')
                         sigPane.grid(row=hh,column=0,sticky='EW')
                         
                     
