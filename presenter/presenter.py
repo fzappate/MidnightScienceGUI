@@ -528,7 +528,7 @@ class Presenter():
         
         # Extract subplot options
         plotIndx = self.model.projectModel.tabSelected
-        subplotIndx = subplotPane.indx
+        subplotIndx = subplotPane.index
         subplot=self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx]
         
         # Populate the subplotOptions 
@@ -551,7 +551,7 @@ class Presenter():
         '''Apply the subplot options to the subplot model.'''
         # Store options in the subplot model
         plotIndx = self.model.projectModel.tabSelected
-        subplotIndx = subplotOptionsPane.indx
+        subplotIndx = subplotOptionsPane.index
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].name = subplotOptionsPane.titleEntry.get()
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xLabel = subplotOptionsPane.xAxisLabEntry.get()
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yLabel = subplotOptionsPane.yAxisLabEntry.get()

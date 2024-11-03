@@ -477,7 +477,6 @@ class TogglePaneDelOpts(tk.Frame):
 class CollapsiblePane(tk.Frame):
     def __init__(self, 
                  parent, 
-                 indx = 0,
                  iconMode = "text",
                  expandText ="+",
                  collapseText ="-",
@@ -520,7 +519,6 @@ class CollapsiblePane(tk.Frame):
  
         # Properties
         self.parent = parent
-        self.indx = indx
         self.iconMode = iconMode
         self.expImgPath = expImgPath
         self.collImgPath = collImgPath
