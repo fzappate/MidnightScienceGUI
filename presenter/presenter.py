@@ -198,36 +198,12 @@ class Presenter():
                     
                     # Append ResultFileModel to SubplotModel.containedResultFiles
                     subplotModel.containedResultFiles.append(resFileModel)
-
                 
                 subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
                 subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
                 subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
                 subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
-                
-                
-                # # Load plotted signals data
-                # jsonPlottedSignals = jsonSubplot["plottedSignals"]
-                # for ll, jsonPlottedSignal in enumerate(jsonPlottedSignals):
-                #     plottedSignalModel = PlottedSignalModel()
-                #     plottedSignalModel.name = jsonPlottedSignal["name"]
-                #     plottedSignalModel.indx = jsonPlottedSignal["indx"]
-                #     plottedSignalModel.width = jsonPlottedSignal["width"]
-                #     plottedSignalModel.style = jsonPlottedSignal["style"]
-                #     plottedSignalModel.marker = jsonPlottedSignal["marker"]
-                #     plottedSignalModel.color = jsonPlottedSignal["color"]
-                #     plottedSignalModel.label = jsonPlottedSignal["label"]
-                #     plottedSignalModel.label = jsonPlottedSignal["name"]
-                #     plottedSignalModel.units = jsonPlottedSignal["units"]
-                #     plottedSignalModel.scalingFactor = jsonPlottedSignal["scalingFactor"] 
-                #     plottedSignalModel.quantity = jsonPlottedSignal["quantity"]
-                #     plottedSignalModel.indxInResFile = jsonSelSign["indxInResFile"]
-                    
-                #     plottedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indxInResFile].rawData
-                #     plottedSignalModel.scaledData = [dataPoint*plottedSignalModel.scalingFactor for dataPoint in plottedSignalModel.rawData]
-                    
-                #     subplotModel.plottedSignals.append(plottedSignalModel)
-                    
+                       
                 # Append the SubplotModel inside the PlotModel.containedSubplots
                 plotModel.containedSubplots.append(subplotModel)
                 
@@ -314,17 +290,6 @@ class Presenter():
             else:
                 f.write('}\n],\n') # Close containedResultFiles list
                 
-        # Print Plotted signals
-        f.write('"plottedSignals": [\n')        
-        noOfPlottedSignals = len(subplotModel.plottedSignals)-1
-        for kk, plottedSignal in enumerate(subplotModel.plottedSignals):
-            self.SavePlottedSignalToJson(plottedSignal,f)
-
-            if kk < noOfPlottedSignals:
-                f.write(',\n') # Close ResultFile object
-            else:
-                f.write(']\n') # Close containedResultFiles list
-        
     def SaveResultFileToJson(self,resultFile,f)->None:
         '''Save ResultFile object to Json.'''
         f.write('{')
