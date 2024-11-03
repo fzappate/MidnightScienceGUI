@@ -572,8 +572,9 @@ class Presenter():
         optsWindow.grab_set()        
         
         # Extract subplot options
+        plotIndx = self.model.projectModel.tabSelected
         subplotIndx = subplotPane.indx
-        subplot=self.model.projectModel.plotModel.containedSubplots[subplotIndx]
+        subplot=self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx]
         
         # Populate the subplotOptions 
         subplotOption = SubplotOptions(optsWindow,
@@ -594,22 +595,20 @@ class Presenter():
     def ApplySubplotOptions(self,subplotOptionsPane)->None:
         '''Apply the subplot options to the subplot model.'''
         # Store options in the subplot model
+        plotIndx = self.model.projectModel.tabSelected
         subplotIndx = subplotOptionsPane.indx
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].name = subplotOptionsPane.titleEntry.get()
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].xLabel = subplotOptionsPane.xAxisLabEntry.get()
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].yLabel = subplotOptionsPane.yAxisLabEntry.get()
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].xLimUser = [float(subplotOptionsPane.xAxisLowLimEntry.get()), float(subplotOptionsPane.xAxisUpLimEntry.get())]
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].yLimUser = [float(subplotOptionsPane.yAxisLowLimEntry.get()), float(subplotOptionsPane.yAxisUpLimEntry.get())]
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].useUserLim = subplotOptionsPane.userLimVar.get()
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].grid = subplotOptionsPane.gridVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].name = subplotOptionsPane.titleEntry.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xLabel = subplotOptionsPane.xAxisLabEntry.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yLabel = subplotOptionsPane.yAxisLabEntry.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xLimUser = [float(subplotOptionsPane.xAxisLowLimEntry.get()), float(subplotOptionsPane.xAxisUpLimEntry.get())]
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yLimUser = [float(subplotOptionsPane.yAxisLowLimEntry.get()), float(subplotOptionsPane.yAxisUpLimEntry.get())]
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserLim = subplotOptionsPane.userLimVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].grid = subplotOptionsPane.gridVar.get()
         
-        # Redraw plot canvas
-        self.RedrawPlotCanvas()
-        # Redraw plot manager 
-        self.RedrawPlotManager()
+        self.RedrawPlotNotebook()
         
     def CloseSubplotOptions(self,subplotOptionsPane)->None:
         '''Close subplot options.'''

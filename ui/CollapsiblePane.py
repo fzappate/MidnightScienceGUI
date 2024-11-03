@@ -603,7 +603,7 @@ class CollapsiblePane(tk.Frame):
             # # Change the property isCollpased to False
             self.isCollapsed = False
             
-        self.presenter.UpdatedCollapsiblePaneModel(self)
+        # self.presenter.UpdatedCollapsiblePaneModel(self)
         
     def SetState(self):
         if (self.isCollapsed==True):
@@ -724,6 +724,7 @@ class CollapsiblePaneOpts(CollapsiblePane):
 class CollapsiblePaneDelOpts(CollapsiblePane):
     def __init__(self, 
                  parent, 
+                 isCollapsed=True,
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 
@@ -754,7 +755,7 @@ class CollapsiblePaneDelOpts(CollapsiblePane):
         userWidget = Frame(collapsiblePane.interior)
         userWidget.grid(row = 0,column = 0, sticky = 'NEWS')
         """
-        super().__init__(parent,*args,**kwargs)
+        super().__init__(parent,isCollapsed=isCollapsed,*args,**kwargs)
          
         # Create header options button
         self.optsIcon = '\u2630' # ☰ 

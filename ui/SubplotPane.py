@@ -14,7 +14,7 @@ class SubplotPane(CollapsiblePaneDelOpts):
                  *args,**kwargs):
     
         ''''''
-        super().__init__(parent,*args,**kwargs)
+        super().__init__(parent,subplotModel.isCollapsed,*args,**kwargs)
         
         # Store the inputs
         self.index = index
