@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from presenter.Presenter import Presenter
+from presenter.presenter import Presenter
 from ui.pathselector import PathSelector
 from ui.customtext import VerticalScrollText
 from ui.auxbar import AuxBar
@@ -66,7 +66,7 @@ class View(tk.Tk):
         # Main tabs
         self.projectNotebook = ProjectNotebook(self)
         self.projectNotebook.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
-        self.projectNotebook.bind("<<NotebookTabChanged>>", self.presenter.UpdateSelectedTabIndx)
+        # self.projectNotebook.bind("<<NotebookTabChanged>>", self.presenter.UpdateSelectedTabIndx)
         # self.projectNotebook.bind("<<NotebookTabChanged>>", lambda event: self.presenter.UpdateSelectedTabIndx(event))
 
         # Text widget

@@ -602,8 +602,6 @@ class CollapsiblePane(tk.Frame):
 
             # # Change the property isCollpased to False
             self.isCollapsed = False
-            
-        # self.presenter.UpdatedCollapsiblePaneModel(self)
         
     def SetState(self):
         if (self.isCollapsed==True):

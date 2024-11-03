@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk 
 
-from presenter.Presenter import Presenter
+from presenter.presenter import Presenter
 
 try:
     from ctypes import windll
