@@ -3,8 +3,7 @@ class SignalModel():
                  name = '',
                  units = '',
                  quantity = '',
-                 indx = 0,
-                 indxInResFile = 0,
+                 indexInResFile = 0,
                  scalingFactor = 1)->None:
         '''
         Class that generates the model of a Signal class.
@@ -13,12 +12,11 @@ class SignalModel():
         '''
         # Dictionary with signal names and values
         self.name = name
-        self.indx = indx
         self.quantity = quantity
         self.units = units
         self.rawData = []
         self.scaledData = []
-        self.indxInResFile = indxInResFile
+        self.indexInResFile = indexInResFile
         self.scalingFactor = scalingFactor
         
     def AddData(self,data)->None:

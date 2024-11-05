@@ -56,7 +56,7 @@ class TogglePane(tk.Frame):
         self.iconMode = iconMode
         self.expImgPath = expImgPath
         self.collImgPath = collImgPath
-        self.isCollapsed = False
+        self.isCollapsed = 0
         self.parent = parent
         self.expandText = expandText
         self.collapseText = collapseText
@@ -111,7 +111,7 @@ class TogglePane(tk.Frame):
         self._activate()
  
     def _activate(self):
-        if (self.isCollapsed==True):
+        if (self.isCollapsed==1):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.interior.grid_forget()
@@ -122,10 +122,10 @@ class TogglePane(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
 
-            # # Change the property isCollpased to False
-            self.isCollapsed = False
+            # # Change the property isCollpased to 0
+            self.isCollapsed = 0
  
-        elif (self.isCollapsed==False):
+        elif (self.isCollapsed==0):
             # increasing the frame area so new widgets
             # could reside in this container
             self.interior.grid(row = 1, column = 0,sticky='EW')
@@ -135,8 +135,8 @@ class TogglePane(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.collapseText)
 
-            # # Change the property isCollpased to False
-            self.isCollapsed = True
+            # # Change the property isCollpased to 0
+            self.isCollapsed = 1
             
 
 class TogglePaneDel(tk.Frame):
@@ -151,7 +151,7 @@ class TogglePaneDel(tk.Frame):
                  iconSize = 20,
                  expImgPath = "",
                  collImgPath = "",
-                 isCollapsed = True,
+                 isCollapsed = 1,
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 
@@ -251,7 +251,7 @@ class TogglePaneDel(tk.Frame):
         self.SetState()
  
     def SwitchState(self):
-        if (self.isCollapsed==False):
+        if (self.isCollapsed==0):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.interior.grid_forget()
@@ -262,11 +262,11 @@ class TogglePaneDel(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
 
-            # Change the property isCollpased to False
-            self.isCollapsed = True
+            # Change the property isCollpased to 0
+            self.isCollapsed = 1
             
  
-        elif (self.isCollapsed==True):
+        elif (self.isCollapsed==1):
             # increasing the frame area so new widgets
             # could reside in this container
             self.interior.grid(row = 1, column = 0,sticky='EW')
@@ -276,13 +276,13 @@ class TogglePaneDel(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.collapseText)
 
-            # # Change the property isCollpased to False
-            self.isCollapsed = False
+            # # Change the property isCollpased to 0
+            self.isCollapsed = 0
             
         self.presenter.UpdatedCollapsiblePaneModel(self)
         
     def SetState(self):
-        if (self.isCollapsed==True):
+        if (self.isCollapsed==1):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.interior.grid_forget()
@@ -293,7 +293,7 @@ class TogglePaneDel(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
  
-        elif (self.isCollapsed==False):
+        elif (self.isCollapsed==0):
             # increasing the frame area so new widgets
             # could reside in this container
             self.interior.grid(row = 1, column = 0,sticky='EW')
@@ -316,7 +316,7 @@ class TogglePaneDelOpts(tk.Frame):
                  iconSize = 20,
                  expImgPath = "",
                  collImgPath = "",
-                 isCollapsed = True,
+                 isCollapsed = 1,
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 
@@ -421,7 +421,7 @@ class TogglePaneDelOpts(tk.Frame):
         self.SetState()
  
     def SwitchState(self):
-        if (self.isCollapsed==False):
+        if (self.isCollapsed==0):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.interior.grid_forget()
@@ -432,11 +432,11 @@ class TogglePaneDelOpts(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
 
-            # Change the property isCollpased to False
-            self.isCollapsed = True
+            # Change the property isCollpased to 0
+            self.isCollapsed = 1
             
  
-        elif (self.isCollapsed==True):
+        elif (self.isCollapsed==1):
             # increasing the frame area so new widgets
             # could reside in this container
             self.interior.grid(row = 1, column = 0,sticky='EW')
@@ -446,13 +446,13 @@ class TogglePaneDelOpts(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.collapseText)
 
-            # # Change the property isCollpased to False
-            self.isCollapsed = False
+            # # Change the property isCollpased to 0
+            self.isCollapsed = 0
             
         self.presenter.UpdatedCollapsiblePaneModel(self)
         
     def SetState(self):
-        if (self.isCollapsed==True):
+        if (self.isCollapsed==1):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.interior.grid_forget()
@@ -463,7 +463,7 @@ class TogglePaneDelOpts(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
  
-        elif (self.isCollapsed==False):
+        elif (self.isCollapsed==0):
             # increasing the frame area so new widgets
             # could reside in this container
             self.interior.grid(row = 1, column = 0,sticky='EW')
@@ -484,7 +484,7 @@ class CollapsiblePane(tk.Frame):
                  iconSize = 20,
                  expImgPath = "",
                  collImgPath = "",
-                 isCollapsed = True,
+                 isCollapsed = 1,
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 
@@ -573,7 +573,7 @@ class CollapsiblePane(tk.Frame):
         self.SetState()
  
     def SwitchState(self):
-        if (self.isCollapsed==False):
+        if (self.isCollapsed==0):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.collapsibleFrame.grid_forget()
@@ -584,11 +584,11 @@ class CollapsiblePane(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
 
-            # Change the property isCollpased to False
-            self.isCollapsed = True
+            # Change the property isCollpased to 0
+            self.isCollapsed = 1
             
  
-        elif (self.isCollapsed==True):
+        elif (self.isCollapsed==1):
             # increasing the frame area so new widgets
             # could reside in this container
             self.collapsibleFrame.grid(row = 1, column = 0,sticky='EW')
@@ -598,11 +598,11 @@ class CollapsiblePane(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.collapseText)
 
-            # # Change the property isCollpased to False
-            self.isCollapsed = False
+            # # Change the property isCollpased to 0
+            self.isCollapsed = 0
         
     def SetState(self):
-        if (self.isCollapsed==True):
+        if (self.isCollapsed==1):
             # As soon as button is pressed it removes this widget
             # but is not destroyed means can be displayed again
             self.collapsibleFrame.grid_forget()
@@ -613,7 +613,7 @@ class CollapsiblePane(tk.Frame):
             elif self.iconMode == 'text':
                 self.expandButton.configure(text = self.expandText)
  
-        elif (self.isCollapsed==False):
+        elif (self.isCollapsed==0):
             # increasing the frame area so new widgets
             # could reside in this container
             self.collapsibleFrame.grid(row = 1, column = 0,sticky='EW')
@@ -720,7 +720,7 @@ class CollapsiblePaneOpts(CollapsiblePane):
 class CollapsiblePaneDelOpts(CollapsiblePane):
     def __init__(self, 
                  parent, 
-                 isCollapsed=True,
+                 isCollapsed=1,
                  *args,**kwargs):
         """
         Initialize an instance of the class of TogglePane. 

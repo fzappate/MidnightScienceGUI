@@ -179,7 +179,6 @@ class Presenter():
                     for hh, jsonSelSign in enumerate(jsonSelectedSignals):
                         selectedSignalModel = PlottedSignalModel()
                         selectedSignalModel.name = jsonSelSign["name"]
-                        selectedSignalModel.indx = jsonSelSign["indx"]
                         selectedSignalModel.width = jsonSelSign["width"]
                         selectedSignalModel.style = jsonSelSign["style"]
                         selectedSignalModel.marker = jsonSelSign["marker"]
@@ -189,9 +188,9 @@ class Presenter():
                         selectedSignalModel.units = jsonSelSign["units"]
                         selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
                         selectedSignalModel.quantity = jsonSelSign["quantity"]
-                        selectedSignalModel.indxInResFile = jsonSelSign["indxInResFile"]
+                        selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
                         
-                        selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indxInResFile].rawData
+                        selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
                         selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
                         
                         # Append PlottedSignal inside the ResultFileModel.selectedSignals
@@ -217,10 +216,12 @@ class Presenter():
     
     def SaveProjectModel(self)->None:
         '''Save project model.'''
-        
-        f = open("ProjectModelSave.json", "w")
+        projModelLocation = "./utilities/ProjectModel.json"
+        f = open(projModelLocation, "w")
         
         self.SaveProjectToJson(self.model.projectModel,f)
+        
+        self.PrintMessage('Project model saved in ' + projModelLocation)
         
     def SaveProjectToJson(self,projectModel,f)->None:
         f.write('{')
@@ -231,13 +232,13 @@ class Presenter():
         noOfContainedPlots = len(self.model.projectModel.containedPlots)-1
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
             self.SavePlotToJson(plot,f)
-            
+            a = 2
             if ii < noOfContainedPlots:
                 f.write('}\n,\n') # Close PlotModel object
             else:
-                f.write('}\n]\n') # Close containedPlots list
+                f.write('}\n]\n}') # Close containedPlots list
                     
-            f.write('}') # Close the ProjectModel
+            # f.write('}') # Close the ProjectModel
                 
     def SavePlotToJson(self,plotModel,f)->None:
         '''Save PlotModel object to Json.'''
@@ -274,8 +275,8 @@ class Presenter():
         f.write('"yTick": '+ str(subplotModel.yTick)+',\n')
         f.write('"xTickUser": '+ str(subplotModel.xTickUser)+',\n')
         f.write('"yTickUser": '+ str(subplotModel.yTickUser)+',\n')
-        f.write('"useUserTicks": '+ str(subplotModel.useUserTicks)+',\n')
-        f.write('"setGrid": '+ str(subplotModel.setGrid)+',\n')
+        f.write('"useUserTicks": '+ str(subplotModel.useUserTicks) +',\n')
+        f.write('"setGrid": '+ str(subplotModel.setGrid) +',\n')
         f.write('"colorCounter": '+ str(subplotModel.colorCounter)+',\n')
         f.write('"noOfResFile": '+ str(subplotModel.noOfResFile)+',\n')
         f.write('"xAxisSelectedIndx": '+ str(subplotModel.xAxisSelectedIndx)+',\n')
@@ -289,7 +290,7 @@ class Presenter():
             if kk < noOfResltFile:
                 f.write('}\n,\n') # Close ResultFile object
             else:
-                f.write('}\n],\n') # Close containedResultFiles list
+                f.write('}\n]\n') # Close containedResultFiles list
                 
     def SaveResultFileToJson(self,resultFile,f)->None:
         '''Save ResultFile object to Json.'''
@@ -321,8 +322,7 @@ class Presenter():
         f.write('"units": "'+ plottedSignal.units +'",\n')
         f.write('"scalingFactor": '+ str(plottedSignal.scalingFactor)+',\n')
         f.write('"quantity": "'+ plottedSignal.quantity +'"'+',\n')
-        f.write('"indx": '+ str(plottedSignal.indx)+',\n')
-        f.write('"indxInResFile": '+ str(plottedSignal.indxInResFile)+'\n')
+        f.write('"indexInResFile": '+ str(plottedSignal.indexInResFile)+'\n')
         f.write('}'+'\n')
                               
                               
@@ -671,9 +671,10 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigNo = resFilePane.signalCollection.current()
+        selectedSigName = resFilePane.signalCollection.get()
+        selectedSigIndex = resFilePane.signalCollection.current()
         # Extract from the ResultFileModel the signal selected
-        signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigNo]
+        signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
         
         # Create a PlottedSignal instance 
         plottedSignal = PlottedSignalModel()
@@ -688,25 +689,24 @@ class Presenter():
         
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.append(plottedSignal)
-        # Add it to the SubplotModel plottedSignals list (for the plot canvas)
-        # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].plottedSignals.append(plottedSignal)
-        
         
         self.RedrawPlotNotebook()
         
     def DeleteSignal(self, signalPane)->None:
         '''Delete signal.'''
-        
-        # Get the index of the result file and subplot
-        subplotIndx = signalPane.master.master.master.master.indx
-        resFileIndx = signalPane.master.indx
-        signalIndx = signalPane.indx
+        # Extract indexes
+        signalIndx = signalPane.index
+        resFilePaneIntern = signalPane.master
+        resFilePane = signalPane.master.master
+        resFileIndx = resFilePane.index
+        collapsPaneIntern = signalPane.master.master.master
+        collapsPane = signalPane.master.master.master.master
+        subplotPane = signalPane.master.master.master.master.master
+        subplotIndx = subplotPane.index
+        plotIndx = self.model.projectModel.tabSelected
         
         # Remove signal from ResultFileModel selectedSignals list
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].resultFiles[resFileIndx].selectedSignals.pop(signalIndx)
-        # Remove the signal from the SubplotModel plottedSignals list
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].plottedSignals.pop(signalIndx)
-        
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.pop(signalIndx)
         
         self.RedrawPlotNotebook()
         
@@ -894,7 +894,7 @@ class Presenter():
             name = ":".join(name)
             units = signalTokens[-1]
             sigQuantity = self.DetermineSignalQuantity(name,units)
-            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indx = i)
+            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indexInResFile=i)
             signals.append(sigTemp)
             signalNames.append(name)
         
@@ -955,7 +955,7 @@ class Presenter():
              self.view.projectNotebook.forget(tab)
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            plotPane = PlotPane(self.view.projectNotebook, self,ii)
+            plotPane = PlotPane(self.view.projectNotebook,self,ii, bg='gray30')
             if plot.name == '':
                 self.view.projectNotebook.add(plotPane, text = "Plot " + str(ii))
             else:
@@ -1082,4 +1082,17 @@ class Presenter():
         
     def UpdateEmpty(self, event)->None:
         '''Empty function'''
+        
+        
+        
+    # TEXT
+    def PrintMessage(self, message)->None:
+        '''Print message.'''
+        message = message +'\n'
+        self.view.textPane.text.insert(tk.END,message)
+        
+    def PrintError(self, message)->None:
+        '''Print error'''
+        message = message +'\n'
+        self.view.textPane.text.insert(tk.END,message)
         

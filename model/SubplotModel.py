@@ -24,13 +24,13 @@ class SubplotModel():
         self.yLim = [0.0, 1.0]
         self.xLimUser = [0.0, 1.0]
         self.yLimUser = [0.0, 1.0]
-        self.useUserLim = False
+        self.useUserLim = 0
         self.xTick = 0.2
         self.yTick = 0.2
         self.xTickUser = 0.2
         self.yTickUser = 0.2
-        self.useUserTicks = False
-        self.setGrid = True
+        self.useUserTicks = 0
+        self.setGrid = 1
         
         self.colorCounter = 0
         

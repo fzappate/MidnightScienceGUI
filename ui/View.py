@@ -66,10 +66,8 @@ class View(tk.Tk):
         # Main tabs
         self.projectNotebook = ProjectNotebook(self)
         self.projectNotebook.grid(row=2,column=0,sticky='NEWS', padx = (3,3),pady = (2,2))
-        # self.projectNotebook.bind("<<NotebookTabChanged>>", self.presenter.UpdateSelectedTabIndx)
-        # self.projectNotebook.bind("<<NotebookTabChanged>>", lambda event: self.presenter.UpdateSelectedTabIndx(event))
 
         # Text widget
-        self.text = VerticalScrollText(self,height = 150, background = 'gray30')
-        self.text.grid(row=3,column=0,sticky='EW', padx = (3,3),pady = (2,2))
+        self.textPane = VerticalScrollText(self,height = 150, background = 'gray30')
+        self.textPane.grid(row=3,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 
