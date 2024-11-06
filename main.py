@@ -1,5 +1,5 @@
 """
-Application Module
+Module: main.py
 ==================
 
 This module serves as the entry point for initializing and running the application.
@@ -7,7 +7,7 @@ It imports and creates instances of the Model, View, and Presenter classes and s
 a high-DPI awareness setting for improved display scaling on Windows.
 
 Author: Federico Zappaterra
-Version: 1.0
+Version: 1.0.0
 Date: 2024-11-05
 
 Classes

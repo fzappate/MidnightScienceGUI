@@ -1,5 +1,5 @@
 """
-Module: Model
+Module: Model.py
 =============
 
 This module contains the `Model` class, which serves as the central data container 
@@ -8,7 +8,7 @@ that manage the application's configuration and project-related data, respective
 The `Model` class acts as storage object for the application.
 
 Author: Federico Zappaterra
-Version: 1.0
+Version: 1.0.0
 Date: 11/05/24
 
 Classes:
