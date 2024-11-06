@@ -55,7 +55,9 @@ class Model:
         Returns:
             None
         """
+        
         # Instantiate the Settings submodel for app configuration
         self.settings = Settings()  
+        
         # Instantiate the ProjectModel submodel to manage project data
         self.projectModel = ProjectModel()  
