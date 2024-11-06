@@ -107,11 +107,7 @@ class Presenter():
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
     
-    
-    # AUX BAR PROJECT MANAGEMENT
-    def LoadProjectModel(self)->None:
-        self.LoadProjectModel()
-        self.RedrawPlotNotebook()
+            
         
     # JSON HANDLING
     
@@ -335,6 +331,10 @@ class Presenter():
   
     # PROJECT FOLDER SELECTION
     
+    def LoadProject(self)->None:
+        self.LoadProjectModel()
+        self.RedrawPlotNotebook()
+        
     def BrowseProjectFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
         and store its path in the main control models. """

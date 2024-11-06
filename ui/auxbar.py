@@ -36,7 +36,7 @@ class AuxBar(tk.Frame):
 
         # Load button
         load_button = ttk.Button(self, image=self.loadIcon)
-        load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadProjectModel)
+        load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadProject)
         load_button.grid(row=0, column=1, padx=(3,3), ipady=1, ipadx=1)
         
         # Reload button
