@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 
-from ui.resfilepane import ResFilePane
-
 class ResFileManager(tk.Frame):
     def __init__(self, 
                  parent, 

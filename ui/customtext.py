@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk 
-from ui.resizableframe import ResizableFrameTopEdge
+from ui.ResizableFrame import ResizableFrameTopEdge
      
 class VerticalScrollText(ResizableFrameTopEdge):
     '''Text object with vertical scroll.'''
@@ -13,16 +13,16 @@ class VerticalScrollText(ResizableFrameTopEdge):
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,weight=1)
         
-        self.text = ''
-        text = tk.Text(self)
-        text.grid_rowconfigure(0, weight=1)
-        text.insert('1.0','Please eneter a comment')
+        
+        self.text = tk.Text(self)
+        self.text.grid_rowconfigure(0, weight=1)
+        # self.text.insert('1.0','Please eneter a comment')
 
         # Scroll bar 
-        text_scroll = ttk.Scrollbar(self, orient='vertical',command = text.yview)
+        text_scroll = ttk.Scrollbar(self, orient='vertical',command = self.text.yview)
         
-        text.grid(column =0, row=0,sticky='NEWS',padx=3,pady=2)
+        self.text.grid(column =0, row=0,sticky='NEWS',padx=3,pady=2)
         text_scroll.grid(row=0,column=1,sticky='NS',padx=(0,3),pady=2)
 
         # Link the text to the scroll bar
-        text['yscrollcommand'] = text_scroll.set
+        self.text['yscrollcommand'] = text_scroll.set

@@ -5,7 +5,7 @@ class SubplotOptions(tk.Frame):
     def __init__(self,
                  parent,
                  presenter,
-                 indx,
+                 index,
                  title = '',
                  xLabel = '',
                  yLabel = '',
@@ -26,7 +26,7 @@ class SubplotOptions(tk.Frame):
         btnSize = 10
         self.parent = parent
         self.presenter = presenter
-        self.indx = indx
+        self.index = index
         self.useUserLim = useUserLim
         self.setGrid = setGrid
         

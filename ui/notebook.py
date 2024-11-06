@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk 
 
-from ui.plotter import Plotter
+from ui.PlotPane import PlotPane
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -21,14 +21,14 @@ class HorizTabCollection(tk.Frame):
         self.rowconfigure(0,weight=1)
 
         # Create tab notebook 
-        self.tab_notebook = ttk.Notebook(self)
+        self.plotNotebook = ttk.Notebook(self)
 
-        # Create the objects to put in the tabs
-        self.plotter = Plotter(self.tab_notebook,presenter, bg = 'red')
-        self.multics = tk.Frame(self.tab_notebook, bg = 'green')
+        # # Create the objects to put in the tabs
+        # self.plotter = Plotter(self.tab_notebook,presenter, bg = 'red')
+        # self.multics = tk.Frame(self.tab_notebook, bg = 'green')
         
-        # Add the tabs (frame) to the notebook
-        self.tab_notebook.add(self.plotter, text='Plotter',padding="3")
-        self.tab_notebook.add(self.multics, text='Multics',padding="3")
+        # # Add the tabs (frame) to the notebook
+        # self.tab_notebook.add(self.plotter, text='Plotter',padding="3")
+        # self.tab_notebook.add(self.multics, text='Multics',padding="3")
         
-        self.tab_notebook.pack(expand=1, fill="both",padx=(3,3),pady=(2,2))
+        self.plotNotebook.pack(expand=1, fill="both",padx=(3,3),pady=(2,2))

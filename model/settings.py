@@ -5,6 +5,4 @@ class Settings():
         '''Initialize the application setting object.'''
 
         self.settingsFilePath = './utilities/settings.md'
-        self.workingFolder = ''
-        self.resultsFile = ''
-        self.resultsFilePath = ''
+        self.projectFolder = ''

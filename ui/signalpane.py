@@ -6,7 +6,7 @@ class SignalPane(tk.Frame):
                  parent, 
                  presenter,
                  signal,
-                 indx = 0,
+                 index = 0,
                  *args,
                  **kwargs)->None:
         """
@@ -27,8 +27,9 @@ class SignalPane(tk.Frame):
         self.signal = signal
         
         self.signalName = signal 
-        self.indx = indx
+        self.index = index
         self.presenter = presenter
+        
         # Define columns weight
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=0)
@@ -55,7 +56,7 @@ class SignalPane(tk.Frame):
         self.unitsCb = ttk.Combobox(self,width = 7,value=unitList,state='readonly')
         self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
         
-        self.unitsCb.current(0)
+        self.unitsCb.set(signal.units)
         self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
         
         # Signal options

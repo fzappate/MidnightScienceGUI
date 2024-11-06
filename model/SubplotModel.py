@@ -6,10 +6,11 @@ class SubplotModel():
         information necessary to draw a subplot.
         '''
         # Dictionary with signal names and values
+        self.name = ''
         self.indx = 0
         self.noOfResFile = 0
-        self.resultFiles = []
-        self.plottedSignals = []
+        self.isCollapsed = 1
+        self.containedResultFiles = []
         
         self.xAxisSignals = []
         self.xAxisSignalsName = []
@@ -17,20 +18,19 @@ class SubplotModel():
         self.xAxisSelectedIndx = 0 
         self.xAxisSelectedName = '' # TO BE DELETED
         
-        self.name = ''
         self.xLabel = ''
         self.yLabel = ''
         self.xLim = [0.0, 1.0]
         self.yLim = [0.0, 1.0]
         self.xLimUser = [0.0, 1.0]
         self.yLimUser = [0.0, 1.0]
-        self.useUserLim = False
+        self.useUserLim = 0
         self.xTick = 0.2
         self.yTick = 0.2
         self.xTickUser = 0.2
         self.yTickUser = 0.2
-        self.useUserTicks = False
-        self.setGrid = True
+        self.useUserTicks = 0
+        self.setGrid = 1
         
         self.colorCounter = 0
         

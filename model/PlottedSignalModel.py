@@ -1,6 +1,6 @@
-from model.SignalModel import Signal
+from model.SignalModel import SignalModel
 
-class PlottedSignal(Signal):
+class PlottedSignalModel(SignalModel):
     def __init__(self,
                  width = 1,
                  style = '-',
@@ -16,6 +16,7 @@ class PlottedSignal(Signal):
         '''
         super().__init__(*args,**kwargs)
         
+        self.objectName = 'PlottedSignal'
         self.width = width
         self.style = style
         self.marker = marker
@@ -26,11 +27,11 @@ class PlottedSignal(Signal):
         '''Take a signal of the Signal class, copy its properties into 
         a PlottedSignal instance.'''
         self.name = signal.name
+        self.indexInResFile = signal.indexInResFile
         self.label = signal.name
         self.units = signal.units
         self.rawData = signal.rawData
         self.scaledData = signal.scaledData
         self.scalingFactor = signal.scalingFactor 
         self.quantity = signal.quantity
-        self.indx = signal.indx
         
