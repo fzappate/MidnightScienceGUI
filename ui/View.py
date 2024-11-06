@@ -69,5 +69,6 @@ class View(tk.Tk):
 
         # Text widget
         self.textPane = VerticalScrollText(self,height = 150, background = 'gray30')
+        self.textPane.text.config(state='disabled')
         self.textPane.grid(row=3,column=0,sticky='EW', padx = (3,3),pady = (2,2))
 

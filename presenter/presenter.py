@@ -77,8 +77,10 @@ class Presenter():
         settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
         
         if (settingsFileExist):
+            self.PrintMessage('Settings file found at: ' + self.model.settings.settingsFilePath)
             print('Settings file found at: ' + self.model.settings.settingsFilePath)
         else:
+            self.PrintError('Settings file found at: ' + self.model.settings.settingsFilePath)
             print('Settings file not found at: ' + self.model.settings.settingsFilePath)
             
         # Read setting file
@@ -106,7 +108,11 @@ class Presenter():
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
     
     
-    
+    # AUX BAR PROJECT MANAGEMENT
+    def LoadProjectModel(self)->None:
+        self.LoadProjectModel()
+        self.RedrawPlotNotebook()
+        
     # JSON HANDLING
     
     def LoadProjectModel(self) -> None:
@@ -404,17 +410,7 @@ class Presenter():
         lines[counter] = "- " + targetSettingKey + ", "  + targetSettingVal + "\n"
         file = open(self.model.settings.settingsFilePath,'w')
         file.writelines(lines)
-        file.close()
-
-    def ReloadResults(self)->None: # Deprecated?
-        '''Reload results.'''
-        for ii,sp in enumerate(self.model.projectModel.plotModel.containedSubplots):
-            for jj, rf in enumerate(sp.resultFiles):
-                rf.RemoveDataFromResultSignals()
-                rf.LoadResults(rf.absPath)
-        
-        
-        self.RedrawPlotNotebook()       
+        file.close()      
         
         
         
@@ -1089,10 +1085,15 @@ class Presenter():
     def PrintMessage(self, message)->None:
         '''Print message.'''
         message = message +'\n'
+        self.view.textPane.text.config(state='normal')
         self.view.textPane.text.insert(tk.END,message)
+        self.view.textPane.text.config(state='disabled')
         
     def PrintError(self, message)->None:
         '''Print error'''
         message = message +'\n'
-        self.view.textPane.text.insert(tk.END,message)
+        self.view.textPane.text.config(state='normal')
+        self.view.textPane.text.tag_configure("red_text",foreground='red')
+        self.view.textPane.text.insert(tk.END,message,"red_text")
+        self.view.textPane.text.config(state='normal')
         

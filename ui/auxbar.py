@@ -32,15 +32,14 @@ class AuxBar(tk.Frame):
 
         # Save button 
         save_button = ttk.Button(self, image=self.saveIcon, command=presenter.SaveProjectModel)
-        # save_button = ttk.Button(self, image=self.saveIcon,command=presenter.SaveGearGenData)
         save_button.grid(row=0, column=0, padx=(3,3), ipady=1, ipadx=1)
 
         # Load button
         load_button = ttk.Button(self, image=self.loadIcon)
-        # load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadData)
+        load_button = ttk.Button(self, image=self.loadIcon,command=presenter.LoadProjectModel)
         load_button.grid(row=0, column=1, padx=(3,3), ipady=1, ipadx=1)
         
         # Reload button
-        reload_button = ttk.Button(self, image=self.reloadIcon, command = presenter.ReloadResults)
-        # reload_button = ttk.Button(self, image=self.reloadIcon,command=xxx)
-        reload_button.grid(row=0, column=2, padx=(3,3), ipady=1, ipadx=1)
+        # reload_button = ttk.Button(self, image=self.reloadIcon, command = presenter.ReloadResults)
+        # # reload_button = ttk.Button(self, image=self.reloadIcon,command=xxx)
+        # reload_button.grid(row=0, column=2, padx=(3,3), ipady=1, ipadx=1)
