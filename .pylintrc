@@ -1,0 +1,8 @@
+[MASTER]
+# Initialize custom Python path for Pylint
+init-hook='import sys; sys.path.append("./model")'
+init-hook='import sys; sys.path.append("./view")'
+init-hook='import sys; sys.path.append("./presenter")'
+
+[MESSAGES CONTROL]
+disable=invalid-name
