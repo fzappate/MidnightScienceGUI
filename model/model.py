@@ -19,8 +19,8 @@ Model:
 
 """
 
-from Settings import Settings
-from ProjectModel import ProjectModel
+from model.Settings import Settings
+from model.ProjectModel import ProjectModel
 
 class Model:
     """

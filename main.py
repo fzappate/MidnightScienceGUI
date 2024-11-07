@@ -37,7 +37,7 @@ Notes
   the application logic (Model), user interface (View), and UI logic (Presenter).
 
 """
-from model import Model
+from model.Model import Model
 from ui.View import View
 from presenter.presenter import Presenter
 

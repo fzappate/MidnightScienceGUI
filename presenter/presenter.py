@@ -46,7 +46,7 @@ class Presenter():
     def RunUI(self):
         '''Run the UI.'''
         # Initialize UI and start the loop 
-        self.view.initUI(self)
+        self.view.initView(self)
         self.LoadSettings()
         self.LoadProjectModel()
         self.RedrawPlotNotebook()

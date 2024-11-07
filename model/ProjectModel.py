@@ -1,5 +1,5 @@
 """
-Module: ProjectModel
+Module: ProjectModel.py
 ====================
 
 This module defines the ProjectModel class, which is responsible for managing the
