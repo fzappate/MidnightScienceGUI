@@ -21,7 +21,7 @@ View(tk.Tk)
 import tkinter as tk
 from presenter.presenter import Presenter
 from ui.PathSelector import PathSelector
-from ui.customtext import VerticalScrollText
+from ui.VerticalScrollText import VerticalScrollText
 from ui.AuxBar import AuxBar
 from ui.TabManager import TabManager
 from ui.ProjectNotebook import ProjectNotebook
