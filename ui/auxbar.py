@@ -18,7 +18,6 @@ AuxBar(tk.Frame)
 
 """
 from tkinter import ttk
-from tkinter import PhotoImage
 import tkinter as tk
 from PIL import Image, ImageTk
 import os

@@ -19,6 +19,8 @@ TabManager(tk.Frame)
 """
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk
+import os
 
 class TabManager(tk.Frame):    
     """
@@ -49,17 +51,37 @@ class TabManager(tk.Frame):
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments for further customization of the frame.
         """
-        '''Initialize TabManager options widget.'''
         super().__init__(parent, *args, **kwargs)
+        '''Initialize TabManager options widget.'''
+        
+        iconSize = (30, 30)
+
+        # Load add tab image
+        addTabIconPath = os.path.join(os.getcwd(), './images/addTabIcon.png')
+        self.addTabIcon = Image.open(addTabIconPath)
+        self.addTabIcon = self.addTabIcon.resize(iconSize)
+        self.addTabIcon = ImageTk.PhotoImage(self.addTabIcon)
+
+        # # Load load image
+        delTabIconPath = os.path.join(os.getcwd(), './images/delTabIcon.png')
+        self.delTabIcon = Image.open(delTabIconPath)
+        self.delTabIcon = self.delTabIcon.resize(iconSize)
+        self.delTabIcon = ImageTk.PhotoImage(self.delTabIcon)
+        
+        # # Load reload image
+        optsTabIconPath = os.path.join(os.getcwd(), './images/optsTabIcon.png')
+        self.optsTabIcon = Image.open(optsTabIconPath)
+        self.optsTabIcon = self.optsTabIcon.resize(iconSize)
+        self.optsTabIcon = ImageTk.PhotoImage(self.optsTabIcon)
         
         # Add button to add a new plot tab
-        self.addButton = ttk.Button(self, text='Add', command=presenter.AddPlotTab)
-        self.addButton.grid(row=0, column=0, sticky='NEWS')
+        self.addButton = ttk.Button(self, text='Add', image=self.addTabIcon, command=presenter.AddPlotTab)
+        self.addButton.grid(row=0, column=0, padx=(3, 3), ipady=1, ipadx=1, sticky='NEWS')
         
         # Options button for tab configuration (functionality can be added later)
-        self.optsButton = ttk.Button(self, text='Opts')
-        self.optsButton.grid(row=0, column=1, sticky='NEWS')
+        self.optsButton = ttk.Button(self, image=self.optsTabIcon )
+        self.optsButton.grid(row=0, column=1, padx=(3, 3), ipady=1, ipadx=1, sticky='NEWS')
         
         # Delete button to remove the current plot tab
-        self.delButton = ttk.Button(self, text='Canc', command=presenter.DeletePlotTab)
-        self.delButton.grid(row=0, column=2, sticky='NEWS')
+        self.delButton = ttk.Button(self, image=self.delTabIcon, command=presenter.DeletePlotTab)
+        self.delButton.grid(row=0, column=2, padx=(3, 3), ipady=1, ipadx=1, sticky='NEWS')
