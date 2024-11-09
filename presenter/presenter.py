@@ -1010,21 +1010,31 @@ class Presenter():
     
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
-        
-        self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
+        # BIND self.tabView.bind('<Button-3>', on_click)
+        # self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
         
         # Delete existing tabs
-        tabs = self.view.projectNotebook.tabs()
-        for ii, tab in enumerate(self.view.projectNotebook.tabs()):
-             self.view.projectNotebook.forget(tab)
+        # tabs = self.view.projectNotebook.tabs()
+
+        a = 4
+        # if self.view.projectNotebook.indx('end')
+        for plot in self.model.projectModel.containedPlots:
+            try:
+                self.view.projectNotebook.delete(plot.name)
+            except:
+                continue
              
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            plotPane = PlotPane(self.view.projectNotebook,self,ii, bg='gray30')
             if plot.name == '':
-                self.view.projectNotebook.add(plotPane, text = "Plot " + str(ii))
+                plotName = "Plot " + str(ii)
             else:
-                self.view.projectNotebook.add(plotPane, text = plot.name)
+                plotName = plot.name
+                
+            self.view.projectNotebook.add(plotName)
+            plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii, bg='gray30')
+            # plotPane.grid(row=0,column=0,sticky='NEWS')
+            plotPane.pack(fill="both", expand=True)
                 
             # Clear all the existing subplots, and create the axis for the new ones
             plotCanvasChildren = plotPane.plotCanvas.winfo_children()
@@ -1143,9 +1153,9 @@ class Presenter():
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
         # Move to the newly created tab
-        self.view.projectNotebook.select(self.model.projectModel.tabSelected)
+        self.view.projectNotebook.set(self.model.projectModel.tabSelected)
         
-        self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
+        # self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         
     def UpdateEmpty(self, event)->None:
         '''Empty function'''
