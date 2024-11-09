@@ -54,6 +54,8 @@ class TabManager(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         '''Initialize TabManager options widget.'''
         
+        self.presenter = presenter
+        
         iconSize = (30, 30)
 
         # Load add tab image
@@ -79,7 +81,7 @@ class TabManager(tk.Frame):
         self.addButton.grid(row=0, column=0, padx=(3, 3), ipady=1, ipadx=1, sticky='NEWS')
         
         # Options button for tab configuration (functionality can be added later)
-        self.optsButton = ttk.Button(self, image=self.optsTabIcon )
+        self.optsButton = ttk.Button(self, image=self.optsTabIcon, command = lambda: self.presenter.OpenPlotOptions(self.optsButton))
         self.optsButton.grid(row=0, column=1, padx=(3, 3), ipady=1, ipadx=1, sticky='NEWS')
         
         # Delete button to remove the current plot tab
