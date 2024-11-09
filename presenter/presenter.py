@@ -625,7 +625,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].grid = subplotOptionsPane.gridVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].setGrid = subplotOptionsPane.gridVar.get()
         
         self.RedrawPlotNotebook()
         
@@ -1043,6 +1043,7 @@ class Presenter():
                 # Redraw subplots
                 for jj, subplot in enumerate(plot.containedSubplots):
                     axList[jj,0].set_facecolor(plot.plotColor)
+                    axList[jj,0].grid(subplot.setGrid)
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
                                             jj,
