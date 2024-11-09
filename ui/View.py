@@ -28,7 +28,7 @@ from ui.AuxBar import AuxBar
 from ui.TabManager import TabManager
 from ui.ProjectNotebook import ProjectNotebook
 
-# from utilities.MSDarkStyle import applyMSDarkTheme
+from utilities.MSStyles import applyMSDarkTheme
 
 try:
     from ctypes import windll
@@ -55,13 +55,8 @@ class View(tk.Tk):
         
         # Window title
         self.title("Midnight Science Plotter")
-        
-        style = ttk.Style(self)
-        
-        print("Theme in use: " + str(style.theme_use()))
-        print("Theme names: " + str(style.theme_names()))
-        style.theme_use('vista')
-        # applyMSDarkTheme(self)
+    
+        applyMSDarkTheme(self)
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
