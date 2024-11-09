@@ -9,6 +9,13 @@ class PlotModel():
         self.name = ''
         self.indx = 0
         self.objectName = 'PlotModel'
+        self.leftMargin = 0.1
+        self.rightMargin = 0.9
+        self.bottomMargin = 0.1
+        self.topMargin = 0.9
+        self.canvasColor = '#FFFFFF'
+        self.plotColor = '#FFFFFF'
+        self.toolbarColor = '#FFFFFF'
         
         self.noOfSubplots = 0
         self.containedSubplots = []

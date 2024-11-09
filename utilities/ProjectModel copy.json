@@ -6,6 +6,13 @@
             "name": "Plot0",
             "indx": 0,
             "noOfSubplots": 2,
+            "canvasColor": "#FFFFFF",
+            "plotColor": "#999999",
+            "toolbarColor": "#AA0000",
+            "leftMargin": 0.05,
+            "rightMargin": 0.95,
+            "bottomMargin": 0.05,
+            "topMargin": 0.95,
             "containedSubplots": [
                 {
                     "name": "Pressures",
@@ -154,9 +161,16 @@
             ]
         },
         {
-            "name": "",
+            "name": "Second Plot",
             "indx": 2,
             "noOfSubplots": 1,
+            "canvasColor": "#FFFFFF",
+            "plotColor": "#999999",
+            "toolbarColor": "#AA0000",
+            "leftMargin": 0.05,
+            "rightMargin": 0.95,
+            "bottomMargin": 0.05,
+            "topMargin": 0.95,
             "containedSubplots": [
                 {
                     "name": "Flows",

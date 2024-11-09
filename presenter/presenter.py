@@ -8,8 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
 from ui.PlotPane import PlotPane
-from ui.CollapsiblePane import TogglePaneDelOpts
-from ui.ResFileManager import ResFileManager
+from ui.PlotOptions import PlotOptions
 from ui.ResFilePane import ResFilePane
 from ui.SignalPane import SignalPane
 from ui.SubplotOptions import SubplotOptions
@@ -46,7 +45,7 @@ class Presenter():
     def RunUI(self):
         '''Run the UI.'''
         # Initialize UI and start the loop 
-        self.view.initUI(self)
+        self.view.initView(self)
         self.LoadSettings()
         self.LoadProjectModel()
         self.RedrawPlotNotebook()
@@ -110,7 +109,10 @@ class Presenter():
             
         
     # JSON HANDLING
-    
+    def LoadProject(self)->None:
+        self.LoadProjectModel()
+        self.RedrawPlotNotebook()
+             
     def LoadProjectModel(self) -> None:
         '''Load project from JSON.'''
         # Check that a ProjectModel.json exists
@@ -135,6 +137,14 @@ class Presenter():
             plotModel = PlotModel()
             plotModel.name = jsonPlot["name"]
             plotModel.indx = jsonPlot["indx"]
+            plotModel.canvasColor = jsonPlot["canvasColor"]
+            plotModel.plotColor = jsonPlot["plotColor"]
+            plotModel.toolbarColor = jsonPlot["toolbarColor"]
+            plotModel.leftMargin = jsonPlot["leftMargin"]
+            plotModel.rightMargin = jsonPlot["rightMargin"]
+            plotModel.bottomMargin = jsonPlot["bottomMargin"]
+            plotModel.topMargin = jsonPlot["topMargin"]
+        
             plotModel.noOfSubplots = jsonPlot["noOfSubplots"]
             
             # Load subplot data
@@ -248,6 +258,13 @@ class Presenter():
         f.write('"name": "'+ plotModel.name +'",\n')
         f.write('"indx": '+ str(plotModel.indx) +',\n')
         f.write('"noOfSubplots": '+ str(plotModel.noOfSubplots) +',\n')
+        f.write('"canvasColor": "'+ plotModel.canvasColor +'",\n')
+        f.write('"plotColor": "'+ plotModel.plotColor +'",\n')
+        f.write('"toolbarColor": "'+ plotModel.toolbarColor +'",\n')
+        f.write('"leftMargin": '+ str(plotModel.leftMargin) +',\n')
+        f.write('"rightMargin": '+ str(plotModel.rightMargin) +',\n')
+        f.write('"bottomMargin": '+ str(plotModel.bottomMargin) +',\n')
+        f.write('"topMargin": '+ str(plotModel.topMargin) +',\n')
         f.write('"containedSubplots": [\n')
         
         # print subplots
@@ -330,11 +347,7 @@ class Presenter():
                               
   
     # PROJECT FOLDER SELECTION
-    
-    def LoadProject(self)->None:
-        self.LoadProjectModel()
-        self.RedrawPlotNotebook()
-        
+
     def BrowseProjectFolder(self)->None:
         """This function allows the user to select a working directory by browsing 
         and store its path in the main control models. """
@@ -429,6 +442,8 @@ class Presenter():
         plot = PlotModel()
         # Assign an index to the plot model
         plot.indx = len(self.model.projectModel.containedPlots) + 1
+        # Assign name to the plot name
+        plot.name = 'Plot ' + str(plot.indx)
         # Append plot model to project model
         self.model.projectModel.containedPlots.append(plot)
         # Set the newly created plot as selected folder
@@ -452,7 +467,60 @@ class Presenter():
         # Redraw plot notebook 
         self.RedrawPlotNotebook()
 
+    def OpenPlotOptions(self,optsButton)->None:
+        '''Open plot options'''
+        # Create new window
+        optsWindowX = optsButton.winfo_rootx()
+        optsWindowY = optsButton.winfo_rooty()
+        optsWindow = tk.Toplevel(self.view)
+        optsWindow.geometry(f"+{optsWindowX}+{optsWindowY}")
+        optsWindow.columnconfigure(0,weight=1)
+        optsWindow.rowconfigure(0,weight=1)
+        optsWindow.resizable(False, False)
+        optsWindow.grab_set()        
         
+        # Extract subplot options
+        plotIndx = self.model.projectModel.tabSelected
+        # subplotIndx = plotPane.index
+        plotModel = self.model.projectModel.containedPlots[plotIndx]
+        
+        # Populate the subplotOptions 
+        plotOption = PlotOptions(optsWindow,
+                                    self,
+                                    plotModel)
+        plotOption.grid(row=0,column=0,sticky = 'NEWS')
+        
+    def ApplyPlotOptions(self,plotOptionsPane)->None:
+        '''Apply plot options.'''
+        # Retrieve the plot index from the tab selection 
+        plotIndx = self.model.projectModel.tabSelected
+
+        # Extract subplot options
+        self.model.projectModel.containedPlots[plotIndx].name = plotOptionsPane.titleEntry.get()
+        self.model.projectModel.containedPlots[plotIndx].leftMargin = float(plotOptionsPane.plotMarginLeft.get())
+        self.model.projectModel.containedPlots[plotIndx].rightMargin = float(plotOptionsPane.plotMarginRight.get())
+        self.model.projectModel.containedPlots[plotIndx].bottomMargin = float(plotOptionsPane.plotMarginBottom.get())
+        self.model.projectModel.containedPlots[plotIndx].topMargin = float(plotOptionsPane.plotMarginTop.get())
+        self.model.projectModel.containedPlots[plotIndx].canvasColor = plotOptionsPane.selectedCanvasColor
+        self.model.projectModel.containedPlots[plotIndx].plotColor = plotOptionsPane.selectedPlotColor
+        self.model.projectModel.containedPlots[plotIndx].toolbarColor = plotOptionsPane.selectedToolbarColor
+        
+        # Redraw notebook
+        self.RedrawPlotNotebook()
+        
+    def ClosePlotOptions(self,plotOptionsPane)->None:
+        '''Apply plot options.'''
+        # Destroy the window containing the plotOptionsPane
+        plotOptionsPane.parent.destroy()
+        
+    def OkPlotOptions(self,plotOptionsPane)->None:
+        '''Apply plot options.'''
+        # Apply the plot options
+        self.ApplyPlotOptions(plotOptionsPane)
+        # Close the plot options
+        self.ClosePlotOptions(plotOptionsPane)
+     
+     
      
     # SUBPLOT HANDLING
     
@@ -557,7 +625,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].grid = subplotOptionsPane.gridVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].setGrid = subplotOptionsPane.gridVar.get()
         
         self.RedrawPlotNotebook()
         
@@ -967,13 +1035,15 @@ class Presenter():
             if noOfSubplots>0:
                 
                 fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
-                fig.patch.set_facecolor("0.4")
+                plt.subplots_adjust(left=plot.leftMargin, right=plot.rightMargin, top=plot.topMargin, bottom=plot.bottomMargin)
+                fig.patch.set_facecolor(plot.canvasColor)
                 
                 
                 # REDRAW PLOT MANAGER ==========================
                 # Redraw subplots
                 for jj, subplot in enumerate(plot.containedSubplots):
-                    axList[jj,0].set_facecolor("0.4")
+                    axList[jj,0].set_facecolor(plot.plotColor)
+                    axList[jj,0].grid(subplot.setGrid)
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
                                             jj,
@@ -1062,7 +1132,7 @@ class Presenter():
                 # Draw the canvas and toolbar inside the Plotter object
                 plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
                 plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar.config(bg="lightblue")
+                plotPane.plotCanvas.toolbar.config(bg=plot.toolbarColor)
                 # for button in plotPane.plotCanvas.toolbar.winfo_children():
                 #     '''Use this to configure the button style'''
                     # Use this to configure the style of the buttons
@@ -1082,6 +1152,7 @@ class Presenter():
         
         
     # TEXT
+    
     def PrintMessage(self, message)->None:
         '''Print message.'''
         message = message +'\n'

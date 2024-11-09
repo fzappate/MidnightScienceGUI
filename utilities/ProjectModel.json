@@ -2,8 +2,15 @@
 "tabSelected": 1,
 "containedPlots": [
 {"name": "Plot0",
-"indx": 0,
+"indx": 0.9,
 "noOfSubplots": 2,
+"canvasColor": "#FFFFFF",
+"plotColor": "#999999",
+"toolbarColor": "#AA0000",
+"leftMargin": 0.1,
+"rightMargin": 0.9,
+"bottomMargin": 0.1,
+"topMargin": 0.9,
 "containedSubplots": [
 {"name": "Pressures",
 "indx": 0,
@@ -123,9 +130,16 @@
 ]
 }
 ,
-{"name": "",
-"indx": 2,
+{"name": "Second Plot",
+"indx": 0.9,
 "noOfSubplots": 1,
+"canvasColor": "#000000",
+"plotColor": "#999999",
+"toolbarColor": "#AA0000",
+"leftMargin": 0.1,
+"rightMargin": 0.9,
+"bottomMargin": 0.1,
+"topMargin": 0.9,
 "containedSubplots": [
 {"name": "Flows",
 "indx": 0,

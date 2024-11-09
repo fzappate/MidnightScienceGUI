@@ -170,7 +170,10 @@ class SubplotOptions(tk.Frame):
         self.gridVar = tk.BooleanVar(value=self.setGrid)
         
         self.gridCheckbox = ttk.Checkbutton(self.gridFrame,onvalue = 'on',variable=self.gridVar)
-        self.gridCheckbox.state(['selected'])
+        if setGrid == True:
+            self.gridCheckbox.state(['selected'])
+        else:
+            self.gridCheckbox.state(['!selected'])
         self.gridCheckbox.grid(row=0,column=2)
         
         # Button frame
