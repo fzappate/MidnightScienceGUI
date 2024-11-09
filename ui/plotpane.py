@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk 
+import customtkinter
 
 # from ui.plotpane import PlotPane
 from ui.PlotCanvas import PlotCanvas
@@ -12,7 +13,7 @@ except:
         pass
 
 
-class PlotPane(tk.Frame):
+class PlotPane(customtkinter.CTkFrame):
     def __init__(self,parent,presenter,index,*args, **kwargs)->None:
         """
         Initialize Plotter. 
@@ -30,9 +31,9 @@ class PlotPane(tk.Frame):
         self.columnconfigure(1,weight=1)
         
         # Plot manager        
-        self.plotManager = PlotManager(self,presenter,width=400,bg = 'green')
+        self.plotManager = PlotManager(self,presenter,width=400)
         self.plotManager.grid(row=0,column=0,sticky='NEWS')
         
         # Plot frame
-        self.plotCanvas=PlotCanvas(self, bg = 'green')
+        self.plotCanvas=PlotCanvas(self)
         self.plotCanvas.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      

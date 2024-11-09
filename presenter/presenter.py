@@ -1032,7 +1032,7 @@ class Presenter():
                 plotName = plot.name
                 
             self.view.projectNotebook.add(plotName)
-            plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii, bg='gray30')
+            plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
             # plotPane.grid(row=0,column=0,sticky='NEWS')
             plotPane.pack(fill="both", expand=True)
                 
