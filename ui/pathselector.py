@@ -20,7 +20,10 @@ PathSelector(tk.Frame)
 """
 import tkinter as tk
 from tkinter import ttk
+
 from presenter.Presenter import Presenter
+
+import customtkinter
 
 # Try to set the process DPI awareness on Windows for proper scaling
 try:
@@ -30,7 +33,7 @@ except:
     pass
 
 
-class PathSelector(ttk.Frame):
+class PathSelector(customtkinter.CTkFrame):
     """
     A tkinter Frame widget that provides a user interface for selecting and displaying
     a working folder for a project.
@@ -74,17 +77,17 @@ class PathSelector(ttk.Frame):
         self.columnconfigure(2, weight=0)  # Button column (fixed size)
 
         # Create and place the label for the "Working Folder" text
-        self.lab = ttk.Label(self, text='Working Folder',width=20)
+        self.lab = customtkinter.CTkLabel(self, text='Working Folder',width=20)
 
         # Create the entry widget for displaying and editing the folder path
-        self.pathEntry = ttk.Entry(self)
+        self.pathEntry = customtkinter.CTkEntry(self)
         self.pathEntry.insert(0, presenter.model.settings.projectFolder)  # Set default path
         # Bind events to handle folder setting when Enter key or focus loss occurs
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
 
         # Create the "Browse..." button to allow the user to select a folder
-        self.navigate = ttk.Button(self, text="Browse..", style = 'new.TButton', command=lambda: presenter.BrowseProjectFolder())
+        self.navigate = customtkinter.CTkButton(self, text="Browse..", command=lambda: presenter.BrowseProjectFolder())
 
         # Grid layout to position the widgets in the frame
         self.lab.grid(row=0, column=0, padx=(3, 3))  # Label in column 0

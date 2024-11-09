@@ -1017,6 +1017,7 @@ class Presenter():
         tabs = self.view.projectNotebook.tabs()
         for ii, tab in enumerate(self.view.projectNotebook.tabs()):
              self.view.projectNotebook.forget(tab)
+             
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
             plotPane = PlotPane(self.view.projectNotebook,self,ii, bg='gray30')

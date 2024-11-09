@@ -41,6 +41,7 @@ from model.Model import Model
 from ui.View import View
 from presenter.Presenter import Presenter
 
+
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)

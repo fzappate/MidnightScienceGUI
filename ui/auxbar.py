@@ -21,8 +21,9 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import os
+import customtkinter
 
-class AuxBar(ttk.Frame):
+class AuxBar(customtkinter.CTkFrame):
     """
     A tkinter Frame widget representing a file bar with buttons for auxiliary functions 
     such as saving, loading, and reloading a project.
@@ -55,27 +56,21 @@ class AuxBar(ttk.Frame):
 
         # Load save image
         saveIconPath = os.path.join(os.getcwd(), './images/saveIcon.png')
-        self.saveIcon = Image.open(saveIconPath)
-        self.saveIcon = self.saveIcon.resize(iconSize)
-        self.saveIcon = ImageTk.PhotoImage(self.saveIcon)
+        self.saveIcon = customtkinter.CTkImage(Image.open(saveIconPath), size = iconSize)
 
         # Load load image
         loadIconPath = os.path.join(os.getcwd(), './images/loadIcon.png')
-        self.loadIcon = Image.open(loadIconPath)
-        self.loadIcon = self.loadIcon.resize(iconSize)
-        self.loadIcon = ImageTk.PhotoImage(self.loadIcon)
+        self.loadIcon = customtkinter.CTkImage(Image.open(loadIconPath), size = iconSize)
         
         # Load reload image
         reloadIconPath = os.path.join(os.getcwd(), './images/reloadIcon.png')
-        self.reloadIcon = Image.open(reloadIconPath)
-        self.reloadIcon = self.reloadIcon.resize(iconSize)
-        self.reloadIcon = ImageTk.PhotoImage(self.reloadIcon)
+        self.reloadIcon = customtkinter.CTkImage(Image.open(reloadIconPath), size = iconSize)
 
         # Save button 
-        save_button = ttk.Button(self, image=self.saveIcon, command=presenter.SaveProjectModel)
+        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.saveIcon, command=presenter.SaveProjectModel)
         save_button.grid(row=0, column=0, padx=(3, 3), ipady=1, ipadx=1)
 
         # Load button
-        load_button = ttk.Button(self, image=self.loadIcon, command=presenter.LoadProject)
+        load_button = customtkinter.CTkButton(self, text = '',width = 10, image=self.loadIcon, command=presenter.LoadProject)
         load_button.grid(row=0, column=1, padx=(3, 3), ipady=1, ipadx=1)
         

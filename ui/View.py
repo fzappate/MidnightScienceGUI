@@ -28,8 +28,8 @@ from ui.AuxBar import AuxBar
 from ui.TabManager import TabManager
 from ui.ProjectNotebook import ProjectNotebook
 
-from utilities.MSStyles import applyMSDarkTheme
-
+# from utilities.MSStyles import applyMSDarkThemeK
+import customtkinter
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -38,7 +38,8 @@ except:
 
 
 # class View(ThemedTk):
-class View(tk.Tk):
+class View(customtkinter.CTk):
+# class View(tk.Tk):
 
     """
     Main UI of the application and view element of the MVP framework.
@@ -56,7 +57,9 @@ class View(tk.Tk):
         # Window title
         self.title("Midnight Science Plotter")
     
-        applyMSDarkTheme(self)
+        # applyMSDarkTheme(self)
+        customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
+        customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
@@ -92,7 +95,7 @@ class View(tk.Tk):
         self.pathSelector.grid(row=0, column=0, sticky='EW')
 
         # Icon frame
-        self.iconFrame = ttk.Frame(self)
+        self.iconFrame = customtkinter.CTkFrame(self)
         self.iconFrame.grid(row=1, column=0, sticky='EW')
         self.iconFrame.columnconfigure(0, weight=1)
 
