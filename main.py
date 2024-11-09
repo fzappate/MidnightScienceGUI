@@ -39,7 +39,7 @@ Notes
 """
 from model.Model import Model
 from ui.View import View
-from presenter.presenter import Presenter
+from presenter.Presenter import Presenter
 
 try:
     from ctypes import windll

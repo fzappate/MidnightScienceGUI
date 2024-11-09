@@ -19,7 +19,7 @@ View(tk.Tk)
 """
 
 import tkinter as tk
-from presenter.presenter import Presenter
+from presenter.Presenter import Presenter
 from ui.PathSelector import PathSelector
 from ui.VerticalScrollText import VerticalScrollText
 from ui.AuxBar import AuxBar
