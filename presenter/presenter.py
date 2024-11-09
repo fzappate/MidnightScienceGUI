@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog, ttk
 import os
 import json
@@ -639,7 +640,6 @@ class Presenter():
         self.CloseSubplotOptions(subplotOptionsPane)
         
 
-        
         
     # RESULT FILE HANDLING
         

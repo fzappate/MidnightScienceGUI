@@ -17,12 +17,12 @@ AuxBar(tk.Frame)
     Represents a file bar containing buttons for saving, loading, and reloading a project.
 
 """
-from tkinter import ttk
 import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 
-class AuxBar(tk.Frame):
+class AuxBar(ttk.Frame):
     """
     A tkinter Frame widget representing a file bar with buttons for auxiliary functions 
     such as saving, loading, and reloading a project.

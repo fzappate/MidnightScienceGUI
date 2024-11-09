@@ -3,8 +3,8 @@ from tkinter import ttk
 
 # from ui.plotpane import PlotPane
 from ui.PlotCanvas import PlotCanvas
-from ui.ResizableFrame import ResizableFrameRightEdgeScrollV
 from ui.PlotManager import PlotManager
+
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -30,7 +30,7 @@ class PlotPane(tk.Frame):
         self.columnconfigure(1,weight=1)
         
         # Plot manager        
-        self.plotManager = PlotManager(self,presenter,width=200,bg = 'green')
+        self.plotManager = PlotManager(self,presenter,width=400,bg = 'green')
         self.plotManager.grid(row=0,column=0,sticky='NEWS')
         
         # Plot frame

@@ -2,10 +2,10 @@
 PathSelector Module
 ===================
 
-This module defines the `PathSelector` class, which represents a user interface 
-element for selecting and displaying a project working folder. The `PathSelector` 
-class is a part of the graphical user interface (GUI) and follows the MVP (Model-View-Presenter) 
-architecture pattern, where it interacts with the `Presenter` class to handle the 
+This module defines the `PathSelector` class, which represents a user interface
+element for selecting and displaying a project working folder. The `PathSelector`
+class is a part of the graphical user interface (GUI) and follows the MVP (Model-View-Presenter)
+architecture pattern, where it interacts with the `Presenter` class to handle the
 logic of setting and browsing project folder paths.
 
 Author: Federico Zappaterra
@@ -20,7 +20,6 @@ PathSelector(tk.Frame)
 """
 import tkinter as tk
 from tkinter import ttk
-
 from presenter.Presenter import Presenter
 
 # Try to set the process DPI awareness on Windows for proper scaling
@@ -31,19 +30,19 @@ except:
     pass
 
 
-class PathSelector(tk.Frame):
+class PathSelector(ttk.Frame):
     """
-    A tkinter Frame widget that provides a user interface for selecting and displaying 
+    A tkinter Frame widget that provides a user interface for selecting and displaying
     a working folder for a project.
 
     Attributes:
         lab (ttk.Label): Label widget that displays the text "Working Folder".
-        pathEntry (ttk.Entry): Entry widget for the user to view or manually input the 
+        pathEntry (ttk.Entry): Entry widget for the user to view or manually input the
                                 path to the project folder.
         navigate (ttk.Button): Button widget to allow the user to browse for a folder.
-    
+
     Methods:
-        __init__(parent, presenter: Presenter, *args, **kwargs): 
+        __init__(parent, presenter: Presenter, *args, **kwargs):
             Initializes the PathSelector frame with a label, entry field, and button.
         (None): The following three widgets are placed within the grid layout of the frame.
             - lab: A label indicating the "Working Folder".
@@ -68,13 +67,14 @@ class PathSelector(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         '''Initialize the path selector.'''
 
+
         # Configure the grid layout to ensure proper resizing of widgets
         self.columnconfigure(0, weight=0)  # Label column (fixed size)
         self.columnconfigure(1, weight=1)  # Entry column (expandable)
         self.columnconfigure(2, weight=0)  # Button column (fixed size)
 
         # Create and place the label for the "Working Folder" text
-        self.lab = ttk.Label(self, text='Working Folder', width=20)
+        self.lab = ttk.Label(self, text='Working Folder',width=20)
 
         # Create the entry widget for displaying and editing the folder path
         self.pathEntry = ttk.Entry(self)

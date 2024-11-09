@@ -22,7 +22,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 
-class TabManager(tk.Frame):    
+class TabManager(ttk.Frame):    
     """
     A tkinter Frame widget that provides options for managing tabs. This includes buttons
     for adding, configuring, and deleting plot tabs.

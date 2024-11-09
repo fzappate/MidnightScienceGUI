@@ -14,7 +14,7 @@ Usage:
 """
 
 import tkinter as tk
-from tkinter import ttk 
+from tkinter import ttk
 from ui.ResizableFrame import ResizableFrameTopEdge
 
 class VerticalScrollText(ResizableFrameTopEdge):
