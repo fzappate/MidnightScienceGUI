@@ -84,7 +84,7 @@ class PathSelector(ttk.Frame):
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
 
         # Create the "Browse..." button to allow the user to select a folder
-        self.navigate = ttk.Button(self, text="Browse..", command=lambda: presenter.BrowseProjectFolder())
+        self.navigate = ttk.Button(self, text="Browse..", style = 'new.TButton', command=lambda: presenter.BrowseProjectFolder())
 
         # Grid layout to position the widgets in the frame
         self.lab.grid(row=0, column=0, padx=(3, 3))  # Label in column 0
