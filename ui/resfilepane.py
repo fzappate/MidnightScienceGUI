@@ -1,9 +1,11 @@
 from tkinter import ttk
 import tkinter as tk
+import customtkinter
+
 from ui.SignalPane import SignalPane
 from ui.FileSelector import FileSelectorDel
 
-class ResFilePane(tk.Frame):
+class ResFilePane(customtkinter.CTkFrame):
     def __init__(self, parent, presenter,index = 0,entryText = '',comboboxList = [],*args,**kwargs)->None:
         """
         Initialize an instance of the class of ResFilePane. 
@@ -28,17 +30,17 @@ class ResFilePane(tk.Frame):
         self.noOfRows = 0
         self.presenter = presenter
         
-        self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText, bg = 'grey40')
+        self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText)
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
         listOfSignals = comboboxList
-        self.signalCollection = ttk.Combobox(self,state='readonly',values=listOfSignals)
+        self.signalCollection = customtkinter.CTkComboBox(self,state='readonly',values=listOfSignals)
         self.signalCollection.grid(row=self.noOfRows,column=0,sticky='EW', padx = 3, pady = 2)
         self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
         
         self.noOfRows +=1
-        self.interior = tk.Frame(self)
+        self.interior = customtkinter.CTkFrame(self)
         self.interior.grid(row=self.noOfRows,column=0,sticky='NEW')        
         self.interior.columnconfigure(0,weight=1)
         
