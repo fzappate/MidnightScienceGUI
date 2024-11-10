@@ -1033,7 +1033,6 @@ class Presenter():
                 
             self.view.projectNotebook.add(plotName)
             plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
-            # plotPane.grid(row=0,column=0,sticky='NEWS')
             plotPane.pack(fill="both", expand=True)
                 
             # Clear all the existing subplots, and create the axis for the new ones
