@@ -20,6 +20,7 @@ View(tk.Tk)
 
 import tkinter as tk
 from tkinter import ttk 
+import customtkinter
 
 from presenter.Presenter import Presenter
 from ui.PathSelector import PathSelector
@@ -112,5 +113,5 @@ class View(customtkinter.CTk):
 
         # Text widget
         self.textPane = VerticalScrollText(self, height=150)
-        self.textPane.text.config(state='disabled')
+        self.textPane.text.configure(state='disabled')
         self.textPane.grid(row=3, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))

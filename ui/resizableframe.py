@@ -583,10 +583,10 @@ class ResizableFrameTopEdge(ResizableFrame):
 
         # If the cursor is close to the top edge, change the cursor to a resize icon
         if event.y < self.dragBandWidth:
-            self.config(cursor='sb_v_double_arrow')
+            self.configure(cursor='sb_v_double_arrow')
         else:
-            self.config(cursor='')
+            self.configure(cursor='')
 
         # If vertical resizing is allowed, resize the frame with the cursor's position
         if self.resizeMode == self.VERTICAL:
-            self.config(height=height - event.y)
+            self.configure(height=height - event.y)

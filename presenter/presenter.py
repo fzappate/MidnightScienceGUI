@@ -1057,8 +1057,7 @@ class Presenter():
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
                                             jj,
-                                            subplot,
-                                            bg = 'blue')
+                                            subplot)
                     subplotPane.grid(row=jj,column=0,sticky='NEW')
                     
                     # Redraw result files 
@@ -1166,15 +1165,15 @@ class Presenter():
     def PrintMessage(self, message)->None:
         '''Print message.'''
         message = message +'\n'
-        self.view.textPane.text.config(state='normal')
+        self.view.textPane.text.configure(state='normal')
         self.view.textPane.text.insert(tk.END,message)
-        self.view.textPane.text.config(state='disabled')
+        self.view.textPane.text.configure(state='disabled')
         
     def PrintError(self, message)->None:
         '''Print error'''
         message = message +'\n'
-        self.view.textPane.text.config(state='normal')
+        self.view.textPane.text.configure(state='normal')
         self.view.textPane.text.tag_configure("red_text",foreground='red')
         self.view.textPane.text.insert(tk.END,message,"red_text")
-        self.view.textPane.text.config(state='normal')
+        self.view.textPane.text.configure(state='normal')
         

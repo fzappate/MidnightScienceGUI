@@ -1,6 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
 import os 
+import customtkinter
 from PIL import Image,ImageTk
 
 try:
@@ -474,7 +475,7 @@ class TogglePaneDelOpts(tk.Frame):
                 self.expandButton.configure(text = self.collapseText)
 
 
-class CollapsiblePane(tk.Frame):
+class CollapsiblePane(customtkinter.CTkFrame):
     def __init__(self, 
                  parent, 
                  iconMode = "text",
@@ -530,12 +531,12 @@ class CollapsiblePane(tk.Frame):
         self.columnconfigure(0, weight = 1)
         
         # Create the header frame
-        self.headerFrame = tk.Frame(self)
+        self.headerFrame = customtkinter.CTkFrame(self)
         self.headerFrame.columnconfigure(1,weight=1)
         self.headerFrame.grid(row=0,column=0,sticky = 'EW')
                 
         # Create expand button
-        self.expandButton = ttk.Button( self.headerFrame, command = self.SwitchState, width=3)
+        self.expandButton = customtkinter.CTkButton( self.headerFrame, command = self.SwitchState, width=3)
         
         # Set the icon/text of the expand button
         if iconMode == 'img':
@@ -553,16 +554,16 @@ class CollapsiblePane(tk.Frame):
             self.expandButton.config(image=self.expandIcon)
             
         elif iconMode == 'text':
-            self.expandButton.config(text=self.collapseText)
+            self.expandButton.configure(text=self.collapseText)
             
         self.expandButton.grid(row = 0, column = 0,sticky='W')
  
         # Create header label
-        self.headerLabel = tk.Label(self.headerFrame,text = label)
+        self.headerLabel = customtkinter.CTkLabel(self.headerFrame,text = label)
         self.headerLabel.grid(row = 0, column=1,sticky='W')
         
         # Create interior frame to host other widgets
-        self.collapsibleFrame = tk.Frame(self)
+        self.collapsibleFrame = customtkinter.CTkFrame(self)
         self.collapsibleFrame.columnconfigure(0,weight=1)
         self.collapsibleFrame.grid(row=1,column=0,sticky='NEWS')
         
@@ -669,7 +670,7 @@ class CollapsiblePaneDel(CollapsiblePane):
         
         # Add a button in the header frame
         self.delIcon = '\u274C' # X
-        self.delBtn = ttk.Button( self.headerFrame, text = self.delIcon, command=self.DelBtnClick,width=3)
+        self.delBtn = customtkinter.CTkButton( self.headerFrame, text = self.delIcon, command=self.DelBtnClick,width=3)
         self.delBtn.grid(row = 0, column=2,sticky='E')
         
        
@@ -712,7 +713,7 @@ class CollapsiblePaneOpts(CollapsiblePane):
         
         # Create header options button
         self.optsIcon = '\u2630' # ☰ 
-        self.optsBtn = ttk.Button( self.headerFrame, text = self.optsIcon, command=self.OptsBtnClick,width=3)
+        self.optsBtn = customtkinter.CTkButton( self.headerFrame, text = self.optsIcon, command=self.OptsBtnClick,width=3)
         self.optsBtn.grid(row = 0, column=2,sticky='E')
         
                        
@@ -755,12 +756,12 @@ class CollapsiblePaneDelOpts(CollapsiblePane):
          
         # Create header options button
         self.optsIcon = '\u2630' # ☰ 
-        self.optsBtn = ttk.Button( self.headerFrame, text = self.optsIcon, command=self.OptsBtnClick,width=3)
+        self.optsBtn = customtkinter.CTkButton( self.headerFrame, text = self.optsIcon, command=self.OptsBtnClick,width=3)
         self.optsBtn.grid(row = 0, column=2,sticky='E')
         
         # Create header delete button
         self.delIcon = '\u274C' # X
-        self.delBtn = ttk.Button( self.headerFrame, text = self.delIcon, command=self.DelBtnClick,width=3)
+        self.delBtn = customtkinter.CTkButton( self.headerFrame, text = self.delIcon, command=self.DelBtnClick,width=3)
         self.delBtn.grid(row = 0, column=3,sticky='E')
         
         
