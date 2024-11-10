@@ -51,7 +51,7 @@ except (ImportError, AttributeError):
 def main() -> None:
     '''Initializes and runs the application.'''
     model = Model()
-    view = View()
+    view =  View()
     presenter = Presenter(model, view)
     presenter.RunUI()
 

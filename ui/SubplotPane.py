@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import customtkinter
 
 from ui.CollapsiblePane import CollapsiblePaneDelOpts
 
@@ -31,23 +32,23 @@ class SubplotPane(CollapsiblePaneDelOpts):
         
         # Add the widgets        
         self.noOfRows = 0
-        self.xAxisLabel = ttk.Label(self.collapsibleFrame,text = 'Select X axis')
+        self.xAxisLabel = customtkinter.CTkLabel(self.collapsibleFrame,text = 'Select X axis')
         self.xAxisLabel.grid(row=self.noOfRows,column=0,sticky='W')
         
         self.noOfRows +=1
-        self.xAxisSelect = ttk.Combobox(self.collapsibleFrame,state='readonly',values=self.listOfSignals)
+        self.xAxisSelect = customtkinter.CTkComboBox(self.collapsibleFrame,state='readonly',values=self.listOfSignals)
         self.xAxisSelect.grid(row=self.noOfRows,column=0,sticky='EW')
         self.xAxisSelect.bind("<<ComboboxSelected>>",lambda event: self.presenter.SelectXAxis(event, self))
         
         self.noOfRows +=1
-        self.addFileBtn = ttk.Button(self.collapsibleFrame,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
+        self.addFileBtn = customtkinter.CTkButton(self.collapsibleFrame,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
         self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
         # Check if the list of signals is empty, if not set the first one
         if len(self.listOfSignals)>0:
-            self.xAxisSelect.current(self.xAxisIndx)
+            self.xAxisSelect.set(self.listOfSignals[0])
             
         self.noOfRows +=1
-        self.interior = tk.Frame(self.collapsibleFrame)
+        self.interior = customtkinter.CTkFrame(self.collapsibleFrame)
         self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS')
         self.interior.columnconfigure(0,weight=1)
         

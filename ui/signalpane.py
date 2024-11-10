@@ -1,7 +1,8 @@
 from tkinter import ttk
 import tkinter as tk
+import customtkinter
 
-class SignalPane(tk.Frame):
+class SignalPane(customtkinter.CTkFrame):
     def __init__(self, 
                  parent, 
                  presenter,
@@ -41,19 +42,19 @@ class SignalPane(tk.Frame):
         
         # Signal label
         colNo = 0
-        self.label = ttk.Label(self,text=self.signal.name)
+        self.label = customtkinter.CTkLabel(self,text=self.signal.name)
         self.label.grid(row=0,column=colNo,sticky='W',padx = (4,0))
         
         unitList, scalingList = self.presenter.GetUnitsList(signal)
         
         # Signal color
         colNo+=1
-        self.colorBox = ttk.Label(self,text = '\u2588\u2588\u2588\u2588',foreground=self.signal.color)
+        self.colorBox = customtkinter.CTkLabel(self,text = '\u2588\u2588\u2588\u2588')
         self.colorBox.grid(row=0,column=colNo)
         
         # Signal units
         colNo+=1
-        self.unitsCb = ttk.Combobox(self,width = 7,value=unitList,state='readonly')
+        self.unitsCb = customtkinter.CTkComboBox(self,width = 7,values=unitList)
         self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
         
         self.unitsCb.set(signal.units)
@@ -61,12 +62,12 @@ class SignalPane(tk.Frame):
         
         # Signal options
         colNo+=1
-        self.optBtn = ttk.Button(self,text = self.optIcon, width=3,command=lambda: self.presenter.OpenSignalOptions(self, self.optBtn))
+        self.optBtn = customtkinter.CTkButton(self,text = self.optIcon, width=3,command=lambda: self.presenter.OpenSignalOptions(self, self.optBtn))
         self.optBtn.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
         
         # Signal delete
         colNo+=1
-        self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal(self))
+        self.delBtn = customtkinter.CTkButton(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal(self))
         self.delBtn.grid(row=0,column=colNo,sticky='EW', padx = 3)
 
 

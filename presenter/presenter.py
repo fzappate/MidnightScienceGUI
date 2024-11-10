@@ -1074,8 +1074,7 @@ class Presenter():
                             sigPane = SignalPane(   resFile.interior,
                                                     self,
                                                     selectedSignal,
-                                                    index = hh,
-                                                    bg = 'gray18')
+                                                    index = hh)
                             sigPane.grid(row=hh,column=0,sticky='EW')
                             
                         
