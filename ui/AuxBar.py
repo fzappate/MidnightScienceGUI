@@ -55,15 +55,15 @@ class AuxBar(customtkinter.CTkFrame):
         iconSize = (30, 30)
 
         # New project image
-        newProjIconPath = os.path.join(os.getcwd(), './images/newProjIcon.png')
+        newProjIconPath = os.path.join(os.getcwd(), './docs/images/newProjIcon.png')
         self.newProjIconPath = customtkinter.CTkImage(Image.open(newProjIconPath), size = iconSize)
 
         # Save image
-        saveProjIconPath = os.path.join(os.getcwd(), './images/saveProjIcon.png')
+        saveProjIconPath = os.path.join(os.getcwd(), './docs/images/saveProjIcon.png')
         self.saveProjIconPath = customtkinter.CTkImage(Image.open(saveProjIconPath), size = iconSize)
         
         # Load image
-        loadProjIconPath = os.path.join(os.getcwd(), './images/loadProjIcon.png')
+        loadProjIconPath = os.path.join(os.getcwd(), './docs/images/loadProjIcon.png')
         self.loadProjIconPath = customtkinter.CTkImage(Image.open(loadProjIconPath), size = iconSize)
         
 

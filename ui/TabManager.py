@@ -60,15 +60,15 @@ class TabManager(customtkinter.CTkFrame):
         iconSize = (30, 30)
 
         # Load add tab image
-        addTabIconPath = os.path.join(os.getcwd(), './images/newTabIcon.png')
+        addTabIconPath = os.path.join(os.getcwd(), './docs/images/newTabIcon.png')
         self.addTabIcon = customtkinter.CTkImage(Image.open(addTabIconPath), size = iconSize)
 
         # # Load load image
-        delTabIconPath = os.path.join(os.getcwd(), './images/delTabIcon.png')
+        delTabIconPath = os.path.join(os.getcwd(), './docs/images/delTabIcon.png')
         self.delTabIcon = customtkinter.CTkImage(Image.open(delTabIconPath), size = iconSize)
         
         # # Load reload image
-        optsTabIconPath = os.path.join(os.getcwd(), './images/optsTabIcon.png')
+        optsTabIconPath = os.path.join(os.getcwd(), './docs/images/optsTabIcon.png')
         self.optsTabIcon = customtkinter.CTkImage(Image.open(optsTabIconPath), size = iconSize)
         
         # Add button to add a new plot tab
