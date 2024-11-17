@@ -48,7 +48,7 @@ class ProjectModel():
         self.objectName = 'ProjectModel'
         
         # Initialize the index of the selected tab
-        self.tabSelected = ''
+        self.tabSelected = 0 # ''
         
         # Initialize an empty list for holding contained plots
         self.containedPlots = []

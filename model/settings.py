@@ -29,5 +29,5 @@ class Settings():
         '''
         
         self.settingsFilePath = './utilities/settings.md'
+        self.defaultProjectModelName = '/ProjectModel.json'
         self.projectFolder = ''
-        self.defaultProjectModelName = 'ProjectModel.json'
