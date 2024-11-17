@@ -29,12 +29,12 @@ class PlotManager(CTkResizableFrameRightEdgeScrollV):
         self.noOfRows = 0
         # self.addPlot = customtkinter.CTkButton(self,text='Add Subplot',command = lambda:self.presenter.AddSubplot(self)) 
         self.addPlot = customtkinter.CTkButton(self.scrollFrame,text='Add Subplot',command = lambda:self.presenter.AddSubplot(self)) 
-        self.addPlot.grid(row=self.noOfRows,column=0,sticky='NEW')
+        self.addPlot.grid(row=self.noOfRows,column=0,sticky='NEW', padx = (0,3))
         
         self.noOfRows += 1    
         # self.interior =customtkinter.CTkFrame(self)
         self.interior =customtkinter.CTkFrame(self.scrollFrame)
-        self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS')
+        self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS', padx = (0,3))
         self.interior.columnconfigure(0,weight=1)
     
         self.noOfIntRows = 0    

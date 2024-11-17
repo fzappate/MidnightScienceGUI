@@ -393,7 +393,7 @@ class CTkResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
 
         # Create a frame inside the canvas which will contain the scrollable content
         self.scrollFrame = customtkinter.CTkScrollableFrame(self)
-        self.scrollFrame.grid(row=0,column=0,sticky='news', padx = [0,10])
+        self.scrollFrame.grid(row=0,column=0,sticky='news', padx = [0,5])
         
         self.scrollFrame.columnconfigure(0, weight=1)
         self.scrollFrame.rowconfigure(0, weight=1)

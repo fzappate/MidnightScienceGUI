@@ -43,31 +43,31 @@ class SignalPane(customtkinter.CTkFrame):
         # Signal label
         colNo = 0
         self.label = customtkinter.CTkLabel(self,text=self.signal.name)
-        self.label.grid(row=0,column=colNo,sticky='W',padx = (4,0))
+        self.label.grid(row=0,column=colNo,sticky='W',padx = (0,0))
         
         unitList, scalingList = self.presenter.GetUnitsList(signal)
         
         # Signal color
         colNo+=1
         self.colorBox = customtkinter.CTkLabel(self,text = '\u2588\u2588\u2588\u2588')
-        self.colorBox.grid(row=0,column=colNo)
+        self.colorBox.grid(row=0,column=colNo, padx=(3,3))
         
         # Signal units
         colNo+=1
-        self.unitsCb = customtkinter.CTkComboBox(self,width = 7,values=unitList)
-        self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
+        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList)
+        self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,3))
         
         self.unitsCb.set(signal.units)
         self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
         
         # Signal options
         colNo+=1
-        self.optBtn = customtkinter.CTkButton(self,text = self.optIcon, width=3,command=lambda: self.presenter.OpenSignalOptions(self, self.optBtn))
-        self.optBtn.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
+        self.optBtn = customtkinter.CTkButton(self,text = self.optIcon, width=30,command=lambda: self.presenter.OpenSignalOptions(self, self.optBtn))
+        self.optBtn.grid(row=0,column=colNo,sticky='EW', padx=(3,3))
         
         # Signal delete
         colNo+=1
-        self.delBtn = customtkinter.CTkButton(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal(self))
-        self.delBtn.grid(row=0,column=colNo,sticky='EW', padx = 3)
+        self.delBtn = customtkinter.CTkButton(self,text = self.delIcon, width=30,command=lambda: self.presenter.DeleteSignal(self))
+        self.delBtn.grid(row=0,column=colNo,sticky='EW', padx=(0,0))
 
 

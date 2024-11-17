@@ -77,7 +77,8 @@ class PathSelector(customtkinter.CTkFrame):
         self.columnconfigure(2, weight=0)  # Button column (fixed size)
 
         # Create and place the label for the "Working Folder" text
-        self.lab = customtkinter.CTkLabel(self, text='Working Folder',width=20)
+        self.lab = customtkinter.CTkLabel(self, text='Project Folder',width=100, anchor = 'w')
+        self.lab.grid(row=0, column=0, padx=(6, 0))  # Label in column 0
 
         # Create the entry widget for displaying and editing the folder path
         self.pathEntry = customtkinter.CTkEntry(self)
@@ -85,11 +86,10 @@ class PathSelector(customtkinter.CTkFrame):
         # Bind events to handle folder setting when Enter key or focus loss occurs
         self.pathEntry.bind('<Return>', presenter.SetWorkingFolderManually)
         self.pathEntry.bind('<FocusOut>', presenter.SetWorkingFolderManually)
+        self.pathEntry.grid(row=0, column=1, sticky="EW", padx=(3, 3), pady=(3, 3))  # Entry in column 1 (expandable)
 
         # Create the "Browse..." button to allow the user to select a folder
-        self.navigate = customtkinter.CTkButton(self, text="Browse..", command=lambda: presenter.BrowseProjectFolder())
+        self.navigate = customtkinter.CTkButton(self, text="Browse..", width = 100,command=lambda: presenter.BrowseProjectFolder())
 
         # Grid layout to position the widgets in the frame
-        self.lab.grid(row=0, column=0, padx=(3, 3))  # Label in column 0
-        self.pathEntry.grid(row=0, column=1, sticky="EW", padx=(3, 3))  # Entry in column 1 (expandable)
-        self.navigate.grid(row=0, column=2, padx=(3, 3))  # Button in column 2
+        self.navigate.grid(row=0, column=2, padx=(0, 6))  # Button in column 2

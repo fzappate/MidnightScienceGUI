@@ -27,16 +27,31 @@ class ResFilePane(customtkinter.CTkFrame):
         # Handy numbers
         self.name = ''
         self.index = index
-        self.noOfRows = 0
         self.presenter = presenter
         
+        self.noOfRows = 0
         self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText)
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
-        listOfSignals = comboboxList
-        self.signalCollection = customtkinter.CTkComboBox(self,state='readonly',values=listOfSignals)
-        self.signalCollection.grid(row=self.noOfRows,column=0,sticky='EW', padx = 3, pady = 2)
+        self.signalSelection = customtkinter.CTkFrame(self)
+        self.signalSelection.grid(row=self.noOfRows,column=0,sticky='EW')
+        self.signalSelection.columnconfigure(1,weight=1)
+        
+        self.noOfSigSelRows =0
+        self.selX = customtkinter.CTkLabel(self.signalSelection, text = 'Select X', width = 70)
+        self.selX.grid(row=self.noOfSigSelRows,column=0,sticky='EW', padx = 0, pady = 3)
+        
+        self.signalCollection = customtkinter.CTkComboBox(self.signalSelection,state='readonly',values=comboboxList)
+        self.signalCollection.grid(row=self.noOfSigSelRows,column=1,sticky='EW', padx = (3,0), pady = 3)
+        # self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
+        
+        self.noOfSigSelRows +=1
+        self.selX = customtkinter.CTkLabel(self.signalSelection, text = 'Select Y', width = 70)
+        self.selX.grid(row=self.noOfSigSelRows,column=0,sticky='EW', padx = 0, pady = 3)
+        
+        self.signalCollection = customtkinter.CTkComboBox(self.signalSelection,state='readonly',values=comboboxList)
+        self.signalCollection.grid(row=self.noOfSigSelRows,column=1,sticky='EW', padx = (3,0), pady = 3)
         self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
         
         self.noOfRows +=1

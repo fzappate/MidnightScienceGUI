@@ -120,9 +120,10 @@ class Presenter():
         projectModelPath = self.model.settings.projectFolder + "/ProjectModel.json"
         projectModelFileExists = os.path.exists(projectModelPath)
         if (projectModelFileExists):
-            print('Project file found at: ' + projectModelPath)
+            self.PrintMessage('Project file found at: ' + projectModelPath)
         else:
-            print(' file not found at: ' + projectModelPath)
+            self.PrintError('Project file not found at: ' + projectModelPath)
+            return
             
         # Load ProjectModel.json
         f = open(projectModelPath,'r')
@@ -1033,7 +1034,7 @@ class Presenter():
                 
             self.view.projectNotebook.add(plotName)
             plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
-            plotPane.pack(fill="both", expand=True)
+            plotPane.pack(fill="both", expand=True,padx = 6)
                 
             # Clear all the existing subplots, and create the axis for the new ones
             plotCanvasChildren = plotPane.plotCanvas.winfo_children()
@@ -1058,7 +1059,7 @@ class Presenter():
                                             self, 
                                             jj,
                                             subplot)
-                    subplotPane.grid(row=jj,column=0,sticky='NEW')
+                    subplotPane.grid(row=jj,column=0,sticky='NEW',pady = (5,20))
                     
                     # Redraw result files 
                     for kk, resultFile in enumerate(subplot.containedResultFiles):
@@ -1150,7 +1151,9 @@ class Presenter():
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
         # Move to the newly created tab
-        self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+        if not self.model.projectModel.tabSelected == '':
+            self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+        # self.view.projectNotebook.set(self.model.projectModel.tabSelected)
         
         # self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         
@@ -1165,6 +1168,7 @@ class Presenter():
         '''Print message.'''
         message = message +'\n'
         self.view.textPane.text.configure(state='normal')
+        # self.view.textPane.text.configure(text_color="#000000")
         self.view.textPane.text.insert(tk.END,message)
         self.view.textPane.text.configure(state='disabled')
         
@@ -1172,7 +1176,7 @@ class Presenter():
         '''Print error'''
         message = message +'\n'
         self.view.textPane.text.configure(state='normal')
-        self.view.textPane.text.tag_configure("red_text",foreground='red')
+        # self.view.textPane.text.configure(text_color="#ff0000")
         self.view.textPane.text.insert(tk.END,message,"red_text")
         self.view.textPane.text.configure(state='normal')
         

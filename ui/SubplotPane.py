@@ -24,28 +24,22 @@ class SubplotPane(CollapsiblePaneDelOpts):
         self.xAxisIndx = subplotModel.xAxisSelectedIndx
         
         # Configure the master widget
+        btnSize = 30
         self.collapsibleFrame.rowconfigure(3,weight=1)
         self.headerLabel.configure(text=subplotModel.name)
         self.expandButton.configure(command = lambda:self.UpdateSubplotPaneAndModelState())
+        self.expandButton.configure(width = btnSize)
         self.optsBtn.configure(command=lambda:self.presenter.OpenSubplotOptions(self,self.optsBtn))
-        self.delBtn.configure( command=lambda:self.presenter.DeleteSubplot(self))
+        self.optsBtn.configure(width = btnSize)
+        self.delBtn.configure(command=lambda:self.presenter.DeleteSubplot(self))
+        self.delBtn.configure(width = btnSize)
         
         # Add the widgets        
         self.noOfRows = 0
-        self.xAxisLabel = customtkinter.CTkLabel(self.collapsibleFrame,text = 'Select X axis')
-        self.xAxisLabel.grid(row=self.noOfRows,column=0,sticky='W')
-        
-        self.noOfRows +=1
-        self.xAxisSelect = customtkinter.CTkComboBox(self.collapsibleFrame,state='readonly',values=self.listOfSignals)
-        self.xAxisSelect.grid(row=self.noOfRows,column=0,sticky='EW')
-        self.xAxisSelect.bind("<<ComboboxSelected>>",lambda event: self.presenter.SelectXAxis(event, self))
-        
-        self.noOfRows +=1
         self.addFileBtn = customtkinter.CTkButton(self.collapsibleFrame,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
-        self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
-        # Check if the list of signals is empty, if not set the first one
-        if len(self.listOfSignals)>0:
-            self.xAxisSelect.set(self.listOfSignals[0])
+        self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='EW', pady = (3,3))
+        # if len(self.listOfSignals)>0:
+        #     self.xAxisSelect.set(self.listOfSignals[0])
             
         self.noOfRows +=1
         self.interior = customtkinter.CTkFrame(self.collapsibleFrame)

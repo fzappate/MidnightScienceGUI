@@ -32,8 +32,8 @@ class PlotPane(customtkinter.CTkFrame):
         
         # Plot manager        
         self.plotManager = PlotManager(self,presenter,width=400)
-        self.plotManager.grid(row=0,column=0,sticky='NEWS')
+        self.plotManager.grid(row=0,column=0,sticky='NEWS', pady=5)
         
         # Plot frame
         self.plotCanvas=PlotCanvas(self)
-        self.plotCanvas.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      
+        self.plotCanvas.grid(row=0,column=1, sticky='NEWS', padx=0, pady=5)      

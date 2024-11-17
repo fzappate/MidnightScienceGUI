@@ -59,8 +59,9 @@ class View(customtkinter.CTk):
         self.title("Midnight Science Plotter")
     
         # applyMSDarkTheme(self)
-        customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
-        customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+        customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
+        customtkinter.set_default_color_theme("./utilities/MSdark.json")  # Themes: blue (default), dark-blue, green
+        # customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
@@ -97,21 +98,21 @@ class View(customtkinter.CTk):
 
         # Icon frame
         self.iconFrame = customtkinter.CTkFrame(self)
-        self.iconFrame.grid(row=1, column=0, sticky='EW')
-        self.iconFrame.columnconfigure(0, weight=1)
+        self.iconFrame.grid(row=1, column=0, sticky='EW',ipady = 2)
+        self.iconFrame.columnconfigure(1, weight=1)
 
         self.auxBar = AuxBar(self.iconFrame, presenter)
-        self.auxBar.grid(row=0, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
+        self.auxBar.grid(row=0, column=0, sticky='EW', padx=(0, 0), pady=(0, 0))
 
         self.tabManager = TabManager(self.iconFrame, presenter)
         self.tabManager.grid(row=0, column=1, sticky='EW')
-        self.tabManager.columnconfigure(0, weight=1)
+        self.tabManager.columnconfigure(2, weight=0)
 
         # Main tabs
         self.projectNotebook = ProjectNotebook(self)
-        self.projectNotebook.grid(row=2, column=0, sticky='NEWS', padx=(3, 3), pady=(2, 2))
+        self.projectNotebook.grid(row=2, column=0, sticky='NEWS', padx=(0, 0), pady=(0, 0))
 
         # Text widget
         self.textPane = VerticalScrollText(self, height=150)
         self.textPane.text.configure(state='disabled')
-        self.textPane.grid(row=3, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
+        self.textPane.grid(row=3, column=0, sticky='EW', padx=(0, 0), pady=(3, 0))

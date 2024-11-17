@@ -536,7 +536,7 @@ class CollapsiblePane(customtkinter.CTkFrame):
         self.headerFrame.grid(row=0,column=0,sticky = 'EW')
                 
         # Create expand button
-        self.expandButton = customtkinter.CTkButton( self.headerFrame, command = self.SwitchState, width=3)
+        self.expandButton = customtkinter.CTkButton( self.headerFrame, width=10, command = self.SwitchState)
         
         # Set the icon/text of the expand button
         if iconMode == 'img':
@@ -560,7 +560,7 @@ class CollapsiblePane(customtkinter.CTkFrame):
  
         # Create header label
         self.headerLabel = customtkinter.CTkLabel(self.headerFrame,text = label)
-        self.headerLabel.grid(row = 0, column=1,sticky='W')
+        self.headerLabel.grid(row = 0, column=1,sticky='W',padx = (5,0))
         
         # Create interior frame to host other widgets
         self.collapsibleFrame = customtkinter.CTkFrame(self)
@@ -756,12 +756,12 @@ class CollapsiblePaneDelOpts(CollapsiblePane):
          
         # Create header options button
         self.optsIcon = '\u2630' # ☰ 
-        self.optsBtn = customtkinter.CTkButton( self.headerFrame, text = self.optsIcon, command=self.OptsBtnClick,width=3)
-        self.optsBtn.grid(row = 0, column=2,sticky='E')
+        self.optsBtn = customtkinter.CTkButton( self.headerFrame, text = self.optsIcon, command=self.OptsBtnClick)
+        self.optsBtn.grid(row = 0, column=2,sticky='E', padx = (3,3))
         
         # Create header delete button
         self.delIcon = '\u274C' # X
-        self.delBtn = customtkinter.CTkButton( self.headerFrame, text = self.delIcon, command=self.DelBtnClick,width=3)
+        self.delBtn = customtkinter.CTkButton( self.headerFrame, text = self.delIcon, command=self.DelBtnClick)
         self.delBtn.grid(row = 0, column=3,sticky='E')
         
         

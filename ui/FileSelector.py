@@ -44,24 +44,26 @@ class FileSelectorDel(customtkinter.CTkFrame):
         self.presenter = presenter
         
         # Set the grid configuration of this object
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=0)
+        self.columnconfigure(0,weight=0)
+        self.columnconfigure(1,weight=1)
+        self.columnconfigure(2,weight=0)
 
         # Draw the graphical interface of the path selector 
-        self.lab = customtkinter.CTkLabel(self, text = 'File', width = 7)
-        self.lab.grid(row=0, column=0, sticky = 'EW',padx = 3, pady = 2)
-        self.navigateIcon = "\U0001F5C1" # 🗈
-        self.navigate = customtkinter.CTkButton(self, text=self.navigateIcon,width = 3, command= lambda:presenter.BrowseResFile(self,self.master))
-        self.navigate.grid(row=0, column=1, padx = (0,3), pady = 2)
-        self.deleteIcon = "\u274C" # ❌ 
-        self.delBtn = customtkinter.CTkButton(self, text=self.deleteIcon, width = 3, command= lambda:self.presenter.DeleteResultFile(self.master))
-        self.delBtn.grid(row=0, column=2, padx = (0,3), pady = 2)
+        self.lab = customtkinter.CTkButton(self, text = 'Select File', width = 70, command= lambda:presenter.BrowseResFile(self,self.master))
+        self.lab.grid(row=0, column=0, sticky = 'EW',padx = 0, pady = 0)
+        # self.navigateIcon = "\U0001F5C1" # 🗈
+        # self.navigate = customtkinter.CTkButton(self, text=self.navigateIcon,width = 3, command= lambda:presenter.BrowseResFile(self,self.master))
+        # self.navigate.grid(row=0, column=1, padx = (0,0), pady = 2)
         
         self.pathEntry = customtkinter.CTkEntry(self, justify='right')
         self.pathEntry.insert(0,entryText)
-        self.pathEntry.grid(row=1,column=0,sticky = "EW", padx = 3, pady = (0,2),columnspan=3)
+        self.pathEntry.grid(row=0,column=1,sticky = "EW", padx = (3,3), pady = (0,0))
         self.pathEntry.bind('<Return>', lambda event: presenter.FileSelectorReturn(event,self,self.master))
         self.pathEntry.bind('<FocusOut>', lambda event: presenter.FileSelectorReturn(event,self,self.master))
+        
+        self.deleteIcon = "\u274C" # ❌ 
+        self.delBtn = customtkinter.CTkButton(self, text=self.deleteIcon, width = 30, command= lambda:self.presenter.DeleteResultFile(self.master))
+        self.delBtn.grid(row=0, column=2, padx = (0,0), pady = 0)
         
     def UpdateEntry(self,entryText)->None:
         '''Update the text of FileSelector entry.'''
