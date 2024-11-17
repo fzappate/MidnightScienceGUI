@@ -108,16 +108,44 @@ class Presenter():
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
     
             
+    # PROJECT MANAGEMENT 
+    def CreateNewProject(self)->None:
+        '''Create a new project.'''
+        self.BrowseProjectFolder()
+        
+        # Check that a ProjectModel.json exists
+        projectModelPath = self.model.settings.projectFolder + "/" + self.model.settings.defaultProjectName
+        projectModelFileExists = os.path.exists(projectModelPath)
+        if (projectModelFileExists):
+            self.PrintMessage('The seleted folder already contains a project folder.')
+            self.PrintMessage('Delete the existing' + self.model.settings.defaultProjectName + '.json file and try again.')
+            return
+        
+        # Cancel all the plots contained in the projectModel
+        for plotModel in self.model.projectModel.containedPlots:
+            del plotModel
+            
+        # Save the new project 
+        self.SaveProjectModel()
+        
+        # Load the default project .json file
+        self.LoadProjectModel()
+        
+        # Redraw Projecy
+        self.RedrawPlotNotebook()
+        
+        
+        
+        
         
     # JSON HANDLING
     def LoadProject(self)->None:
         self.LoadProjectModel()
-        self.RedrawPlotNotebook()
              
     def LoadProjectModel(self) -> None:
         '''Load project from JSON.'''
         # Check that a ProjectModel.json exists
-        projectModelPath = self.model.settings.projectFolder + "/ProjectModel.json"
+        projectModelPath = self.model.settings.projectFolder + "/" + self.model.settings.defaultProjectModelName 
         projectModelFileExists = os.path.exists(projectModelPath)
         if (projectModelFileExists):
             self.PrintMessage('Project file found at: ' + projectModelPath)
