@@ -17,12 +17,13 @@ AuxBar(tk.Frame)
     Represents a file bar containing buttons for saving, loading, and reloading a project.
 
 """
-from tkinter import ttk
 import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
 import os
+import customtkinter
 
-class AuxBar(tk.Frame):
+class AuxBar(customtkinter.CTkFrame):
     """
     A tkinter Frame widget representing a file bar with buttons for auxiliary functions 
     such as saving, loading, and reloading a project.
@@ -53,29 +54,31 @@ class AuxBar(tk.Frame):
         
         iconSize = (30, 30)
 
-        # Load save image
-        saveIconPath = os.path.join(os.getcwd(), './images/saveIcon.png')
-        self.saveIcon = Image.open(saveIconPath)
-        self.saveIcon = self.saveIcon.resize(iconSize)
-        self.saveIcon = ImageTk.PhotoImage(self.saveIcon)
+        # New project image
+        newProjIconPath = os.path.join(os.getcwd(), './docs/images/newProjIcon.png')
+        self.newProjIconPath = customtkinter.CTkImage(Image.open(newProjIconPath), size = iconSize)
 
-        # Load load image
-        loadIconPath = os.path.join(os.getcwd(), './images/loadIcon.png')
-        self.loadIcon = Image.open(loadIconPath)
-        self.loadIcon = self.loadIcon.resize(iconSize)
-        self.loadIcon = ImageTk.PhotoImage(self.loadIcon)
+        # Save image
+        saveProjIconPath = os.path.join(os.getcwd(), './docs/images/saveProjIcon.png')
+        self.saveProjIconPath = customtkinter.CTkImage(Image.open(saveProjIconPath), size = iconSize)
         
-        # Load reload image
-        reloadIconPath = os.path.join(os.getcwd(), './images/reloadIcon.png')
-        self.reloadIcon = Image.open(reloadIconPath)
-        self.reloadIcon = self.reloadIcon.resize(iconSize)
-        self.reloadIcon = ImageTk.PhotoImage(self.reloadIcon)
+        # Load image
+        loadProjIconPath = os.path.join(os.getcwd(), './docs/images/loadProjIcon.png')
+        self.loadProjIconPath = customtkinter.CTkImage(Image.open(loadProjIconPath), size = iconSize)
+        
 
+        # New project button 
+        colNo = 0 
+        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.newProjIconPath)
+        save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
+        
         # Save button 
-        save_button = ttk.Button(self, image=self.saveIcon, command=presenter.SaveProjectModel)
-        save_button.grid(row=0, column=0, padx=(3, 3), ipady=1, ipadx=1)
+        colNo +=1
+        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.saveProjIconPath, command=presenter.SaveProjectModel)
+        save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
 
         # Load button
-        load_button = ttk.Button(self, image=self.loadIcon, command=presenter.LoadProject)
-        load_button.grid(row=0, column=1, padx=(3, 3), ipady=1, ipadx=1)
+        colNo +=1
+        load_button = customtkinter.CTkButton(self, text = '',width = 10, image=self.loadProjIconPath, command=presenter.LoadProject)
+        load_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
         

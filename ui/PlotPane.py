@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import ttk 
+import customtkinter
 
 # from ui.plotpane import PlotPane
 from ui.PlotCanvas import PlotCanvas
-from ui.ResizableFrame import ResizableFrameRightEdgeScrollV
 from ui.PlotManager import PlotManager
+
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -12,7 +13,7 @@ except:
         pass
 
 
-class PlotPane(tk.Frame):
+class PlotPane(customtkinter.CTkFrame):
     def __init__(self,parent,presenter,index,*args, **kwargs)->None:
         """
         Initialize Plotter. 
@@ -30,9 +31,9 @@ class PlotPane(tk.Frame):
         self.columnconfigure(1,weight=1)
         
         # Plot manager        
-        self.plotManager = PlotManager(self,presenter,width=200,bg = 'green')
-        self.plotManager.grid(row=0,column=0,sticky='NEWS')
+        self.plotManager = PlotManager(self,presenter,width=400)
+        self.plotManager.grid(row=0,column=0,sticky='NEWS', pady=5)
         
         # Plot frame
-        self.plotCanvas=PlotCanvas(self, bg = 'green')
-        self.plotCanvas.grid(row=0,column=1, sticky='NEWS', padx=3, pady=3)      
+        self.plotCanvas=PlotCanvas(self)
+        self.plotCanvas.grid(row=0,column=1, sticky='NEWS', padx=0, pady=5)      

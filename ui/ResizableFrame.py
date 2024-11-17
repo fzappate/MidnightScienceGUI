@@ -49,8 +49,9 @@ layouts and behaviors.
 import tkinter as tk
 from tkinter import ttk
 from abc import ABC, abstractmethod
+import customtkinter
 
-class ResizableFrame(tk.Frame, ABC):
+class ResizableFrame(customtkinter.CTkFrame, ABC):
     """
     A base class for creating resizable frames in a Tkinter application. This class 
     serves as a parent for specific resizable frame types, such as 
@@ -255,7 +256,7 @@ class ResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
         self.columnconfigure(1, weight=0)
         
         # Create a vertical scrollbar and place it in column 1
-        self.vscrollbar = ttk.Scrollbar(self, orient='vertical')
+        self.vscrollbar = customtkinter.CTkScrollbar(self, orient='vertical')
         self.vscrollbar.grid(row=0, column=1, sticky='NWS', padx=(0, self.dragBandWidth), pady=(3, 3))
         
         # Create a canvas for scrolling the content and configure its vertical scrolling
@@ -267,7 +268,7 @@ class ResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
         self.canvas.yview_moveto(0)
 
         # Create a frame inside the canvas which will contain the scrollable content
-        self.scrollFrame = tk.Frame(self.canvas, bg='red')
+        self.scrollFrame = customtkinter.CTkFrame(self.canvas, bg='red')
         self.scrollFrame.columnconfigure(0, weight=1)
         self.scrollFrame.rowconfigure(0, weight=1)
         
@@ -346,6 +347,108 @@ class ResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
         if scrollFrameLength > canvasLength:
             self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
+class CTkResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
+    """
+    A frame that can be resized from the right edge and scrolled vertically. Inherits from 
+    `ResizableFrameRightEdge` and extends it by adding vertical scrolling capability using 
+    a canvas and scrollbar.
+
+    This frame combines the functionality of resizing from the right edge with the ability 
+    to display content that can be scrolled vertically.
+
+    Arguments:
+        - All arguments accepted by `tk.Frame` are valid, including background, bg, 
+          borderwidth, and more.
+        
+    Example usage:
+        root.columnconfigure(0, weight=0)
+        
+        # Create an instance of the ResizableFrame with scroll capability
+        resScrollFrame = ResizableFrameRightEdgeScrollV(root)
+        
+        # Place the frame on the grid
+        resScrollFrame.grid(row=0, column=0, sticky='NWS')
+        
+        # Add content inside the frame
+        frame = tk.Frame(resScrollFrame.scrollFrame, bg='blue')
+        frame.grid(row=0, column=0, sticky='NEWS')
+    """
+    
+    def __init__(self, parent, *args, **kw):
+        """
+        Initializes the ResizableFrameRightEdgeScrollV class, which allows resizing from the 
+        right edge and adding vertical scrolling functionality using a canvas and scrollbar.
+
+        Arguments:
+            parent (tk.Widget): The parent widget where the frame will be placed.
+            *args, **kw: Arguments passed to the parent class constructor.
+        """
+        super().__init__(parent, *args, **kw)
+        
+        # Configure columns, where column 0 (scrolling canvas) will take available space 
+        # and column 1 (scrollbar) has fixed space
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=0)       
+
+
+        # Create a frame inside the canvas which will contain the scrollable content
+        self.scrollFrame = customtkinter.CTkScrollableFrame(self)
+        self.scrollFrame.grid(row=0,column=0,sticky='news', padx = [0,5])
+        
+        self.scrollFrame.columnconfigure(0, weight=1)
+        self.scrollFrame.rowconfigure(0, weight=1)
+        
+    def MonitorCursorPosition(self, event):
+        """
+        Monitors the cursor position and changes the cursor icon if it's close to the right edge of the frame.
+        
+        Also resizes the frame horizontally if resizing is allowed.
+        
+        Args:
+            event (tk.Event): The mouse motion event that tracks the cursor position.
+        """
+        # Get the current width and height of the frame
+        width = self.winfo_width()
+        height = self.winfo_height()
+
+        # Change cursor to indicate horizontal resizing if the cursor is near the right edge
+        if event.x > width - self.dragBandWidth:
+            self.configure(cursor='sb_h_double_arrow')
+        else:
+            self.configure(cursor='')
+
+        # If horizontal resizing is enabled, resize the frame width according to mouse position
+        if self.resizeMode == self.HORIZONTAL:
+            self.configure(width=event.x)
+            
+    def StartResize(self, event):
+        """
+        Determines if the mouse click is near the right edge of the frame to initiate horizontal resizing.
+        
+        Args:
+            event (tk.Event): The mouse event that triggers the resizing.
+        """
+        # Get the current width of the frame
+        width = self.winfo_width()
+
+        # If the mouse is clicked close to the right edge, enable horizontal resizing
+        if event.x > width - self.dragBandWidth:
+            self.resizeMode = self.HORIZONTAL
+        else:
+            self.resizeMode = self.NONE
+            
+    def StopResize(self, event):
+        """
+        Stops the resizing operation and restores the default cursor when the mouse button is released.
+        
+        Args:
+            event (tk.Event): The mouse event for releasing the button and stopping the resize.
+        """
+        # Reset resize mode and cursor
+        self.resizeMode = self.NONE
+        self.configure(cursor='')
+
+        
 
 
 class ResizableFrameLeftEdge(ResizableFrame):
@@ -480,10 +583,10 @@ class ResizableFrameTopEdge(ResizableFrame):
 
         # If the cursor is close to the top edge, change the cursor to a resize icon
         if event.y < self.dragBandWidth:
-            self.config(cursor='sb_v_double_arrow')
+            self.configure(cursor='sb_v_double_arrow')
         else:
-            self.config(cursor='')
+            self.configure(cursor='')
 
         # If vertical resizing is allowed, resize the frame with the cursor's position
         if self.resizeMode == self.VERTICAL:
-            self.config(height=height - event.y)
+            self.configure(height=height - event.y)

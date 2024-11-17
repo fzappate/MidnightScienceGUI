@@ -19,6 +19,9 @@ View(tk.Tk)
 """
 
 import tkinter as tk
+from tkinter import ttk 
+import customtkinter
+
 from presenter.Presenter import Presenter
 from ui.PathSelector import PathSelector
 from ui.VerticalScrollText import VerticalScrollText
@@ -26,6 +29,8 @@ from ui.AuxBar import AuxBar
 from ui.TabManager import TabManager
 from ui.ProjectNotebook import ProjectNotebook
 
+# from utilities.MSStyles import applyMSDarkThemeK
+import customtkinter
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -33,7 +38,10 @@ except:
     pass
 
 
-class View(tk.Tk):
+# class View(ThemedTk):
+class View(customtkinter.CTk):
+# class View(tk.Tk):
+
     """
     Main UI of the application and view element of the MVP framework.
     Inherits from `tk.Tk` and represents the main window of the application.
@@ -46,12 +54,18 @@ class View(tk.Tk):
         Sets up the main application window, including size and background configuration.
         """
         super().__init__()
-        self.title("Midnight Science GUI")
-
+        
+        # Window title
+        self.title("Midnight Science Plotter")
+    
+        # applyMSDarkTheme(self)
+        customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
+        customtkinter.set_default_color_theme("./utilities/MSdark.json")  # Themes: blue (default), dark-blue, green
+        # customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+        
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
         hs = self.winfo_screenheight()  # Height of the screen
-        self.config(bg='black')
         
         # Set window dimensions to 70% of screen size
         w = 0.7 * ws
@@ -79,26 +93,26 @@ class View(tk.Tk):
         self.rowconfigure(3, weight=0)
 
         # Path selector
-        self.pathSelector = PathSelector(self, presenter, background='gray30')
-        self.pathSelector.grid(row=0, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
+        self.pathSelector = PathSelector(self, presenter)
+        self.pathSelector.grid(row=0, column=0, sticky='EW')
 
         # Icon frame
-        self.iconFrame = tk.Frame(self, bg='blue')
-        self.iconFrame.grid(row=1, column=0, sticky='EW')
-        self.iconFrame.columnconfigure(0, weight=1)
+        self.iconFrame = customtkinter.CTkFrame(self)
+        self.iconFrame.grid(row=1, column=0, sticky='EW',ipady = 2)
+        self.iconFrame.columnconfigure(1, weight=1)
 
-        self.auxBar = AuxBar(self.iconFrame, presenter, background='gray30')
-        self.auxBar.grid(row=0, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
+        self.auxBar = AuxBar(self.iconFrame, presenter)
+        self.auxBar.grid(row=0, column=0, sticky='EW', padx=(0, 0), pady=(0, 0))
 
         self.tabManager = TabManager(self.iconFrame, presenter)
         self.tabManager.grid(row=0, column=1, sticky='EW')
-        self.tabManager.columnconfigure(0, weight=1)
+        self.tabManager.columnconfigure(2, weight=0)
 
         # Main tabs
         self.projectNotebook = ProjectNotebook(self)
-        self.projectNotebook.grid(row=2, column=0, sticky='NEWS', padx=(3, 3), pady=(2, 2))
+        self.projectNotebook.grid(row=2, column=0, sticky='NEWS', padx=(0, 0), pady=(0, 0))
 
         # Text widget
-        self.textPane = VerticalScrollText(self, height=150, background='gray30')
-        self.textPane.text.config(state='disabled')
-        self.textPane.grid(row=3, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
+        self.textPane = VerticalScrollText(self, height=150)
+        self.textPane.text.configure(state='disabled')
+        self.textPane.grid(row=3, column=0, sticky='EW', padx=(0, 0), pady=(3, 0))

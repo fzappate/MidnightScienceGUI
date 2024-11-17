@@ -17,10 +17,11 @@ ProjectNotebook(ttk.Notebook)
     A custom notebook widget that manages the tabs for the application's user interface.
 
 """
-import tkinter as tk
 from tkinter import ttk
+import customtkinter
 
-class ProjectNotebook(ttk.Notebook):
+# class ProjectNotebook(ttk.Notebook):
+class ProjectNotebook(customtkinter.CTkTabview):
     """
     A custom ttk.Notebook widget that manages the tabs for the application. 
     The notebook is filled with tabs at runtime by the presenter.

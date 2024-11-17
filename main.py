@@ -41,6 +41,7 @@ from model.Model import Model
 from ui.View import View
 from presenter.Presenter import Presenter
 
+
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
@@ -50,7 +51,7 @@ except (ImportError, AttributeError):
 def main() -> None:
     '''Initializes and runs the application.'''
     model = Model()
-    view = View()
+    view =  View()
     presenter = Presenter(model, view)
     presenter.RunUI()
 

@@ -14,7 +14,8 @@ Usage:
 """
 
 import tkinter as tk
-from tkinter import ttk 
+import customtkinter
+from tkinter import ttk
 from ui.ResizableFrame import ResizableFrameTopEdge
 
 class VerticalScrollText(ResizableFrameTopEdge):
@@ -43,14 +44,14 @@ class VerticalScrollText(ResizableFrameTopEdge):
         self.rowconfigure(0, weight=1)  # Make the first row expand
 
         # Create the Text widget for multi-line input
-        self.text = tk.Text(self)
+        self.text = customtkinter.CTkTextbox(self)
         self.text.grid_rowconfigure(0, weight=1)  # Allow the Text widget to expand vertically
+        self.text.grid(column=0, row=0, sticky='NEWS', padx=6, pady=3)  # Text widget fills the available space
 
         # Create a vertical scrollbar linked to the Text widget
-        text_scroll = ttk.Scrollbar(self, orient='vertical', command=self.text.yview)
+        text_scroll = customtkinter.CTkScrollbar(self, command=self.text.yview)
 
         # Grid the Text widget and scrollbar, configuring them for resizing
-        self.text.grid(column=0, row=0, sticky='NEWS', padx=3, pady=2)  # Text widget fills the available space
         text_scroll.grid(row=0, column=1, sticky='NS', padx=(0, 3), pady=2)  # Scrollbar placed on the right
 
         # Link the scrollbar to the Text widget, allowing scroll functionality

@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog, ttk
 import os
 import json
@@ -119,9 +120,10 @@ class Presenter():
         projectModelPath = self.model.settings.projectFolder + "/ProjectModel.json"
         projectModelFileExists = os.path.exists(projectModelPath)
         if (projectModelFileExists):
-            print('Project file found at: ' + projectModelPath)
+            self.PrintMessage('Project file found at: ' + projectModelPath)
         else:
-            print(' file not found at: ' + projectModelPath)
+            self.PrintError('Project file not found at: ' + projectModelPath)
+            return
             
         # Load ProjectModel.json
         f = open(projectModelPath,'r')
@@ -640,7 +642,6 @@ class Presenter():
         
 
         
-        
     # RESULT FILE HANDLING
         
     def AddResultFile(self, subplotPane)->None:
@@ -1010,20 +1011,30 @@ class Presenter():
     
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
-        
-        self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
+        # BIND self.tabView.bind('<Button-3>', on_click)
+        # self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
         
         # Delete existing tabs
-        tabs = self.view.projectNotebook.tabs()
-        for ii, tab in enumerate(self.view.projectNotebook.tabs()):
-             self.view.projectNotebook.forget(tab)
+        # tabs = self.view.projectNotebook.tabs()
+
+        a = 4
+        # if self.view.projectNotebook.indx('end')
+        for plot in self.model.projectModel.containedPlots:
+            try:
+                self.view.projectNotebook.delete(plot.name)
+            except:
+                continue
+             
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            plotPane = PlotPane(self.view.projectNotebook,self,ii, bg='gray30')
             if plot.name == '':
-                self.view.projectNotebook.add(plotPane, text = "Plot " + str(ii))
+                plotName = "Plot " + str(ii)
             else:
-                self.view.projectNotebook.add(plotPane, text = plot.name)
+                plotName = plot.name
+                
+            self.view.projectNotebook.add(plotName)
+            plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
+            plotPane.pack(fill="both", expand=True,padx = 6)
                 
             # Clear all the existing subplots, and create the axis for the new ones
             plotCanvasChildren = plotPane.plotCanvas.winfo_children()
@@ -1047,9 +1058,8 @@ class Presenter():
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
                                             jj,
-                                            subplot,
-                                            bg = 'blue')
-                    subplotPane.grid(row=jj,column=0,sticky='NEW')
+                                            subplot)
+                    subplotPane.grid(row=jj,column=0,sticky='NEW',pady = (5,20))
                     
                     # Redraw result files 
                     for kk, resultFile in enumerate(subplot.containedResultFiles):
@@ -1065,8 +1075,7 @@ class Presenter():
                             sigPane = SignalPane(   resFile.interior,
                                                     self,
                                                     selectedSignal,
-                                                    index = hh,
-                                                    bg = 'gray18')
+                                                    index = hh)
                             sigPane.grid(row=hh,column=0,sticky='EW')
                             
                         
@@ -1142,9 +1151,11 @@ class Presenter():
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
         # Move to the newly created tab
-        self.view.projectNotebook.select(self.model.projectModel.tabSelected)
+        if not self.model.projectModel.tabSelected == '':
+            self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+        # self.view.projectNotebook.set(self.model.projectModel.tabSelected)
         
-        self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
+        # self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         
     def UpdateEmpty(self, event)->None:
         '''Empty function'''
@@ -1156,15 +1167,16 @@ class Presenter():
     def PrintMessage(self, message)->None:
         '''Print message.'''
         message = message +'\n'
-        self.view.textPane.text.config(state='normal')
+        self.view.textPane.text.configure(state='normal')
+        # self.view.textPane.text.configure(text_color="#000000")
         self.view.textPane.text.insert(tk.END,message)
-        self.view.textPane.text.config(state='disabled')
+        self.view.textPane.text.configure(state='disabled')
         
     def PrintError(self, message)->None:
         '''Print error'''
         message = message +'\n'
-        self.view.textPane.text.config(state='normal')
-        self.view.textPane.text.tag_configure("red_text",foreground='red')
+        self.view.textPane.text.configure(state='normal')
+        # self.view.textPane.text.configure(text_color="#ff0000")
         self.view.textPane.text.insert(tk.END,message,"red_text")
-        self.view.textPane.text.config(state='normal')
+        self.view.textPane.text.configure(state='normal')
         
