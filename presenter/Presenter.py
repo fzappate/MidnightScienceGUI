@@ -79,7 +79,6 @@ class Presenter():
             self.PrintMessage('Settings file found at: ' + self.model.settings.settingsFilePath)
             print('Settings file found at: ' + self.model.settings.settingsFilePath)
         else:
-            self.PrintError('Settings file found at: ' + self.model.settings.settingsFilePath)
             print('Settings file not found at: ' + self.model.settings.settingsFilePath)
             
         # Read setting file
@@ -111,16 +110,17 @@ class Presenter():
     def CreateNewProject(self)->None:
         '''Create a new project.'''
         # Choose a new folder and make sure there is no project there
-        self.BrowseProjectFolder()
+        projectModelFound = self.BrowseProjectFolder()
         
-        # Create new projectModel
-        self.model.projectModel = self.CreateEmptyProjectModel()
-        
-        # Save the new project 
-        self.SaveProjectModel()
-        
-        # Load the projectModel.json jsut created and redraw
-        self.RedrawPlotNotebook()
+        if not projectModelFound:
+            # Create new projectModel
+            self.model.projectModel = self.CreateEmptyProjectModel()
+            
+            # Save the new project 
+            self.SaveProjectModel()
+            
+            # Load the projectModel.json jsut created and redraw
+            self.RedrawPlotNotebook()
         
     def LoadExistingProject(self)->None:
         self.LoadProjectFromJson()
@@ -128,35 +128,41 @@ class Presenter():
         
     def BrowseToDifferentProject(self)->None:
         '''Browse to a different project.'''
-        self.BrowseProjectFolder()
-        self.RedrawPlotNotebook()
+        projectModelFound = self.BrowseProjectFolder()
+        if projectModelFound:
+            self.RedrawPlotNotebook()
         
-    def BrowseProjectFolder(self)->None:
+    def BrowseProjectFolder(self):
         """This function allows the user to select a working directory by browsing 
         and store its path in the main control models. """
         # Open the dialog window
         folder = filedialog.askdirectory()
+        projectModelFound = 0
         
         # If user hits cancel don't do anything
         if folder == "":
-            return 
+            projectModelFound = -1
+            return projectModelFound
             
         # Check that a ProjectModel.json exists
         projectModelPath = folder + self.model.settings.defaultProjectModelName
         projectModelFileExists = os.path.exists(projectModelPath)
         if (projectModelFileExists):
-            self.PrintError('\n')
             self.PrintError('The seleted folder already contains a project folder.')
             self.PrintError('Delete the existing "' + self.model.settings.defaultProjectModelName + '" file and try again.')
-            self.PrintError('\n')
-            return
+            projectModelFound = 1
+            return projectModelFound
+        else:
+            # Update project setting updating the project folder
+            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
+            # Update model setting
+            self.model.settings.workingFolder = folder
+            # Set the workign folder of the setting object the same as the content of the entry 
+            self.UpdateSettingFile("ProjectFolder", folder)
+
+            projectModelFound = 0
+            return projectModelFound
         
-        # Update project setting updating the project folder
-        self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
-        # Update model setting
-        self.model.settings.workingFolder = folder
-        # Set the workign folder of the setting object the same as the content of the entry 
-        self.UpdateSettingFile("ProjectFolder", folder)
         
         
         
@@ -323,10 +329,8 @@ class Presenter():
             
                 self.model.projectModel = projModel        
             except:
-                self.PrintError('\n')
                 self.PrintError('Something went wrong while reading ' + self.model.settings.defaultProjectModelName + '.')
                 self.PrintError('New project is started. Save current model in the selected folder to overwrite corrupted ' + self.model.settings.defaultProjectModelName + '.')
-                self.PrintError('\n')
                 
                 
                 self.model.projectModel = self.CreateEmptyProjectModel()
@@ -1059,8 +1063,10 @@ class Presenter():
         # Delete existing tabs
         # tabs = self.view.projectNotebook.tabs()
 
-        a = 4
         # if self.view.projectNotebook.indx('end')
+        # for tab in self.view.projectNotebook.tabs():
+        #     self.view.projectNotebook.delete(tab)
+    
         for plot in self.model.projectModel.containedPlots:
             try:
                 self.view.projectNotebook.delete(plot.name)
@@ -1073,6 +1079,8 @@ class Presenter():
                 plotName = "Plot " + str(ii)
             else:
                 plotName = plot.name
+                
+
                 
             self.view.projectNotebook.add(plotName)
             plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
