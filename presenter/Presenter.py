@@ -395,12 +395,13 @@ class Presenter():
         and store its path in the main control models. """
         # Open the dialog window
         folder = filedialog.askdirectory()
-        # Update the working folder entry with the selecter folder 
-        self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
-        # Update model setting
-        self.model.settings.workingFolder = folder
-        # Set the workign folder of the setting object the same as the content of the entry 
-        self.UpdateSettingFile("ProjectFolder", folder)
+        if not folder == "":
+            # Update the working folder entry with the selecter folder 
+            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
+            # Update model setting
+            self.model.settings.workingFolder = folder
+            # Set the workign folder of the setting object the same as the content of the entry 
+            self.UpdateSettingFile("ProjectFolder", folder)
                     
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
