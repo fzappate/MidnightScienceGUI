@@ -54,23 +54,31 @@ class AuxBar(customtkinter.CTkFrame):
         
         iconSize = (30, 30)
 
-        # Load save image
-        saveIconPath = os.path.join(os.getcwd(), './images/saveIcon.png')
-        self.saveIcon = customtkinter.CTkImage(Image.open(saveIconPath), size = iconSize)
+        # New project image
+        newProjIconPath = os.path.join(os.getcwd(), './images/newProjIcon.png')
+        self.newProjIconPath = customtkinter.CTkImage(Image.open(newProjIconPath), size = iconSize)
 
-        # Load load image
-        loadIconPath = os.path.join(os.getcwd(), './images/loadIcon.png')
-        self.loadIcon = customtkinter.CTkImage(Image.open(loadIconPath), size = iconSize)
+        # Save image
+        saveProjIconPath = os.path.join(os.getcwd(), './images/saveProjIcon.png')
+        self.saveProjIconPath = customtkinter.CTkImage(Image.open(saveProjIconPath), size = iconSize)
         
-        # Load reload image
-        reloadIconPath = os.path.join(os.getcwd(), './images/reloadIcon.png')
-        self.reloadIcon = customtkinter.CTkImage(Image.open(reloadIconPath), size = iconSize)
+        # Load image
+        loadProjIconPath = os.path.join(os.getcwd(), './images/loadProjIcon.png')
+        self.loadProjIconPath = customtkinter.CTkImage(Image.open(loadProjIconPath), size = iconSize)
+        
 
+        # New project button 
+        colNo = 0 
+        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.newProjIconPath)
+        save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
+        
         # Save button 
-        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.saveIcon, command=presenter.SaveProjectModel)
-        save_button.grid(row=0, column=0, padx=(3, 3), ipady=1, ipadx=1)
+        colNo +=1
+        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.saveProjIconPath, command=presenter.SaveProjectModel)
+        save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
 
         # Load button
-        load_button = customtkinter.CTkButton(self, text = '',width = 10, image=self.loadIcon, command=presenter.LoadProject)
-        load_button.grid(row=0, column=1, padx=(3, 3), ipady=1, ipadx=1)
+        colNo +=1
+        load_button = customtkinter.CTkButton(self, text = '',width = 10, image=self.loadProjIconPath, command=presenter.LoadProject)
+        load_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
         

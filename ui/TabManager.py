@@ -60,7 +60,7 @@ class TabManager(customtkinter.CTkFrame):
         iconSize = (30, 30)
 
         # Load add tab image
-        addTabIconPath = os.path.join(os.getcwd(), './images/addTabIcon.png')
+        addTabIconPath = os.path.join(os.getcwd(), './images/newTabIcon.png')
         self.addTabIcon = customtkinter.CTkImage(Image.open(addTabIconPath), size = iconSize)
 
         # # Load load image
