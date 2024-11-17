@@ -110,32 +110,17 @@ class Presenter():
     # PROJECT MANAGEMENT 
     def CreateNewProject(self)->None:
         '''Create a new project.'''
+        # Choose a new folder and make sure there is no project there
         self.BrowseProjectFolder()
         
-        # Check that a ProjectModel.json exists
-        projectModelPath = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName
-        projectModelFileExists = os.path.exists(projectModelPath)
-        if (projectModelFileExists):
-            self.PrintError('\n')
-            self.PrintError('The seleted folder already contains a project folder.')
-            self.PrintError('Delete the existing "' + self.model.settings.defaultProjectModelName + '" file and try again.')
-            self.PrintError('\n')
-            return
-        
-        # Cancel all the plots contained in the projectModel
-        for plotModel in self.model.projectModel.containedPlots:
-            del plotModel
-        # Create an empty plot and subplot
-        emptyPlotModel = PlotModel()    
-        emptySubplotModel = SubplotModel()
-        emptyPlotModel.containedSubplots.append(emptySubplotModel)
-        self.model.projectModel.containedPlots.append(emptyPlotModel)
+        # Create new projectModel
+        self.model.projectModel = self.CreateEmptyProjectModel()
         
         # Save the new project 
         self.SaveProjectModel()
         
         # Load the projectModel.json jsut created and redraw
-        self.LoadExistingProject()
+        self.RedrawPlotNotebook()
         
     def LoadExistingProject(self)->None:
         self.LoadProjectFromJson()
@@ -151,13 +136,30 @@ class Presenter():
         and store its path in the main control models. """
         # Open the dialog window
         folder = filedialog.askdirectory()
-        if not folder == "":
-            # Update the working folder entry with the selecter folder 
-            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
-            # Update model setting
-            self.model.settings.workingFolder = folder
-            # Set the workign folder of the setting object the same as the content of the entry 
-            self.UpdateSettingFile("ProjectFolder", folder)
+        
+        # If user hits cancel don't do anything
+        if folder == "":
+            return 
+            
+        # Check that a ProjectModel.json exists
+        projectModelPath = folder + self.model.settings.defaultProjectModelName
+        projectModelFileExists = os.path.exists(projectModelPath)
+        if (projectModelFileExists):
+            self.PrintError('\n')
+            self.PrintError('The seleted folder already contains a project folder.')
+            self.PrintError('Delete the existing "' + self.model.settings.defaultProjectModelName + '" file and try again.')
+            self.PrintError('\n')
+            return
+        
+        # Update project setting updating the project folder
+        self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
+        # Update model setting
+        self.model.settings.workingFolder = folder
+        # Set the workign folder of the setting object the same as the content of the entry 
+        self.UpdateSettingFile("ProjectFolder", folder)
+        
+        
+        
                     
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
@@ -307,11 +309,11 @@ class Presenter():
                             
                             # Append ResultFileModel to SubplotModel.containedResultFiles
                             subplotModel.containedResultFiles.append(resFileModel)
-                        
-                        subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
-                        subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
-                        subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
-                        subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
+                        # REMOVED BECAUSE X AXIS ARE IN THE RES FILE NOW, NOT IN SUBPLOT
+                        # subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
+                        # subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
+                        # subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
+                        # subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
                             
                         # Append the SubplotModel inside the PlotModel.containedSubplots
                         plotModel.containedSubplots.append(subplotModel)
@@ -338,8 +340,6 @@ class Presenter():
             
             return
             
-
-    
     def SaveProjectModel(self)->None:
         '''Save project model.'''
         projModelLocation = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName
@@ -420,11 +420,15 @@ class Presenter():
         
         # Print Result files
         f.write('"containedResultFiles": [\n')
-        noOfResltFile = len(subplotModel.containedResultFiles)-1
+        noOfResltFile = len(subplotModel.containedResultFiles)
+        if noOfResltFile == 0:
+            f.write(']\n') # Close containedResultFiles list
+            return 
+        
         for kk, resultFile in enumerate(subplotModel.containedResultFiles):
             self.SaveResultFileToJson(resultFile,f)
 
-            if kk < noOfResltFile:
+            if kk < noOfResltFile-1:
                 f.write('}\n,\n') # Close ResultFile object
             else:
                 f.write('}\n]\n') # Close containedResultFiles list

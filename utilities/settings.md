@@ -1,2 +1,2 @@
 # Settings
-- ProjectFolder, C:/Software/MACnCheese/build
+- ProjectFolder, C:/Software/MACnCheese/build/Debug
