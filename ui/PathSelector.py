@@ -89,7 +89,7 @@ class PathSelector(customtkinter.CTkFrame):
         self.pathEntry.grid(row=0, column=1, sticky="EW", padx=(3, 3), pady=(3, 3))  # Entry in column 1 (expandable)
 
         # Create the "Browse..." button to allow the user to select a folder
-        self.navigate = customtkinter.CTkButton(self, text="Browse..", width = 100,command=lambda: presenter.BrowseProjectFolder())
+        self.navigate = customtkinter.CTkButton(self, text="Browse..", width = 100,command=lambda: presenter.BrowseToDifferentProject())
 
         # Grid layout to position the widgets in the frame
         self.navigate.grid(row=0, column=2, padx=(0, 6))  # Button in column 2

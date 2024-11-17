@@ -48,8 +48,7 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initView(self)
         self.LoadSettings()
-        self.LoadProjectModel()
-        self.RedrawPlotNotebook()
+        self.LoadExistingProject()
         
         # Force closing when using matplotlib
         self.view.protocol("WM_DELETE_WINDOW", self._on_closing)   
@@ -126,143 +125,220 @@ class Presenter():
         # Cancel all the plots contained in the projectModel
         for plotModel in self.model.projectModel.containedPlots:
             del plotModel
-            
+        # Create an empty plot and subplot
+        emptyPlotModel = PlotModel()    
+        emptySubplotModel = SubplotModel()
+        emptyPlotModel.containedSubplots.append(emptySubplotModel)
+        self.model.projectModel.containedPlots.append(emptyPlotModel)
+        
         # Save the new project 
         self.SaveProjectModel()
         
-        # Load the default project .json file
-        self.LoadProjectModel()
+        # Load the projectModel.json jsut created and redraw
+        self.LoadExistingProject()
         
-        # Redraw Projecy
+    def LoadExistingProject(self)->None:
+        self.LoadProjectFromJson()
         self.RedrawPlotNotebook()
         
+    def BrowseToDifferentProject(self)->None:
+        '''Browse to a different project.'''
+        self.BrowseProjectFolder()
+        self.RedrawPlotNotebook()
         
+    def BrowseProjectFolder(self)->None:
+        """This function allows the user to select a working directory by browsing 
+        and store its path in the main control models. """
+        # Open the dialog window
+        folder = filedialog.askdirectory()
+        if not folder == "":
+            # Update the working folder entry with the selecter folder 
+            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
+            # Update model setting
+            self.model.settings.workingFolder = folder
+            # Set the workign folder of the setting object the same as the content of the entry 
+            self.UpdateSettingFile("ProjectFolder", folder)
+                    
+    def SetWorkingFolderManually(self,event=None)->None:
+        """This function allows the user to select a working directory by copying 
+        and pasting in the setting object. """
+        workingFolder = self.view.pathSelector.pathEntry.get()
+        # Set the workign folder of the setting object the same as the content of the entry 
+        # self.UpdateSettingWorkingFolder(workingFolder)
         
+    def UpdateSettingFile(self, targetSettingKey, targetSettingVal)->None:
+        """This function makes sure that when a working folder is chosen the path is properly 
+        updated in the Settings object and settings file.
+        
+        settingInModel:     structure of the setting in the UI.
+                            Eg: self.model.settings.workingFolder
+        targetSettingKey:   keyword of the setting in the settings file.
+                            Eg: workingFolder
+        setting:            data entered in the model setting structure and file."""
+
+        # Update settings file
+        file = open(self.model.settings.settingsFilePath,'r')
+        lines = file.readlines()
+        file.close()
+        
+        counter = 0
+        for line in lines:
+            if line.startswith('-'):
+                
+                lineMod = line.replace(line[0],"")
+                tokens = lineMod.split(',')
+                keyword = tokens[0].strip()                
+                setting = tokens[1].strip()
+                if keyword == targetSettingKey:
+                    break
+            counter +=1
+        
+        lines[counter] = "- " + targetSettingKey + ", "  + targetSettingVal + "\n"
+        file = open(self.model.settings.settingsFilePath,'w')
+        file.writelines(lines)
+        file.close()      
+        
+    def CreateEmptyProjectModel(self):
+        '''Create an empty project.'''
+        emptyProjectModel = ProjectModel()
+        emptyPlotModel = PlotModel()    
+        emptySubplotModel = SubplotModel()
+        
+        emptyPlotModel.containedSubplots.append(emptySubplotModel)
+        emptyProjectModel.containedPlots.append(emptyPlotModel)
+        
+        return emptyProjectModel
         
         
     # JSON HANDLING
-    def LoadProject(self)->None:
-        self.LoadProjectModel()
-             
-    def LoadProjectModel(self) -> None:
+    def LoadProjectFromJson(self) -> None:
         '''Load project from JSON.'''
         # Check that a ProjectModel.json exists
         projectModelPath = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName 
         projectModelFileExists = os.path.exists(projectModelPath)
         if (projectModelFileExists):
             self.PrintMessage('Project file found at: ' + projectModelPath)
+            # Create projectModel instance
+            projModel = ProjectModel()
+            try:
+                # Load ProjectModel.json
+                f = open(projectModelPath,'r')
+                jsonProjMod = json.load(f)
+                
+                # Load project data
+                projModel.tabSelected = jsonProjMod["tabSelected"]
+                
+                # Load plot data        
+                jsonContainedPlots = jsonProjMod["containedPlots"]
+                for ii, jsonPlot in enumerate(jsonContainedPlots):
+                    plotModel = PlotModel()
+                    plotModel.name = jsonPlot["name"]
+                    plotModel.indx = jsonPlot["indx"]
+                    plotModel.canvasColor = jsonPlot["canvasColor"]
+                    plotModel.plotColor = jsonPlot["plotColor"]
+                    plotModel.toolbarColor = jsonPlot["toolbarColor"]
+                    plotModel.leftMargin = jsonPlot["leftMargin"]
+                    plotModel.rightMargin = jsonPlot["rightMargin"]
+                    plotModel.bottomMargin = jsonPlot["bottomMargin"]
+                    plotModel.topMargin = jsonPlot["topMargin"]
+                
+                    plotModel.noOfSubplots = jsonPlot["noOfSubplots"]
+                    
+                    # Load subplot data
+                    jsonContainedSubplots = jsonPlot["containedSubplots"]
+                    for jj, jsonSubplot in enumerate(jsonContainedSubplots):
+                        subplotModel = SubplotModel()
+                        subplotModel.name = jsonSubplot["name"]
+                        subplotModel.indx = jsonSubplot["indx"]
+                        subplotModel.isCollapsed = jsonSubplot["isCollapsed"]
+                        
+                        subplotModel.xLabel = jsonSubplot["xLabel"]
+                        subplotModel.yLabel = jsonSubplot["yLabel"]
+                        subplotModel.xLim = jsonSubplot["xLim"]
+                        subplotModel.yLim = jsonSubplot["yLim"]
+                        subplotModel.xLimUser = jsonSubplot["xLimUser"]
+                        subplotModel.yLimUser = jsonSubplot["yLimUser"]
+                        subplotModel.useUserLim = jsonSubplot["useUserLim"]
+                        subplotModel.xTick = jsonSubplot["xTick"]
+                        subplotModel.yTick = jsonSubplot["yTick"]
+                        subplotModel.xTickUser = jsonSubplot["xTickUser"]
+                        subplotModel.yTickUser = jsonSubplot["yTickUser"]
+                        subplotModel.useUserTicks = jsonSubplot["useUserTicks"]
+                        subplotModel.setGrid = jsonSubplot["setGrid"]
+                        
+                        subplotModel.colorCounter = jsonSubplot["colorCounter"]
+                        
+                        subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
+                        
+                        subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
+                        
+                        
+                        # Load result files data
+                        jsonContainedResFile = jsonSubplot["containedResultFiles"]
+                        for kk, jsonResFile in enumerate(jsonContainedResFile):
+                            resFileModel = ResultFileModel()
+                            resFileModel.name = jsonResFile["name"]
+                            resFileModel.indx = jsonResFile["indx"]
+                            resFileModel.absPath = jsonResFile["absPath"]
+                                                
+                            resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
+                            
+                            # Load selected signal data
+                            jsonSelectedSignals = jsonResFile["selectedSignals"]
+                            for hh, jsonSelSign in enumerate(jsonSelectedSignals):
+                                selectedSignalModel = PlottedSignalModel()
+                                selectedSignalModel.name = jsonSelSign["name"]
+                                selectedSignalModel.width = jsonSelSign["width"]
+                                selectedSignalModel.style = jsonSelSign["style"]
+                                selectedSignalModel.marker = jsonSelSign["marker"]
+                                selectedSignalModel.color = jsonSelSign["color"]
+                                selectedSignalModel.label = jsonSelSign["label"]
+                                selectedSignalModel.label = jsonSelSign["name"]
+                                selectedSignalModel.units = jsonSelSign["units"]
+                                selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
+                                selectedSignalModel.quantity = jsonSelSign["quantity"]
+                                selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
+                                
+                                selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
+                                selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
+                                
+                                # Append PlottedSignal inside the ResultFileModel.selectedSignals
+                                resFileModel.selectedSignals.append(selectedSignalModel)
+                            
+                            # Append ResultFileModel to SubplotModel.containedResultFiles
+                            subplotModel.containedResultFiles.append(resFileModel)
+                        
+                        subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
+                        subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
+                        subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
+                        subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
+                            
+                        # Append the SubplotModel inside the PlotModel.containedSubplots
+                        plotModel.containedSubplots.append(subplotModel)
+                        
+                    # Append the PlotModel inside the ProjectModel.containedPlots
+                    projModel.containedPlots.append(plotModel)      
+            
+                self.model.projectModel = projModel        
+            except:
+                self.PrintError('\n')
+                self.PrintError('Something went wrong while reading ' + self.model.settings.defaultProjectModelName + '.')
+                self.PrintError('New project is started. Save current model in the selected folder to overwrite corrupted ' + self.model.settings.defaultProjectModelName + '.')
+                self.PrintError('\n')
+                
+                
+                self.model.projectModel = self.CreateEmptyProjectModel()
+            
         else:
             self.PrintError('Project file not found at: ' + projectModelPath)
+            self.PrintError('New project is started.')
+            # Create an empty plot and subplot
+            self.model.projectModel = self.CreateEmptyProjectModel()
+
+            
             return
             
-        # Create projectModel instance
-        projModel = ProjectModel()
-        try:
-            # Load ProjectModel.json
-            f = open(projectModelPath,'r')
-            jsonProjMod = json.load(f)
-            
-            # Load project data
-            projModel.tabSelected = jsonProjMod["tabSelected"]
-            
-            # Load plot data        
-            jsonContainedPlots = jsonProjMod["containedPlots"]
-            for ii, jsonPlot in enumerate(jsonContainedPlots):
-                plotModel = PlotModel()
-                plotModel.name = jsonPlot["name"]
-                plotModel.indx = jsonPlot["indx"]
-                plotModel.canvasColor = jsonPlot["canvasColor"]
-                plotModel.plotColor = jsonPlot["plotColor"]
-                plotModel.toolbarColor = jsonPlot["toolbarColor"]
-                plotModel.leftMargin = jsonPlot["leftMargin"]
-                plotModel.rightMargin = jsonPlot["rightMargin"]
-                plotModel.bottomMargin = jsonPlot["bottomMargin"]
-                plotModel.topMargin = jsonPlot["topMargin"]
-            
-                plotModel.noOfSubplots = jsonPlot["noOfSubplots"]
-                
-                # Load subplot data
-                jsonContainedSubplots = jsonPlot["containedSubplots"]
-                for jj, jsonSubplot in enumerate(jsonContainedSubplots):
-                    subplotModel = SubplotModel()
-                    subplotModel.name = jsonSubplot["name"]
-                    subplotModel.indx = jsonSubplot["indx"]
-                    subplotModel.isCollapsed = jsonSubplot["isCollapsed"]
-                    
-                    subplotModel.xLabel = jsonSubplot["xLabel"]
-                    subplotModel.yLabel = jsonSubplot["yLabel"]
-                    subplotModel.xLim = jsonSubplot["xLim"]
-                    subplotModel.yLim = jsonSubplot["yLim"]
-                    subplotModel.xLimUser = jsonSubplot["xLimUser"]
-                    subplotModel.yLimUser = jsonSubplot["yLimUser"]
-                    subplotModel.useUserLim = jsonSubplot["useUserLim"]
-                    subplotModel.xTick = jsonSubplot["xTick"]
-                    subplotModel.yTick = jsonSubplot["yTick"]
-                    subplotModel.xTickUser = jsonSubplot["xTickUser"]
-                    subplotModel.yTickUser = jsonSubplot["yTickUser"]
-                    subplotModel.useUserTicks = jsonSubplot["useUserTicks"]
-                    subplotModel.setGrid = jsonSubplot["setGrid"]
-                    
-                    subplotModel.colorCounter = jsonSubplot["colorCounter"]
-                    
-                    subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
-                    
-                    subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
-                    
-                    
-                    # Load result files data
-                    jsonContainedResFile = jsonSubplot["containedResultFiles"]
-                    for kk, jsonResFile in enumerate(jsonContainedResFile):
-                        resFileModel = ResultFileModel()
-                        resFileModel.name = jsonResFile["name"]
-                        resFileModel.indx = jsonResFile["indx"]
-                        resFileModel.absPath = jsonResFile["absPath"]
-                                            
-                        resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
-                        
-                        # Load selected signal data
-                        jsonSelectedSignals = jsonResFile["selectedSignals"]
-                        for hh, jsonSelSign in enumerate(jsonSelectedSignals):
-                            selectedSignalModel = PlottedSignalModel()
-                            selectedSignalModel.name = jsonSelSign["name"]
-                            selectedSignalModel.width = jsonSelSign["width"]
-                            selectedSignalModel.style = jsonSelSign["style"]
-                            selectedSignalModel.marker = jsonSelSign["marker"]
-                            selectedSignalModel.color = jsonSelSign["color"]
-                            selectedSignalModel.label = jsonSelSign["label"]
-                            selectedSignalModel.label = jsonSelSign["name"]
-                            selectedSignalModel.units = jsonSelSign["units"]
-                            selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
-                            selectedSignalModel.quantity = jsonSelSign["quantity"]
-                            selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
-                            
-                            selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
-                            selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
-                            
-                            # Append PlottedSignal inside the ResultFileModel.selectedSignals
-                            resFileModel.selectedSignals.append(selectedSignalModel)
-                        
-                        # Append ResultFileModel to SubplotModel.containedResultFiles
-                        subplotModel.containedResultFiles.append(resFileModel)
-                    
-                    subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
-                    subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
-                    subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
-                    subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
-                        
-                    # Append the SubplotModel inside the PlotModel.containedSubplots
-                    plotModel.containedSubplots.append(subplotModel)
-                    
-                # Append the PlotModel inside the ProjectModel.containedPlots
-                projModel.containedPlots.append(plotModel)      
-                
-        except:
-            self.PrintError('\n')
-            self.PrintError('Something went wrong while reading ' + self.model.settings.defaultProjectModelName + '.')
-            self.PrintError('New project is started. Save current model in the selected folder to overwrite corrupted ' + self.model.settings.defaultProjectModelName + '.')
-            self.PrintError('\n')
-            
-        self.model.projectModel = projModel
+
     
     def SaveProjectModel(self)->None:
         '''Save project model.'''
@@ -390,85 +466,6 @@ class Presenter():
   
     # PROJECT FOLDER SELECTION
 
-    def BrowseProjectFolder(self)->None:
-        """This function allows the user to select a working directory by browsing 
-        and store its path in the main control models. """
-        # Open the dialog window
-        folder = filedialog.askdirectory()
-        if not folder == "":
-            # Update the working folder entry with the selecter folder 
-            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
-            # Update model setting
-            self.model.settings.workingFolder = folder
-            # Set the workign folder of the setting object the same as the content of the entry 
-            self.UpdateSettingFile("ProjectFolder", folder)
-                    
-    def SetWorkingFolderManually(self,event=None)->None:
-        """This function allows the user to select a working directory by copying 
-        and pasting in the setting object. """
-        workingFolder = self.view.pathSelector.pathEntry.get()
-        # Set the workign folder of the setting object the same as the content of the entry 
-        # self.UpdateSettingWorkingFolder(workingFolder)
-        
-    def UpdateWorkingFolder(self,workingFolder)->None: # Deprecated?
-        """This function makes sure that when a working folder is chosen the path is properly 
-        updated in the Settings object and settings file."""
-
-        # Update settings file
-        file = open(self.model.settings.settingsFilePath,'r')
-        lines = file.readlines()
-        file.close()
-        
-        counter = 0
-        for line in lines:
-            if line.startswith('-'):
-                
-                lineMod = line.replace(line[0],"")
-                tokens = lineMod.split(',')
-                keyword = tokens[0].strip()                
-                setting = tokens[1].strip()
-                if keyword == "workingFolder":
-                    break
-            counter +=1
-        
-        lines[counter] = "- workingFolder, " + workingFolder + "\n"
-        file = open(self.model.settings.settingsFilePath,'w')
-        file.writelines(lines)
-        file.close()
-        
-    def UpdateSettingFile(self, targetSettingKey, targetSettingVal)->None:
-        """This function makes sure that when a working folder is chosen the path is properly 
-        updated in the Settings object and settings file.
-        
-        settingInModel:     structure of the setting in the UI.
-                            Eg: self.model.settings.workingFolder
-        targetSettingKey:   keyword of the setting in the settings file.
-                            Eg: workingFolder
-        setting:            data entered in the model setting structure and file."""
-
-        # Update settings file
-        file = open(self.model.settings.settingsFilePath,'r')
-        lines = file.readlines()
-        file.close()
-        
-        counter = 0
-        for line in lines:
-            if line.startswith('-'):
-                
-                lineMod = line.replace(line[0],"")
-                tokens = lineMod.split(',')
-                keyword = tokens[0].strip()                
-                setting = tokens[1].strip()
-                if keyword == targetSettingKey:
-                    break
-            counter +=1
-        
-        lines[counter] = "- " + targetSettingKey + ", "  + targetSettingVal + "\n"
-        file = open(self.model.settings.settingsFilePath,'w')
-        file.writelines(lines)
-        file.close()      
-        
-        
         
     # PLOT (TAB) HANDLING
     
