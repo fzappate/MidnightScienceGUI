@@ -55,9 +55,12 @@ class ResFilePane(customtkinter.CTkFrame):
         self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
         
         self.noOfRows +=1
-        self.interior = customtkinter.CTkFrame(self)
+        self.interior = customtkinter.CTkFrame(self,height=0)
         self.interior.grid(row=self.noOfRows,column=0,sticky='NEW')        
         self.interior.columnconfigure(0,weight=1)
+        
+      
+        
         
     def PrintCombo(self,event):
         '''Test fun'''

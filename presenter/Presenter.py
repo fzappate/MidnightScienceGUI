@@ -1109,7 +1109,7 @@ class Presenter():
                                             self, 
                                             jj,
                                             subplot)
-                    subplotPane.grid(row=jj,column=0,sticky='NEW',pady = (5,20))
+                    subplotPane.grid(row=jj,column=0,sticky='NEW',pady = (2,2))
                     
                     # Redraw result files 
                     for kk, resultFile in enumerate(subplot.containedResultFiles):

@@ -42,9 +42,14 @@ class SubplotPane(CollapsiblePaneDelOpts):
         #     self.xAxisSelect.set(self.listOfSignals[0])
             
         self.noOfRows +=1
-        self.interior = customtkinter.CTkFrame(self.collapsibleFrame)
+        self.interior = customtkinter.CTkFrame(self.collapsibleFrame,height=0)
         self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS')
         self.interior.columnconfigure(0,weight=1)
+        
+        # Empty frame used just as a spacer
+        self.noOfRows +=1
+        self.spacer = customtkinter.CTkFrame(self.collapsibleFrame,height=30)
+        self.spacer.grid(row=self.noOfRows,column=0,sticky='NEW')  
         
     def UpdateSubplotPaneAndModelState(self)->None:
         '''First it calls the SwitchState function of the parent CollapsiblePane to update its status.
