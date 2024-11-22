@@ -1,4 +1,4 @@
-from model.SignalModel import SignalModel
+from model.PlottedSignalModel import PlottedSignalModel
 
 class ResultFileModel():
     def __init__(self)->None:
@@ -17,6 +17,8 @@ class ResultFileModel():
         self.signalNames = []
         self.selectedSignals = []
         self.selectedSignalsIndx = []
+        
+        self.xAxisSignal = PlottedSignalModel()
         
     def RemoveDataFromResultSignals(self)->None:
         '''Delete the data from singals.'''

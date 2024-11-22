@@ -12,6 +12,7 @@ from ui.PlotPane import PlotPane
 from ui.PlotOptions import PlotOptions
 from ui.ResFilePane import ResFilePane
 from ui.SignalPane import SignalPane
+from ui.SignalPaneX import SignalPaneX
 from ui.SubplotOptions import SubplotOptions
 from ui.SignalOptions import SignalOptions
 from ui.SubplotPane import SubplotPane
@@ -752,9 +753,12 @@ class Presenter():
         # Load the signals into signal names
         signals, signalNames = self.LoadSignalsFromResFile(filePath)
         
-        # Store the signals and signal names in the model
+        # Store the signals, signal names in the model
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals = signals
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signalNames = signalNames
+        
+        # Set the first signal of the file as X axis
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal = signals[0]
         
         # If the first result pane is added
         if resFilePane.index == 0:
@@ -775,7 +779,6 @@ class Presenter():
     
     def AddSignal(self,event, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
-        print('Adding signal')
         # Get useful information
         plotIndx = self.model.projectModel.tabSelected
         subplotIndx = resFilePane.master.master.master.index
@@ -800,6 +803,31 @@ class Presenter():
         
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.append(plottedSignal)
+        
+        self.RedrawPlotNotebook()
+        
+    def AddXAxisSignal(self,event, resFilePane)->None:
+        '''Set the X Axis signal used in the result file model.'''
+        # Get useful information
+        plotIndx = self.model.projectModel.tabSelected
+        subplotIndx = resFilePane.master.master.master.index
+        resFileIndx = resFilePane.index
+        
+        # Find the index of the signal selected
+        selectedSigName = resFilePane.signalCollection.get()
+        selectedSigIndex = resFilePane.signalCollection.current()
+        # Extract from the ResultFileModel the signal selected
+        signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
+        
+        # Create a PlottedSignal instance 
+        plottedSignal = PlottedSignalModel()
+        # Copy the signal properties into the PlottedSignal
+        plottedSignal.CopySignalProperties(signalToPlot)
+        # Assign the PlottedSignal a color
+        plottedSignal.color='#000000'
+        
+        # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal[0] = plottedSignal
         
         self.RedrawPlotNotebook()
         
@@ -1119,10 +1147,17 @@ class Presenter():
                                             entryText=resultFile.absPath,
                                             comboboxList=resultFile.signalNames)
                         resFile.grid(row=kk,column=0,sticky='NEW')
+                        
+                        if not resultFile.xAxisSignal.name == '':
+                            xAxisSignal = resultFile.xAxisSignal
+                            xSigPane = SignalPaneX(   resFile.xAxisInterior,
+                                                        self,
+                                                        xAxisSignal)
+                            xSigPane.grid(row=0,column=0,sticky='EW')
 
                         # Redraw selected signals
                         for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
-                            sigPane = SignalPane(   resFile.interior,
+                            sigPane = SignalPane(   resFile.yAxisInterior,
                                                     self,
                                                     selectedSignal,
                                                     index = hh)
@@ -1136,16 +1171,13 @@ class Presenter():
                             # Do not plot anything if the x axis is not selected
                             if xAxisSelected == []:
                                 continue
-                            
-                            # Extract plotted signals and plot them
-                            plottedSig = selectedSignal
-                            
-                            psCol=plottedSig.color
-                            psWidth=plottedSig.width
-                            psStyle=plottedSig.style
-                            psMarker=plottedSig.marker
-                            psLabel=plottedSig.label
-                            axList[jj,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
+                                                        
+                            psCol=selectedSignal.color
+                            psWidth=selectedSignal.width
+                            psStyle=selectedSignal.style
+                            psMarker=selectedSignal.marker
+                            psLabel=selectedSignal.label
+                            axList[jj,0].plot(xAxisSelected.scaledData,selectedSignal.scaledData,
                                                 color=psCol,
                                                 linewidth=psWidth,
                                                 linestyle=psStyle,

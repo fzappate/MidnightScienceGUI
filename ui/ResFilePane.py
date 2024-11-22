@@ -21,43 +21,47 @@ class ResFilePane(customtkinter.CTkFrame):
         This is used exactly as a Frame widget.
         """  
         super().__init__(parent,*args,**kwargs)
-        # Set columns weight
-        self.columnconfigure(0,weight=1)
-        
         # Handy numbers
         self.name = ''
         self.index = index
         self.presenter = presenter
+        labelWidth = 70
+        # Set column weight
+        self.columnconfigure(1,weight=1)
         
         self.noOfRows = 0
         self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText)
-        self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
+        self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW',columnspan=2)
         
+        # X Axis Selection
         self.noOfRows +=1
-        self.signalSelection = customtkinter.CTkFrame(self)
-        self.signalSelection.grid(row=self.noOfRows,column=0,sticky='EW')
-        self.signalSelection.columnconfigure(1,weight=1)
+        self.selX = customtkinter.CTkLabel(self, text = 'Select X', anchor = 'w',width = labelWidth)
+        self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.noOfSigSelRows =0
-        self.selX = customtkinter.CTkLabel(self.signalSelection, text = 'Select X', width = 70)
-        self.selX.grid(row=self.noOfSigSelRows,column=0,sticky='EW', padx = 0, pady = 3)
+        self.xSignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList)
+        self.xSignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
+        self.xSignalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddXAxisSignal(event, self))
         
-        self.signalCollection = customtkinter.CTkComboBox(self.signalSelection,state='readonly',values=comboboxList)
-        self.signalCollection.grid(row=self.noOfSigSelRows,column=1,sticky='EW', padx = (3,0), pady = 3)
-        # self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
-        
-        self.noOfSigSelRows +=1
-        self.selX = customtkinter.CTkLabel(self.signalSelection, text = 'Select Y', width = 70)
-        self.selX.grid(row=self.noOfSigSelRows,column=0,sticky='EW', padx = 0, pady = 3)
-        
-        self.signalCollection = customtkinter.CTkComboBox(self.signalSelection,state='readonly',values=comboboxList)
-        self.signalCollection.grid(row=self.noOfSigSelRows,column=1,sticky='EW', padx = (3,0), pady = 3)
-        self.signalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
-        
+        # Frame for selected X Axis signal
         self.noOfRows +=1
-        self.interior = customtkinter.CTkFrame(self,height=0)
-        self.interior.grid(row=self.noOfRows,column=0,sticky='NEW')        
-        self.interior.columnconfigure(0,weight=1)
+        self.xAxisInterior = customtkinter.CTkFrame(self,height=0,width=0)
+        self.xAxisInterior.grid(row=self.noOfRows,column=0,sticky='NEW', padx = (3,0),columnspan=2)
+        self.xAxisInterior.columnconfigure(0,weight=1)
+                
+        # Y Axis Selection
+        self.noOfRows +=1
+        self.selX = customtkinter.CTkLabel(self, text = 'Select Y', anchor = 'w',width = labelWidth)
+        self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
+        
+        self.ySignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList)
+        self.ySignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
+        self.ySignalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
+        
+        # Frame for selected signals
+        self.noOfRows +=1
+        self.yAxisInterior = customtkinter.CTkFrame(self,height=0,width=0)
+        self.yAxisInterior.grid(row=self.noOfRows,column=0,sticky='NEW', padx = (3,0),columnspan=2)     
+        self.yAxisInterior.columnconfigure(0,weight=1)   
         
       
         
