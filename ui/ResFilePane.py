@@ -25,6 +25,7 @@ class ResFilePane(customtkinter.CTkFrame):
         self.name = ''
         self.index = index
         self.presenter = presenter
+        self.signalList = comboboxList
         labelWidth = 70
         # Set column weight
         self.columnconfigure(1,weight=1)
@@ -38,9 +39,8 @@ class ResFilePane(customtkinter.CTkFrame):
         self.selX = customtkinter.CTkLabel(self, text = 'Select X', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.xSignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList)
+        self.xSignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList, command=lambda event: self.presenter.AddXAxisSignal(self))
         self.xSignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
-        self.xSignalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddXAxisSignal(event, self))
         
         # Frame for selected X Axis signal
         self.noOfRows +=1
@@ -53,9 +53,8 @@ class ResFilePane(customtkinter.CTkFrame):
         self.selX = customtkinter.CTkLabel(self, text = 'Select Y', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.ySignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList)
+        self.ySignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList, command=lambda event: self.presenter.AddSignal(self))
         self.ySignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
-        self.ySignalCollection.bind("<<ComboboxSelected>>",lambda event: self.presenter.AddSignal(event, self))
         
         # Frame for selected signals
         self.noOfRows +=1

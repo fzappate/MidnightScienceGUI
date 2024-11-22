@@ -37,7 +37,6 @@ except:
 class Presenter():
     '''Class of the presenter.'''
     
-        
     def __init__(self, model, view) -> None:
         '''Initialize the presenter object.'''
         # Save model and view into the presenter
@@ -67,9 +66,7 @@ class Presenter():
         entry.insert(0,txt)
 
 
-
     # GUI Initialization
-
     def LoadSettings(self) -> None:
         ''' This function loads the GUI settings.'''
         
@@ -164,10 +161,6 @@ class Presenter():
             projectModelFound = 0
             return projectModelFound
         
-        
-        
-        
-                    
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
         and pasting in the setting object. """
@@ -373,8 +366,6 @@ class Presenter():
                 else:
                     f.write('}\n]\n}') # Close containedPlots list
                         
-            
-                
     def SavePlotToJson(self,plotModel,f)->None:
         '''Save PlotModel object to Json.'''
         f.write('{')
@@ -447,14 +438,17 @@ class Presenter():
         f.write('"selectedSignals": [\n')
         
         # Print selected signals
-        noOfSelSignals = len(resultFile.selectedSignals)-1
-        for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
-            self.SavePlottedSignalToJson(selectedSignal,f)
-            
-            if hh < noOfSelSignals:
-                f.write(',\n') # Close SelectedSignal object
-            else:
-                f.write(']\n') # Close SelectedSignals list
+        noOfSelSignals = len(resultFile.selectedSignals)
+        if noOfSelSignals == 0:
+            f.write(']')
+        else:
+            for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
+                self.SavePlottedSignalToJson(selectedSignal,f)
+                
+                if hh < noOfSelSignals-1:
+                    f.write(',\n') # Close SelectedSignal object
+                else:
+                    f.write(']\n') # Close SelectedSignals list
         
     def SavePlottedSignalToJson(self, plottedSignal, f)->None:
         '''Save PlottedSignal object to Json.'''
@@ -471,13 +465,8 @@ class Presenter():
         f.write('"indexInResFile": '+ str(plottedSignal.indexInResFile)+'\n')
         f.write('}'+'\n')
                               
-                              
-  
-    # PROJECT FOLDER SELECTION
 
-        
     # PLOT (TAB) HANDLING
-    
     def UpdateSelectedTabIndx(self,event)->None:
         '''Update the selected tab index in the project model.'''
         notebook = event.widget
@@ -777,7 +766,7 @@ class Presenter():
         
     # SIGNAL HANDLING
     
-    def AddSignal(self,event, resFilePane)->None:
+    def AddSignal(self, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
         # Get useful information
         plotIndx = self.model.projectModel.tabSelected
@@ -785,8 +774,8 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigName = resFilePane.signalCollection.get()
-        selectedSigIndex = resFilePane.signalCollection.current()
+        selectedSigName = resFilePane.ySignalCollection.get()
+        selectedSigIndex = resFilePane.signalList.index(selectedSigName)
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
         
@@ -806,7 +795,7 @@ class Presenter():
         
         self.RedrawPlotNotebook()
         
-    def AddXAxisSignal(self,event, resFilePane)->None:
+    def AddXAxisSignal(self, resFilePane)->None:
         '''Set the X Axis signal used in the result file model.'''
         # Get useful information
         plotIndx = self.model.projectModel.tabSelected
@@ -814,8 +803,8 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigName = resFilePane.signalCollection.get()
-        selectedSigIndex = resFilePane.signalCollection.current()
+        selectedSigName = resFilePane.xSignalCollection.get()
+        selectedSigIndex = resFilePane.signalList.index(selectedSigName)
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
         
@@ -827,7 +816,7 @@ class Presenter():
         plottedSignal.color='#000000'
         
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal[0] = plottedSignal
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal = plottedSignal
         
         self.RedrawPlotNotebook()
         
@@ -1011,7 +1000,6 @@ class Presenter():
 
 
   # LOAD SIGNALS
-             
     def LoadSignalsFromResFile(self,filePath):
         '''Load results.'''       
         # Read results file
@@ -1080,9 +1068,7 @@ class Presenter():
             print('Units of signal ' + name + ' not found.')
 
 
-
     # REDRAW GUI
-    
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
         # BIND self.tabView.bind('<Button-3>', on_click)
@@ -1236,15 +1222,9 @@ class Presenter():
         if not self.model.projectModel.tabSelected == '':
             '''nothgin'''
             # self.view.projectNotebook.set(self.model.projectModel.tabSelected)
-        
-        
-    def UpdateEmpty(self, event)->None:
-        '''Empty function'''
-        
-        
-        
+
+
     # TEXT
-    
     def PrintMessage(self, message)->None:
         '''Print message.'''
         message = message +'\n'
