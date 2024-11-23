@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import ttk, colorchooser
+import customtkinter
 
 class PlotOptions(tk.Frame):
     def __init__(self,
@@ -15,9 +16,13 @@ class PlotOptions(tk.Frame):
         '''Initialize the plot options window.'''
         self.presenter = presenter
         
-        labelSize = 20
-        btnSize = 10
-        entrySize = 5
+        framesWidth = 300
+        framesHeight = 100
+        labelSize = 150
+        btnSize = 100
+        entrySize = 50
+        padY = 2
+        padX = 3
         self.parent = parent
         self.presenter = presenter
         
@@ -30,48 +35,54 @@ class PlotOptions(tk.Frame):
         self.selectedPlotColor = plotModel.plotColor
         self.selectedToolbarColor = plotModel.toolbarColor
         
+
+
         # Title frame
         rowNo = 0
-        self.titleFrame = tk.Frame(parent, pady=3, bg = 'red')
-        self.titleFrame.grid(row=rowNo,column=0, pady=3, sticky = 'NEW')
+        self.titleFrame = customtkinter.CTkFrame(parent)
+        self.titleFrame.grid( row=rowNo, column=0, sticky='NEW')
         self.titleFrame.columnconfigure(1,weight=1)
         
-        self.titleLab = ttk.Label(self.titleFrame,text='Title',width=labelSize)
-        self.titleLab.grid(row=0,column=0, pady=3)
+        self.titleLab = customtkinter.CTkLabel(self.titleFrame,text=' Title',anchor = 'w',width=labelSize)
+        self.titleLab.grid( row=0, column=0, pady=padY)
         
-        self.titleEntry = tk.Entry(self.titleFrame)
-        self.titleEntry.grid(row=0,column=1,padx=3,sticky='EW')
+        self.titleEntry = customtkinter.CTkEntry(self.titleFrame)
+        self.titleEntry.grid( row=0, column=1, padx=(padX, padX), sticky='EW')
         self.UpdateEntry(self.titleEntry, title)
 
-        
-                
+
+
         # Plot margins
         rowNo +=1
-        self.plotMarginsFrame = tk.Frame(parent, pady=3, bg = 'red')
-        self.plotMarginsFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        self.plotMarginsFrame = customtkinter.CTkFrame(parent)
+        self.plotMarginsFrame.grid( row=rowNo, column=0, sticky='NEW')
+        self.plotMarginsFrame.columnconfigure(1,weight=1)
         
-        self.xAxisLimLab = ttk.Label(self.plotMarginsFrame, text = 'Set plot margins',width=labelSize)
-        self.xAxisLimLab.grid(row=0,column=0)
+        self.xAxisLimLab = customtkinter.CTkLabel(self.plotMarginsFrame, anchor = 'w',text = ' Set plot margins',width=labelSize)
+        self.xAxisLimLab.grid( row=0, column=0,  pady=padY)
         
-        self.marginsFrame = tk.Frame(self.plotMarginsFrame)
-        self.marginsFrame.grid(row=0,column=1)
+        self.marginsFrame = customtkinter.CTkFrame(self.plotMarginsFrame)
+        self.marginsFrame.grid( row=0, column=1, sticky='EW')
+        self.marginsFrame.columnconfigure(0,weight=1)
+        self.marginsFrame.columnconfigure(1,weight=1)
+        self.marginsFrame.columnconfigure(2,weight=1)
+        self.marginsFrame.columnconfigure(3,weight=1)
 
-        self.plotMarginLeft = tk.Entry(self.marginsFrame, width= entrySize)
-        self.plotMarginLeft.grid(row=0,column=0,padx=3)
+        self.plotMarginLeft = customtkinter.CTkEntry(self.marginsFrame, width=entrySize)
+        self.plotMarginLeft.grid( row=0, column=0, padx=padX, sticky='EW')
         self.UpdateEntry(self.plotMarginLeft, str(leftMargin))
         
-        self.plotMarginRight = tk.Entry(self.marginsFrame, width= entrySize)
-        self.plotMarginRight.grid(row=0,column=1,padx=3)
+        self.plotMarginRight = customtkinter.CTkEntry(self.marginsFrame, width=entrySize)
+        self.plotMarginRight.grid(row=0,column=1,padx=padX,sticky='EW')
         self.UpdateEntry(self.plotMarginRight, str(rightMargin))
         
-        self.plotMarginBottom = tk.Entry(self.marginsFrame, width= entrySize)
-        self.plotMarginBottom.grid(row=0,column=2,padx=3)    
+        self.plotMarginBottom = customtkinter.CTkEntry(self.marginsFrame, width=entrySize)
+        self.plotMarginBottom.grid(row=0,column=2,padx=padX,sticky='EW')    
         self.UpdateEntry(self.plotMarginBottom, str(bottomMargin))
         
-        self.plotMarginTop = tk.Entry(self.marginsFrame, width= entrySize)
-        self.plotMarginTop.grid(row=0,column=3,padx=3)    
+        self.plotMarginTop = customtkinter.CTkEntry(self.marginsFrame, width=entrySize)
+        self.plotMarginTop.grid(row=0,column=3,padx=(padX,padX),sticky='EW')    
         self.UpdateEntry(self.plotMarginTop, str(topMargin))
-        
         
         self.plotMarginLeft.bind("<FocusOut>",lambda event: self.ValidateLeftMarginEntry(event, self.plotMarginRight, leftMargin))
         self.plotMarginLeft.bind("<Return>",lambda event: self.ValidateLeftMarginEntry(event, self.plotMarginRight, leftMargin))
@@ -82,79 +93,82 @@ class PlotOptions(tk.Frame):
         self.plotMarginTop.bind("<FocusOut>",lambda event: self.ValidateTopMarginEntry(event, self.plotMarginBottom, topMargin))
         self.plotMarginTop.bind("<Return>",lambda event: self.ValidateTopMarginEntry(event, self.plotMarginBottom, topMargin))
         
-                
+     
         # Select canvas color pane
         rowNo +=1
-        self.mainCanvasColorFrame = tk.Frame(parent, pady=3, bg = 'blue')
+        self.mainCanvasColorFrame = customtkinter.CTkFrame(parent)
         self.mainCanvasColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         self.mainCanvasColorFrame.columnconfigure(1,weight=1)
         
-        self.canvasColorLab = ttk.Label(self.mainCanvasColorFrame, text = 'Select canvas color',width=labelSize)
-        self.canvasColorLab.grid(row=0,column=0)
+        self.canvasColorLab = customtkinter.CTkLabel(self.mainCanvasColorFrame, anchor = 'w',text = ' Select canvas color',width=labelSize)
+        self.canvasColorLab.grid(row=0,column=0,  pady=padY)
         
-        self.canvasColorFrame = tk.Frame(self.mainCanvasColorFrame, bg='black')
+        self.canvasColorFrame = customtkinter.CTkFrame(self.mainCanvasColorFrame)
         self.canvasColorFrame.grid(row=0,column=1, sticky = 'EW')
         self.canvasColorFrame.columnconfigure(0,weight=1)
         self.canvasColorFrame.columnconfigure(1,weight=1)
         
-        self.canvasColorSample = ttk.Label(self.canvasColorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedCanvasColor)
+        self.canvasColorSample = customtkinter.CTkLabel(self.canvasColorFrame,text='\u2588\u2588\u2588\u2588')
         self.canvasColorSample.grid(row=0,column=0)
         
-        self.canvasColorButton = ttk.Button(self.canvasColorFrame,text='Color',command=self.SelectCanvasColor)
-        self.canvasColorButton.grid(row=0,column=1,padx=3,pady=3)
+        self.canvasColorButton = customtkinter.CTkButton(self.canvasColorFrame,text='Color',command=self.SelectCanvasColor)
+        self.canvasColorButton.grid(row=0,column=1)
+        
         
         # Select plot color pane
         rowNo +=1
-        self.mainPlotColorFrame = tk.Frame(parent, pady=3, bg = 'blue')
+        self.mainPlotColorFrame = customtkinter.CTkFrame(parent)
         self.mainPlotColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         self.mainPlotColorFrame.columnconfigure(1,weight=1)
         
-        self.plotColorLab = ttk.Label(self.mainPlotColorFrame, text = 'Select plot color',width=labelSize)
-        self.plotColorLab.grid(row=0,column=0)
+        self.plotColorLab = customtkinter.CTkLabel(self.mainPlotColorFrame, text = ' Select plot color', anchor = 'w',width=labelSize)
+        self.plotColorLab.grid(row=0,column=0, pady=padY)
         
-        self.plotColorFrame = tk.Frame(self.mainPlotColorFrame, bg='black')
+        self.plotColorFrame = customtkinter.CTkFrame(self.mainPlotColorFrame)
         self.plotColorFrame.grid(row=0,column=1, sticky = 'EW')
         self.plotColorFrame.columnconfigure(0,weight=1)
         self.plotColorFrame.columnconfigure(1,weight=1)
         
-        self.plotColorSample = ttk.Label(self.plotColorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedPlotColor)
+        self.plotColorSample = customtkinter.CTkLabel(self.plotColorFrame,text='\u2588\u2588\u2588\u2588')
         self.plotColorSample.grid(row=0,column=0)
         
-        self.plotColorButton = ttk.Button(self.plotColorFrame,text='Color',command=self.SelectPlotColor)
-        self.plotColorButton.grid(row=0,column=1,padx=3,pady=3)
+        self.plotColorButton = customtkinter.CTkButton(self.plotColorFrame,text='Color',command=self.SelectPlotColor)
+        self.plotColorButton.grid(row=0,column=1)
         
+
+    
         # Select toolbar color pane
         rowNo +=1
-        self.mainToolbarColorFrame = tk.Frame(parent, pady=3, bg = 'blue')
+        self.mainToolbarColorFrame = customtkinter.CTkFrame(parent)
         self.mainToolbarColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         self.mainToolbarColorFrame.columnconfigure(1,weight=1)
         
-        self.xAxisLabLab = ttk.Label(self.mainToolbarColorFrame, text = 'Select toolbar color',width=labelSize)
-        self.xAxisLabLab.grid(row=0,column=0)
+        self.xAxisLabLab = customtkinter.CTkLabel(self.mainToolbarColorFrame, text = ' Select toolbar color',anchor = 'w',width=labelSize)
+        self.xAxisLabLab.grid(row=0,column=0, pady=padY)
         
-        self.toolbarColorFrame = tk.Frame(self.mainToolbarColorFrame, bg='black')
+        self.toolbarColorFrame = customtkinter.CTkFrame(self.mainToolbarColorFrame)
         self.toolbarColorFrame.grid(row=0,column=1, sticky = 'EW')
         self.toolbarColorFrame.columnconfigure(0,weight=1)
         self.toolbarColorFrame.columnconfigure(1,weight=1)
         
-        self.toolbarColorSample = ttk.Label(self.toolbarColorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedToolbarColor)
+        self.toolbarColorSample = customtkinter.CTkLabel(self.toolbarColorFrame,text='\u2588\u2588\u2588\u2588')
         self.toolbarColorSample.grid(row=0,column=0)
         
-        self.plotColorButton = ttk.Button(self.toolbarColorFrame,text='Color',command=self.SelectToolbarColor)
-        self.plotColorButton.grid(row=0,column=1,padx=3,pady=3)
+        self.plotColorButton = customtkinter.CTkButton(self.toolbarColorFrame,text='Color',command=self.SelectToolbarColor)
+        self.plotColorButton.grid(row=0,column=1)
         
         # Button frame
         rowNo +=1
-        btnFrame = tk.Frame(parent, pady=5, bg = 'cyan')
+        btnFrame = customtkinter.CTkFrame(parent)
         btnFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         btnFrame.columnconfigure(0,weight=1)
         
-        cancelBtn = ttk.Button(btnFrame,text = 'Cancel', width = btnSize, command=lambda:self.presenter.ClosePlotOptions(self))
-        cancelBtn.grid(row = 0, column=0, sticky = 'E')
-        applyBtn = ttk.Button(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.presenter.ApplyPlotOptions(self))
-        applyBtn.grid(row = 0, column=1, sticky = 'E')
-        okBtn = ttk.Button(btnFrame,text = 'Ok', width = btnSize, command=lambda:self.presenter.OkPlotOptions(self))
-        okBtn.grid(row = 0, column=2, sticky = 'E')
+        cancelBtn = customtkinter.CTkButton(btnFrame,text = 'Cancel', width = btnSize, command=lambda:self.presenter.ClosePlotOptions(self))
+        cancelBtn.grid(row = 0, column=0,padx = padX, pady = (6*padY,padY), sticky = 'E')
+        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.presenter.ApplyPlotOptions(self))
+        applyBtn.grid(row = 0, column=1,padx = padX,pady = (6*padY,padY), sticky = 'E')
+        okBtn = customtkinter.CTkButton(btnFrame,text = 'Ok', width = btnSize, command=lambda:self.presenter.OkPlotOptions(self))
+        okBtn.grid(row = 0, column=2,padx = (padX, padX),pady = (6*padY,padY), sticky = 'E')
         
         
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
@@ -247,7 +261,7 @@ class PlotOptions(tk.Frame):
             
         try:
             self.selectedCanvasColor=colorCode[1]
-            self.canvasColorSample.config(foreground=colorCode[1])
+            self.canvasColorSample.configure(text_color=colorCode[1])
             
         except:
             '''Nothing'''
@@ -259,7 +273,7 @@ class PlotOptions(tk.Frame):
             
         try:
             self.selectedPlotColor=colorCode[1]
-            self.plotColorSample.config(foreground=colorCode[1])
+            self.plotColorSample.configure(text_color=colorCode[1])
             
         except:
             '''Nothing'''
@@ -271,7 +285,7 @@ class PlotOptions(tk.Frame):
             
         try:
             self.selectedToolbarColor=colorCode[1]
-            self.toolbarColorSample.config(foreground=colorCode[1])
+            self.toolbarColorSample.configure(text_color=colorCode[1])
             
         except:
             '''Nothing'''
