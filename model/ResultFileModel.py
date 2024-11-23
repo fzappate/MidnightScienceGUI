@@ -1,15 +1,14 @@
 from model.PlottedSignalModel import PlottedSignalModel
 
 class ResultFileModel():
-    def __init__(self)->None:
+    def __init__(self, name = 'Res File 0')->None:
         '''
         Class that generates the model of a ResultFile object.
         The purpose of this class is to store all the signals
         and related information contained in a result file.
         '''
         # Dictionary with signal names and values
-        self.name = ''
-        self.indx = 0
+        self.name = name
         self.objectName = 'ResultFileModel'
         
         self.absPath = ''

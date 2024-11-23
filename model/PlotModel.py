@@ -1,13 +1,12 @@
 class PlotModel():    
-    def __init__(self)->None:
+    def __init__(self, name = 'Plot 0')->None:
         '''
         Class that generates the model of a Plot.
         The purpose of this class is to store all the 
         information necessary to draw a series of subplots.
         '''
         # Dictionary with signal names and values
-        self.name = ''
-        self.indx = 0
+        self.name = name
         self.objectName = 'PlotModel'
         self.leftMargin = 0.1
         self.rightMargin = 0.9

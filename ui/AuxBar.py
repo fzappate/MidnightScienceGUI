@@ -69,11 +69,11 @@ class AuxBar(customtkinter.CTkFrame):
 
         # New project button 
         colNo = 0 
-        save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.newProjIconPath, command=presenter.CreateNewProject)
-        save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
+        # save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.newProjIconPath, command=presenter.CreateNewProject)
+        # save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
         
         # Save button 
-        colNo +=1
+        # colNo +=1
         save_button = customtkinter.CTkButton(self, text = '',width = 10,image=self.saveProjIconPath, command=presenter.SaveProjectModel)
         save_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
 

@@ -39,7 +39,7 @@ class ProjectModel():
         index, object name, selected tab, and initializes an empty list to hold plots.
         '''
         # Initialize project name
-        self.name = 'ProjectModel'
+        self.name = 'Project Model 0'
         
         # Initialize index for internal tracking
         self.indx = 0

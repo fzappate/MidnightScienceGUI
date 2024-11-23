@@ -105,30 +105,32 @@ class Presenter():
     
             
     # PROJECT MANAGEMENT 
-    def CreateNewProject(self)->None:
-        '''Create a new project.'''
-        # Choose a new folder and make sure there is no project there
-        projectModelFound = self.BrowseProjectFolder()
+    def BrowseToDifferentProject(self)->None:
+        '''Browse to a different project.'''
+        projectModelFound, folder = self.BrowseProjectFolder()
         
-        if not projectModelFound:
-            # Create new projectModel
-            self.model.projectModel = self.CreateEmptyProjectModel()
+        # Do something only if a folder is actually selected 
+        if not projectModelFound == -1:
+            # Update project setting updating the project folder
+            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
+            # Update model setting
+            self.model.settings.projectFolder = folder
+            # Set the workign folder of the setting object the same as the content of the entry 
+            self.UpdateSettingFile("ProjectFolder", folder)
             
-            # Save the new project 
-            self.SaveProjectModel()
-            
-            # Load the projectModel.json jsut created and redraw
+            if projectModelFound == 1:
+                # Load the model 
+                self.LoadProjectFromJson()
+                                
+            elif projectModelFound == 0:
+                self.model.projectModel = self.CreateEmptyProjectModel()
+
+            # Redraw everything
             self.RedrawPlotNotebook()
         
     def LoadExistingProject(self)->None:
         self.LoadProjectFromJson()
         self.RedrawPlotNotebook()
-        
-    def BrowseToDifferentProject(self)->None:
-        '''Browse to a different project.'''
-        projectModelFound = self.BrowseProjectFolder()
-        if projectModelFound:
-            self.RedrawPlotNotebook()
         
     def BrowseProjectFolder(self):
         """This function allows the user to select a working directory by browsing 
@@ -140,28 +142,22 @@ class Presenter():
         # If user hits cancel don't do anything
         if folder == "":
             projectModelFound = -1
-            return projectModelFound
+            return projectModelFound, folder
             
         # Check that a ProjectModel.json exists
         projectModelPath = folder + self.model.settings.defaultProjectModelName
         projectModelFileExists = os.path.exists(projectModelPath)
         if (projectModelFileExists):
-            self.PrintError('The seleted folder already contains a project folder.')
-            self.PrintError('Delete the existing "' + self.model.settings.defaultProjectModelName + '" file and try again.')
+            self.PrintError('Project found in "' + self.model.settings.defaultProjectModelName)
             projectModelFound = 1
-            return projectModelFound
+            return projectModelFound, folder
         else:
-            # Update project setting updating the project folder
-            self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
-            # Update model setting
-            self.model.settings.workingFolder = folder
-            # Set the workign folder of the setting object the same as the content of the entry 
-            self.UpdateSettingFile("ProjectFolder", folder)
+            self.PrintError('Project not found in "' + self.model.settings.defaultProjectModelName)
 
             projectModelFound = 0
-            return projectModelFound
+            return projectModelFound, folder
         
-    def SetWorkingFolderManually(self,event=None)->None:
+    def SetWorkingFolderManually(self,event=None)->None: # MUST BE REPRESTINATED
         """This function allows the user to select a working directory by copying 
         and pasting in the setting object. """
         workingFolder = self.view.pathSelector.pathEntry.get()
@@ -205,6 +201,7 @@ class Presenter():
         emptyProjectModel = ProjectModel()
         emptyPlotModel = PlotModel()    
         emptySubplotModel = SubplotModel()
+        emptyResFileModel = ResultFileModel()
         
         emptyPlotModel.containedSubplots.append(emptySubplotModel)
         emptyProjectModel.containedPlots.append(emptyPlotModel)
@@ -235,7 +232,6 @@ class Presenter():
                 for ii, jsonPlot in enumerate(jsonContainedPlots):
                     plotModel = PlotModel()
                     plotModel.name = jsonPlot["name"]
-                    plotModel.indx = jsonPlot["indx"]
                     plotModel.canvasColor = jsonPlot["canvasColor"]
                     plotModel.plotColor = jsonPlot["plotColor"]
                     plotModel.toolbarColor = jsonPlot["toolbarColor"]
@@ -283,7 +279,9 @@ class Presenter():
                             resFileModel.indx = jsonResFile["indx"]
                             resFileModel.absPath = jsonResFile["absPath"]
                                                 
-                            resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
+                            # If abs path is set, load the signals
+                            if not resFileModel.absPath == '':
+                                resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
                             
                             # Load selected signal data
                             jsonSelectedSignals = jsonResFile["selectedSignals"]
@@ -370,7 +368,6 @@ class Presenter():
         '''Save PlotModel object to Json.'''
         f.write('{')
         f.write('"name": "'+ plotModel.name +'",\n')
-        f.write('"indx": '+ str(plotModel.indx) +',\n')
         f.write('"noOfSubplots": '+ str(plotModel.noOfSubplots) +',\n')
         f.write('"canvasColor": "'+ plotModel.canvasColor +'",\n')
         f.write('"plotColor": "'+ plotModel.plotColor +'",\n')
@@ -688,7 +685,7 @@ class Presenter():
         subplotIndx = subplotPane.index
         # Create ResFileModel
         resultFileModel = ResultFileModel()
-        resultFileModel.name = str(noOfResFile)
+        resultFileModel.name = 'Res File ' + str(noOfResFile)
         resultFileModel.indx = noOfResFile
         
         # Update SubplotModel adding a ResultFile
@@ -765,7 +762,6 @@ class Presenter():
         
         
     # SIGNAL HANDLING
-    
     def AddSignal(self, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
         # Get useful information
@@ -1094,8 +1090,6 @@ class Presenter():
             else:
                 plotName = plot.name
                 
-
-                
             self.view.projectNotebook.add(plotName)
             plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
             plotPane.pack(fill="both", expand=True,padx = 6)
@@ -1134,12 +1128,14 @@ class Presenter():
                                             comboboxList=resultFile.signalNames)
                         resFile.grid(row=kk,column=0,sticky='NEW')
                         
-                        if not resultFile.xAxisSignal.name == '':
-                            xAxisSignal = resultFile.xAxisSignal
-                            xSigPane = SignalPaneX(   resFile.xAxisInterior,
-                                                        self,
-                                                        xAxisSignal)
-                            xSigPane.grid(row=0,column=0,sticky='EW')
+                        if resultFile.xAxisSignal.name == '':
+                            continue
+                        
+                        xAxisSignal = resultFile.xAxisSignal
+                        xSigPane = SignalPaneX(   resFile.xAxisInterior,
+                                                    self,
+                                                    xAxisSignal)
+                        xSigPane.grid(row=0,column=0,sticky='EW')
 
                         # Redraw selected signals
                         for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
@@ -1151,19 +1147,13 @@ class Presenter():
                             
                         
                             # REDRAW PLOT CANVAS ==========================
-                            # Extract x axis signal 
-                            xAxisSelected = subplot.xAxisSelected
-                                    
-                            # Do not plot anything if the x axis is not selected
-                            if xAxisSelected == []:
-                                continue
                                                         
                             psCol=selectedSignal.color
                             psWidth=selectedSignal.width
                             psStyle=selectedSignal.style
                             psMarker=selectedSignal.marker
                             psLabel=selectedSignal.label
-                            axList[jj,0].plot(xAxisSelected.scaledData,selectedSignal.scaledData,
+                            axList[jj,0].plot(xAxisSignal.scaledData,selectedSignal.scaledData,
                                                 color=psCol,
                                                 linewidth=psWidth,
                                                 linestyle=psStyle,

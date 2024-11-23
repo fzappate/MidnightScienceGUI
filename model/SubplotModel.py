@@ -1,12 +1,12 @@
 class SubplotModel():
-    def __init__(self)->None:
+    def __init__(self, name = 'Subplot 0')->None:
         '''
         Class that generates the model of a Subplot.
         The purpose of this class is to store all the 
         information necessary to draw a subplot.
         '''
         # Dictionary with signal names and values
-        self.name = ''
+        self.name = name
         self.indx = 0
         self.noOfResFile = 0
         self.isCollapsed = 1
