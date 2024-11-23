@@ -30,4 +30,5 @@ class Settings():
         
         self.settingsFilePath = './utilities/settings.md'
         self.defaultProjectModelName = '/ProjectModel.json'
+        self.defaultTempProjectModelName = '/ProjectModelTemp.json'
         self.projectFolder = ''

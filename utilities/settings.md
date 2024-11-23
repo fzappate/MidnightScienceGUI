@@ -1,2 +1,2 @@
 # Settings
-- ProjectFolder, C:/Software/MACnCheese/build/Debug/NewPlotProj
+- ProjectFolder, C:/Software/MACnCheese/build/Debug/PlotProject

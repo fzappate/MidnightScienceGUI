@@ -79,6 +79,6 @@ class AuxBar(customtkinter.CTkFrame):
 
         # Load button
         colNo +=1
-        load_button = customtkinter.CTkButton(self, text = '',width = 10, image=self.loadProjIconPath, command=presenter.LoadExistingProject)
+        load_button = customtkinter.CTkButton(self, text = '',width = 10, image=self.loadProjIconPath, command=presenter.ReloadProject)
         load_button.grid(row=0, column=colNo, padx=(3, 3), ipady=1, ipadx=1)
         

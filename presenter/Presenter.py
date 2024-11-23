@@ -4,6 +4,7 @@ from tkinter import filedialog, ttk
 import os
 import json
 import numpy as np
+from shutil import copy2
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
@@ -48,13 +49,14 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initView(self)
         self.LoadSettings()
-        self.LoadExistingProject()
+        self.LoadProjectFromJson()
+        self.RedrawPlotNotebook()
         
         # Force closing when using matplotlib
-        self.view.protocol("WM_DELETE_WINDOW", self._on_closing)   
+        self.view.protocol("WM_DELETE_WINDOW", self.OnClosing)   
         self.view.mainloop()
 
-    def _on_closing(self):
+    def OnClosing(self):
         self.view.quit()  # stops mainloop
         self.view.destroy()  # this is necessary on Windows to prevent Fatal Python Error: PyEval_RestoreThread: NULL tstate
         
@@ -64,6 +66,7 @@ class Presenter():
         # Delete and rewrite the entry text 
         entry.delete(0,tk.END)
         entry.insert(0,txt)
+
 
 
     # GUI Initialization
@@ -127,11 +130,7 @@ class Presenter():
 
             # Redraw everything
             self.RedrawPlotNotebook()
-        
-    def LoadExistingProject(self)->None:
-        self.LoadProjectFromJson()
-        self.RedrawPlotNotebook()
-        
+               
     def BrowseProjectFolder(self):
         """This function allows the user to select a working directory by browsing 
         and store its path in the main control models. """
@@ -156,6 +155,11 @@ class Presenter():
 
             projectModelFound = 0
             return projectModelFound, folder
+        
+    def ReloadProject(self):
+        '''Reload project'''
+        self.LoadProjectFromJson()
+        self.RedrawPlotNotebook()
         
     def SetWorkingFolderManually(self,event=None)->None: # MUST BE REPRESTINATED
         """This function allows the user to select a working directory by copying 
@@ -203,11 +207,13 @@ class Presenter():
         emptySubplotModel = SubplotModel()
         emptyResFileModel = ResultFileModel()
         
+        emptySubplotModel.containedResultFiles.append(emptyResFileModel)
         emptyPlotModel.containedSubplots.append(emptySubplotModel)
         emptyProjectModel.containedPlots.append(emptyPlotModel)
         
         return emptyProjectModel
-        
+    
+
         
     # JSON HANDLING
     def LoadProjectFromJson(self) -> None:
@@ -276,7 +282,6 @@ class Presenter():
                         for kk, jsonResFile in enumerate(jsonContainedResFile):
                             resFileModel = ResultFileModel()
                             resFileModel.name = jsonResFile["name"]
-                            resFileModel.indx = jsonResFile["indx"]
                             resFileModel.absPath = jsonResFile["absPath"]
                                                 
                             # If abs path is set, load the signals
@@ -338,17 +343,34 @@ class Presenter():
             
     def SaveProjectModel(self)->None:
         '''Save project model.'''
-        projModelLocation = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName
-        f = open(projModelLocation, "w")
         
+        # Save temporary project file
+        tempProjModelLocation = self.model.settings.projectFolder + self.model.settings.defaultTempProjectModelName
+        f = open(tempProjModelLocation, "w")        
         self.SaveProjectToJson(self.model.projectModel,f)
+        f.close()
         
-        self.PrintMessage('Project model saved in ' + projModelLocation)
+        # Verify that the file was properly written
+        f = open(tempProjModelLocation,'r')
+        saveSuccessful = 1
+        try:
+            jsonProjMod = json.load(f)
+        except:
+            saveSuccessful = 0
+        f.close()
+        
+        # If properly written overwrite official .json file
+        if saveSuccessful: 
+            projModelLocation = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName
+            copy2(tempProjModelLocation, projModelLocation)            
+            self.PrintMessage('Project model saved in ' + projModelLocation)
+        else:
+            self.PrintMessage("Something went wrong while saving the project in " + projModelLocation)
         
     def SaveProjectToJson(self,projectModel,f)->None:
         f.write('{')
         f.write('"name": "'+ projectModel.name +'",\n')
-        f.write('"tabSelected": '+ str(projectModel.tabSelected) +',\n')
+        f.write('"tabSelected": "'+ projectModel.tabSelected +'",\n')
         f.write('"containedPlots": [\n')
         
         noOfContainedPlots = len(self.model.projectModel.containedPlots)
@@ -379,14 +401,17 @@ class Presenter():
         f.write('"containedSubplots": [\n')
         
         # print subplots
-        noOfContainedSubplots = len(plotModel.containedSubplots)-1
-        for jj, subplot in enumerate(plotModel.containedSubplots):
-            self.SaveSubplotToJson(subplot,f)
-            
-            if jj < noOfContainedSubplots:
-                f.write('}\n,\n') # Close SubplotModel object
-            else:
-                f.write('}\n]\n') # Close containedSubplots list
+        noOfContainedSubplots = len(plotModel.containedSubplots)
+        if noOfContainedSubplots == 0:
+            f.write(']\n')
+        else:
+            for jj, subplot in enumerate(plotModel.containedSubplots):
+                self.SaveSubplotToJson(subplot,f)
+                
+                if jj < noOfContainedSubplots-1:
+                    f.write('}\n,\n') # Close SubplotModel object
+                else:
+                    f.write('}\n]\n') # Close containedSubplots list
                
     def SaveSubplotToJson(self,subplotModel,f)->None:
         '''Save SubplotModel to Json.'''
@@ -430,7 +455,6 @@ class Presenter():
         '''Save ResultFile object to Json.'''
         f.write('{')
         f.write('"name": "'+ resultFile.name +'",\n')
-        f.write('"indx": '+ str(resultFile.indx) +',\n')
         f.write('"absPath": "'+ resultFile.absPath +'",\n')
         f.write('"selectedSignals": [\n')
         
@@ -464,17 +488,10 @@ class Presenter():
                               
 
     # PLOT (TAB) HANDLING
-    def UpdateSelectedTabIndx(self,event)->None:
-        '''Update the selected tab index in the project model.'''
-        notebook = event.widget
-        selTabName = notebook.select()
-        selTabIndx = notebook.index(selTabName)
-        self.model.projectModel.tabSelected = selTabIndx
-        
     def AddPlotTab(self)->None:
         '''Add a Plot in the ProjectModel containedPlots list.'''
         # Build default plot model 
-        plot = PlotModel()
+        plot = self.CreateEmptyPlotModel()
         # Assign an index to the plot model
         plot.indx = len(self.model.projectModel.containedPlots) + 1
         # Assign name to the plot name
@@ -482,9 +499,26 @@ class Presenter():
         # Append plot model to project model
         self.model.projectModel.containedPlots.append(plot)
         # Set the newly created plot as selected folder
-        self.model.projectModel.tabSelected = plot.indx-1
+        self.model.projectModel.tabSelected = plot.name
         # Redraw plot notebook 
         self.RedrawPlotNotebook()
+        
+    def CreateEmptyPlotModel(self):
+        '''Create an empty plot.'''
+        emptyPlotModel = PlotModel()    
+        emptySubplotModel = SubplotModel()
+        emptyResFileModel = ResultFileModel()
+        
+        emptySubplotModel.containedResultFiles.append(emptyResFileModel)
+        emptyPlotModel.containedSubplots.append(emptySubplotModel)
+        return emptyPlotModel
+        
+    def UpdateSelectedTabIndx(self,event)->None:
+        '''Update the selected tab index in the project model.'''
+        notebook = event.widget
+        selTabName = notebook.select()
+        selTabIndx = notebook.index(selTabName)
+        self.model.projectModel.tabSelected = selTabIndx
         
     def DeletePlotTab(self)->None:
         '''Delete plot tab.'''
@@ -558,7 +592,6 @@ class Presenter():
      
      
     # SUBPLOT HANDLING
-    
     def AddSubplot(self,plotManager)->None:
         '''Add subplot to PlotManager and Plot.
         Add a toggle frame to the plot manager pane.'''
@@ -604,15 +637,15 @@ class Presenter():
                 
     def SaveSubplotStateIntoModel(self,subplotPane)->None:
         '''Save state into model'''
-        plotIndx = self.model.projectModel.tabSelected
+        selectedTabName = self.model.projectModel.tabSelected
+        selectedTabIndex = self.view.projectNotebook.index(selectedTabName)
         subplotIndx = subplotPane.index
         
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].isCollapsed = subplotPane.isCollapsed
+        self.model.projectModel.containedPlots[selectedTabIndex].containedSubplots[subplotIndx].isCollapsed = subplotPane.isCollapsed
                 
                 
                 
     # SUBPLOT OPTIONS
-    
     def OpenSubplotOptions(self,subplotPane, subplotOptsBtn)->None:
         '''Open subplot options.'''   
         # Create new window
@@ -676,7 +709,6 @@ class Presenter():
 
         
     # RESULT FILE HANDLING
-        
     def AddResultFile(self, subplotPane)->None:
         '''Add ResultFile to Subplot.'''
         # Get useful information 
@@ -1064,6 +1096,7 @@ class Presenter():
             print('Units of signal ' + name + ' not found.')
 
 
+
     # REDRAW GUI
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
@@ -1211,7 +1244,8 @@ class Presenter():
         # Move to the newly created tab
         if not self.model.projectModel.tabSelected == '':
             '''nothgin'''
-            # self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+            self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+
 
 
     # TEXT
