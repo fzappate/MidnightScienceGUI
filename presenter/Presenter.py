@@ -107,6 +107,7 @@ class Presenter():
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
     
             
+            
     # PROJECT MANAGEMENT 
     def BrowseToDifferentProject(self)->None:
         '''Browse to a different project.'''
@@ -212,9 +213,9 @@ class Presenter():
         emptyProjectModel.containedPlots.append(emptyPlotModel)
         
         return emptyProjectModel
-    
 
-        
+
+
     # JSON HANDLING
     def LoadProjectFromJson(self) -> None:
         '''Load project from JSON.'''
@@ -340,7 +341,7 @@ class Presenter():
 
             
             return
-            
+
     def SaveProjectModel(self)->None:
         '''Save project model.'''
         
@@ -366,7 +367,7 @@ class Presenter():
             self.PrintMessage('Project model saved in ' + projModelLocation)
         else:
             self.PrintMessage("Something went wrong while saving the project in " + projModelLocation)
-        
+
     def SaveProjectToJson(self,projectModel,f)->None:
         f.write('{')
         f.write('"name": "'+ projectModel.name +'",\n')
@@ -385,7 +386,7 @@ class Presenter():
                     f.write('}\n,\n') # Close PlotModel object
                 else:
                     f.write('}\n]\n}') # Close containedPlots list
-                        
+
     def SavePlotToJson(self,plotModel,f)->None:
         '''Save PlotModel object to Json.'''
         f.write('{')
@@ -412,7 +413,7 @@ class Presenter():
                     f.write('}\n,\n') # Close SubplotModel object
                 else:
                     f.write('}\n]\n') # Close containedSubplots list
-               
+
     def SaveSubplotToJson(self,subplotModel,f)->None:
         '''Save SubplotModel to Json.'''
         f.write('{')
@@ -450,7 +451,7 @@ class Presenter():
                 f.write('}\n,\n') # Close ResultFile object
             else:
                 f.write('}\n]\n') # Close containedResultFiles list
-                
+
     def SaveResultFileToJson(self,resultFile,f)->None:
         '''Save ResultFile object to Json.'''
         f.write('{')
@@ -470,7 +471,7 @@ class Presenter():
                     f.write(',\n') # Close SelectedSignal object
                 else:
                     f.write(']\n') # Close SelectedSignals list
-        
+
     def SavePlottedSignalToJson(self, plottedSignal, f)->None:
         '''Save PlottedSignal object to Json.'''
         f.write('{')
@@ -485,7 +486,8 @@ class Presenter():
         f.write('"quantity": "'+ plottedSignal.quantity +'"'+',\n')
         f.write('"indexInResFile": '+ str(plottedSignal.indexInResFile)+'\n')
         f.write('}'+'\n')
-                              
+
+
 
     # PLOT (TAB) HANDLING
     def AddPlotTab(self)->None:
@@ -493,7 +495,7 @@ class Presenter():
         # Build default plot model 
         plot = self.CreateEmptyPlotModel()
         # Assign an index to the plot model
-        plot.indx = len(self.model.projectModel.containedPlots) + 1
+        plot.indx = len(self.model.projectModel.containedPlots)
         # Assign name to the plot name
         plot.name = 'Plot ' + str(plot.indx)
         # Append plot model to project model
@@ -549,7 +551,9 @@ class Presenter():
         optsWindow.grab_set()        
         
         # Extract subplot options
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.model.projectModel.tabSelected
+        plotIndx = self.view.projectNotebook.index(plotName)
+        
         # subplotIndx = plotPane.index
         plotModel = self.model.projectModel.containedPlots[plotIndx]
         
