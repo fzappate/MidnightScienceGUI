@@ -9,6 +9,8 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
+import customtkinter
+
 from ui.PlotPane import PlotPane
 from ui.PlotOptions import PlotOptions
 from ui.ResFilePane import ResFilePane
@@ -566,7 +568,8 @@ class Presenter():
     def ApplyPlotOptions(self,plotOptionsPane)->None:
         '''Apply plot options.'''
         # Retrieve the plot index from the tab selection 
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.model.projectModel.tabSelected
+        plotIndx = self.view.projectNotebook.index(plotName)
 
         # Extract subplot options
         self.model.projectModel.containedPlots[plotIndx].name = plotOptionsPane.titleEntry.get()
@@ -577,6 +580,9 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].canvasColor = plotOptionsPane.selectedCanvasColor
         self.model.projectModel.containedPlots[plotIndx].plotColor = plotOptionsPane.selectedPlotColor
         self.model.projectModel.containedPlots[plotIndx].toolbarColor = plotOptionsPane.selectedToolbarColor
+        
+        # Update selected tab
+        self.model.projectModel.tabSelected = plotOptionsPane.titleEntry.get()
         
         # Redraw notebook
         self.RedrawPlotNotebook()
@@ -1104,21 +1110,10 @@ class Presenter():
     # REDRAW GUI
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
-        # BIND self.tabView.bind('<Button-3>', on_click)
-        # self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
-        
-        # Delete existing tabs
-        # tabs = self.view.projectNotebook.tabs()
-
-        # if self.view.projectNotebook.indx('end')
-        # for tab in self.view.projectNotebook.tabs():
-        #     self.view.projectNotebook.delete(tab)
-    
-        for plot in self.model.projectModel.containedPlots:
-            try:
-                self.view.projectNotebook.delete(plot.name)
-            except:
-                continue
+        list = self.view.projectNotebook.list().copy()
+        for tabName in list:
+            a = 2
+            self.view.projectNotebook.delete(tabName)
              
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
@@ -1131,11 +1126,12 @@ class Presenter():
             plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
             plotPane.pack(fill="both", expand=True,padx = 6)
                 
+            # USELESS. PlotPane has just being creaed, no need to clean it.
             # Clear all the existing subplots, and create the axis for the new ones
-            plotCanvasChildren = plotPane.plotCanvas.winfo_children()
-            for ii,child in enumerate(plotCanvasChildren):
-                plt.close()
-                child.destroy()
+            plotCanvasChildren = plotPane.plotCanvas.winfo_children() # Delete
+            for ii,child in enumerate(plotCanvasChildren): # Delete
+                plt.close() # Delete
+                child.destroy() # Delete
                 
             noOfSubplots = len(plot.containedSubplots)
             if noOfSubplots>0:

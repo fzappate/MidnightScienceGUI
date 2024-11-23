@@ -50,3 +50,10 @@ class ProjectNotebook(customtkinter.CTkTabview):
         """
         '''Initialize the notebook widget of the application UI.'''
         super().__init__(parent, *args, **kwargs)
+        
+    def list(self):
+        """ List names of the tabs """
+
+        list = self._name_list
+        
+        return list
