@@ -517,26 +517,27 @@ class Presenter():
         emptyPlotModel.containedSubplots.append(emptySubplotModel)
         return emptyPlotModel
         
-    def UpdateSelectedTabIndx(self,event)->None:
-        '''Update the selected tab index in the project model.'''
-        notebook = event.widget
-        selTabName = notebook.select()
-        selTabIndx = notebook.index(selTabName)
-        self.model.projectModel.tabSelected = selTabIndx
-        
     def DeletePlotTab(self)->None:
         '''Delete plot tab.'''
+        # Status before deleting a tab
+        tabList = self.view.projectNotebook.list().copy()
+        tabSelected = self.view.projectNotebook.get()
+        tabIndx = self.view.projectNotebook.index(tabSelected)
         noOfPlots = len(self.model.projectModel.containedPlots)
-        tabSelected = self.model.projectModel.tabSelected
         
-        # If the last tab is cancelled
-        if tabSelected == noOfPlots-1:
-            self.model.projectModel.tabSelected = tabSelected-1
+        self.model.projectModel.tabSelected = tabList[tabIndx-1]
+        
+        # If the right-most tab is cancelled move to the left one
+        if tabIndx == noOfPlots-1:
+            self.model.projectModel.tabSelected = tabList[tabIndx-1]
             
-        # Find how many tabs are in the notebook
-        noOfTabs = len(self.model.projectModel.containedPlots)        
-        # Delete the selected tab
-        del self.model.projectModel.containedPlots[tabSelected]
+        # If a tab in the middle is cancelled move to the right one
+        else:
+            self.model.projectModel.tabSelected = tabList[tabIndx+1]
+        
+        # Delete the targeted tab from the containedPlots model    
+        del self.model.projectModel.containedPlots[tabIndx]
+            
         # Redraw plot notebook 
         self.RedrawPlotNotebook()
 
@@ -553,7 +554,7 @@ class Presenter():
         optsWindow.grab_set()        
         
         # Extract subplot options
-        plotName = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
         plotIndx = self.view.projectNotebook.index(plotName)
         
         # subplotIndx = plotPane.index
@@ -568,10 +569,10 @@ class Presenter():
     def ApplyPlotOptions(self,plotOptionsPane)->None:
         '''Apply plot options.'''
         # Retrieve the plot index from the tab selection 
-        plotName = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
         plotIndx = self.view.projectNotebook.index(plotName)
 
-        # Extract subplot options
+        # Extract subplot options and modify the model
         self.model.projectModel.containedPlots[plotIndx].name = plotOptionsPane.titleEntry.get()
         self.model.projectModel.containedPlots[plotIndx].leftMargin = float(plotOptionsPane.plotMarginLeft.get())
         self.model.projectModel.containedPlots[plotIndx].rightMargin = float(plotOptionsPane.plotMarginRight.get())
@@ -581,7 +582,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].plotColor = plotOptionsPane.selectedPlotColor
         self.model.projectModel.containedPlots[plotIndx].toolbarColor = plotOptionsPane.selectedToolbarColor
         
-        # Update selected tab
+        # Update selected tab so that the right tab is selected after redrawing
         self.model.projectModel.tabSelected = plotOptionsPane.titleEntry.get()
         
         # Redraw notebook
@@ -606,8 +607,8 @@ class Presenter():
         '''Add subplot to PlotManager and Plot.
         Add a toggle frame to the plot manager pane.'''
         # Get useful information 
-        notebook = self.view.projectNotebook
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
 
         noOfSubplot = self.model.projectModel.containedPlots[plotIndx].noOfSubplots
         
@@ -624,7 +625,8 @@ class Presenter():
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
         # Update PlotModel deleting the SubplotModel
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         del self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotPane.index]
         
         self.RedrawPlotNotebook()
@@ -632,7 +634,8 @@ class Presenter():
     def SelectXAxis(self,event,subplotPane)->None:
         '''Function invoked when an item is selected from the subplot X axis selection.'''
         # Identify the widget indexes
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = subplotPane.index
         # Extract the list of signals tht can be selected as x axis
         xAxisSignals = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignals
@@ -647,11 +650,13 @@ class Presenter():
                 
     def SaveSubplotStateIntoModel(self,subplotPane)->None:
         '''Save state into model'''
-        selectedTabName = self.model.projectModel.tabSelected
-        selectedTabIndex = self.view.projectNotebook.index(selectedTabName)
+        
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
+        
         subplotIndx = subplotPane.index
         
-        self.model.projectModel.containedPlots[selectedTabIndex].containedSubplots[subplotIndx].isCollapsed = subplotPane.isCollapsed
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].isCollapsed = subplotPane.isCollapsed
                 
                 
                 
@@ -668,8 +673,9 @@ class Presenter():
         optsWindow.resizable(False, False)
         optsWindow.grab_set()        
         
-        # Extract subplot options
-        plotIndx = self.model.projectModel.tabSelected
+        # Extract subplot options        
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = subplotPane.index
         subplot=self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx]
         
@@ -692,7 +698,8 @@ class Presenter():
     def ApplySubplotOptions(self,subplotOptionsPane)->None:
         '''Apply the subplot options to the subplot model.'''
         # Store options in the subplot model
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = subplotOptionsPane.index
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].name = subplotOptionsPane.titleEntry.get()
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xLabel = subplotOptionsPane.xAxisLabEntry.get()
@@ -723,7 +730,8 @@ class Presenter():
         '''Add ResultFile to Subplot.'''
         # Get useful information 
         noOfResFile = subplotPane.noOfRows
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = subplotPane.index
         # Create ResFileModel
         resultFileModel = ResultFileModel()
@@ -771,7 +779,8 @@ class Presenter():
             return
                 
         # Retrieve useful info
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = resFilePane.master.master.master.index
         resFileIndx = resFilePane.index
         
@@ -807,7 +816,8 @@ class Presenter():
     def AddSignal(self, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
         # Get useful information
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = resFilePane.master.master.master.index
         resFileIndx = resFilePane.index
         
@@ -836,7 +846,8 @@ class Presenter():
     def AddXAxisSignal(self, resFilePane)->None:
         '''Set the X Axis signal used in the result file model.'''
         # Get useful information
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndx = resFilePane.master.master.master.index
         resFileIndx = resFilePane.index
         
@@ -869,7 +880,8 @@ class Presenter():
         collapsPane = signalPane.master.master.master.master
         subplotPane = signalPane.master.master.master.master.master
         subplotIndx = subplotPane.index
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         
         # Remove signal from ResultFileModel selectedSignals list
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.pop(signalIndx)
@@ -892,7 +904,8 @@ class Presenter():
         collapsPane = signalPane.master.master.master.master
         subplotPane = signalPane.master.master.master.master.master
         subplotIndx = subplotPane.index
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         
         # Extract row data and calculate scaled data
         rawData = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].rawData
@@ -988,7 +1001,8 @@ class Presenter():
         collapsPane = signalPane.master.master.master.master
         subplotPane = signalPane.master.master.master.master.master
         subplotIndx = subplotPane.index
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         
         # Get the PlottedSignal object to retrieve its property
         signal = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx]
@@ -1010,7 +1024,8 @@ class Presenter():
         sigIndx = signalOptions.sigIndx
         resIndx = signalOptions.resIndx
         subplotIndx = signalOptions.subplotIndx
-        plotIndx = self.model.projectModel.tabSelected
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
         
         
         # Get the signal options values
@@ -1112,7 +1127,6 @@ class Presenter():
         '''Redraw plot tab.'''
         list = self.view.projectNotebook.list().copy()
         for tabName in list:
-            a = 2
             self.view.projectNotebook.delete(tabName)
              
         # Redraw tabs
@@ -1241,10 +1255,8 @@ class Presenter():
                 plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
-        # Move to the newly created tab
-        if not self.model.projectModel.tabSelected == '':
-            '''nothgin'''
-            self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+
+        self.view.projectNotebook.set(self.model.projectModel.tabSelected)
 
 
 
