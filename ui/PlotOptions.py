@@ -16,8 +16,6 @@ class PlotOptions(tk.Frame):
         '''Initialize the plot options window.'''
         self.presenter = presenter
         
-        framesWidth = 300
-        framesHeight = 100
         labelSize = 150
         btnSize = 100
         entrySize = 50
@@ -26,7 +24,7 @@ class PlotOptions(tk.Frame):
         self.parent = parent
         self.presenter = presenter
         
-        title = plotModel.name
+        self.title = plotModel.name
         leftMargin = plotModel.leftMargin
         rightMargin = plotModel.rightMargin
         bottomMargin = plotModel.bottomMargin
@@ -48,7 +46,9 @@ class PlotOptions(tk.Frame):
         
         self.titleEntry = customtkinter.CTkEntry(self.titleFrame)
         self.titleEntry.grid( row=0, column=1, padx=(padX, padX), sticky='EW')
-        self.UpdateEntry(self.titleEntry, title)
+        self.UpdateEntry(self.titleEntry, self.title)
+        self.titleEntry.bind("<FocusOut>",lambda event: self.ValidatePlotTitle( self.titleEntry,self.title))
+        self.titleEntry.bind("<Return>",lambda event: self.ValidatePlotTitle( self.titleEntry, self.title))
 
 
 
@@ -84,14 +84,14 @@ class PlotOptions(tk.Frame):
         self.plotMarginTop.grid(row=0,column=3,padx=(padX,padX),sticky='EW')    
         self.UpdateEntry(self.plotMarginTop, str(topMargin))
         
-        self.plotMarginLeft.bind("<FocusOut>",lambda event: self.ValidateLeftMarginEntry(event, self.plotMarginRight, leftMargin))
-        self.plotMarginLeft.bind("<Return>",lambda event: self.ValidateLeftMarginEntry(event, self.plotMarginRight, leftMargin))
-        self.plotMarginRight.bind("<FocusOut>",lambda event: self.ValidateRightMarginEntry(event, self.plotMarginLeft, rightMargin))
-        self.plotMarginRight.bind("<Return>",lambda event: self.ValidateRightMarginEntry(event, self.plotMarginLeft, rightMargin))
-        self.plotMarginBottom.bind("<FocusOut>",lambda event: self.ValidateBottomMarginEntry(event, self.plotMarginTop, bottomMargin))
-        self.plotMarginBottom.bind("<Return>",lambda event: self.ValidateBottomMarginEntry(event, self.plotMarginTop, bottomMargin))
-        self.plotMarginTop.bind("<FocusOut>",lambda event: self.ValidateTopMarginEntry(event, self.plotMarginBottom, topMargin))
-        self.plotMarginTop.bind("<Return>",lambda event: self.ValidateTopMarginEntry(event, self.plotMarginBottom, topMargin))
+        self.plotMarginLeft.bind("<FocusOut>",lambda event: self.ValidateSmallerMarginEntry(self.plotMarginLeft, self.plotMarginRight, leftMargin))
+        self.plotMarginLeft.bind("<Return>",lambda event: self.ValidateSmallerMarginEntry(self.plotMarginLeft, self.plotMarginRight, leftMargin))
+        self.plotMarginRight.bind("<FocusOut>",lambda event: self.ValidateGreaterMarginEntry(self.plotMarginRight, self.plotMarginLeft, rightMargin))
+        self.plotMarginRight.bind("<Return>",lambda event: self.ValidateGreaterMarginEntry(self.plotMarginRight, self.plotMarginLeft, rightMargin))
+        self.plotMarginBottom.bind("<FocusOut>",lambda event: self.ValidateSmallerMarginEntry(self.plotMarginBottom, self.plotMarginTop, bottomMargin))
+        self.plotMarginBottom.bind("<Return>",lambda event: self.ValidateSmallerMarginEntry(self.plotMarginBottom, self.plotMarginTop, bottomMargin))
+        self.plotMarginTop.bind("<FocusOut>",lambda event: self.ValidateGreaterMarginEntry(self.plotMarginTop, self.plotMarginBottom, topMargin))
+        self.plotMarginTop.bind("<Return>",lambda event: self.ValidateGreaterMarginEntry(self.plotMarginTop, self.plotMarginBottom, topMargin))
         
      
         # Select canvas color pane
@@ -165,11 +165,23 @@ class PlotOptions(tk.Frame):
         
         cancelBtn = customtkinter.CTkButton(btnFrame,text = 'Cancel', width = btnSize, command=lambda:self.presenter.ClosePlotOptions(self))
         cancelBtn.grid(row = 0, column=0,padx = padX, pady = (6*padY,padY), sticky = 'E')
-        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.presenter.ApplyPlotOptions(self))
+        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.ApplyPlotOptions())
         applyBtn.grid(row = 0, column=1,padx = padX,pady = (6*padY,padY), sticky = 'E')
         okBtn = customtkinter.CTkButton(btnFrame,text = 'Ok', width = btnSize, command=lambda:self.presenter.OkPlotOptions(self))
         okBtn.grid(row = 0, column=2,padx = (padX, padX),pady = (6*padY,padY), sticky = 'E')
         
+    def ApplyPlotOptions(self)->None:
+        '''Run all the validations before applying.'''
+        
+        err = 0
+        err += self.ValidatePlotTitle(self.titleEntry, self.title)
+        err += self.ValidateSmallerMarginEntry(self.plotMarginLeft, self.plotMarginRight)
+        # err += ValidateRightMarginEntry
+        # err += ValidateTopMarginEntry
+        # err += ValidateBottomMarginEntry
+        
+        if not err: 
+            self.presenter.ApplyPlotOptions(self)
         
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
         """This function takes whatever entry, deleted the text, and write the new 
@@ -178,43 +190,67 @@ class PlotOptions(tk.Frame):
         entry.delete(0,tk.END)
         entry.insert(0,txt)
         
+        
+    def ValidatePlotTitle(self,titleEntry, previousVal):
+        '''Make sure that the plot title just entered doesn't already exists.'''
+        tabListName = self.presenter.view.projectNotebook.list().copy()
+        inputTitle = titleEntry.get()
+        
+        if inputTitle in tabListName:
+            self.UpdateEntry(titleEntry,previousVal)
+            return 1
+            
+        return 0
+        
                         
-    def ValidateLeftMarginEntry(self,event,otherLimit, previousVal)->None:
+    def ValidateSmallerMarginEntry(self,smallerMarginEntry,greaterMarginEntry, previousVal)->None:
         '''Validate entries.'''
         # Check if the entry is a number, and if it is right with respect to 
         # its counterpart
         try:
-            currentEntry = float(event.widget.get())
-            otherEntry = float(otherLimit.get())
-            if currentEntry<0 or currentEntry>1:
+            smallerMargin = float(smallerMarginEntry.get())
+            greaterMargin = float(greaterMarginEntry.get())
+            if smallerMargin<0 or smallerMargin>1:
                 self.presenter.PrintError('Entry must be a number between 0 and 1.')
-                self.UpdateEntry(event.widget,previousVal)
+                self.UpdateEntry(smallerMarginEntry,previousVal)
+                return 1
             
-            if currentEntry>=otherEntry:
-                self.presenter.PrintError('Left margin must be smaller than right margin.')
-                self.UpdateEntry(event.widget,previousVal)
+            if smallerMargin>=greaterMargin:
+                self.presenter.PrintError('This margin cannot be greater than ' + str(greaterMargin))
+                self.UpdateEntry(smallerMarginEntry,previousVal)
+                return 1
+            
+            return 0
+        
         except:
             self.presenter.PrintError('Entry must be a number between 0 and 1.')
-            self.UpdateEntry(event.widget,previousVal)
+            self.UpdateEntry(smallerMarginEntry,previousVal)
+            return 1
             
             
-    def ValidateRightMarginEntry(self,event,otherLimit, previousVal)->None:
+    def ValidateGreaterMarginEntry(self,greaterMarginEntry,smallerMarginEntry, previousVal)->None:
         '''Validate entries.'''
         # Check if the entry is a number, and if it is right with respect to 
         # its counterpart
         try:
-            currentEntry = float(event.widget.get())
-            otherEntry = float(otherLimit.get())
-            if currentEntry<0 or currentEntry>1:
+            greaterMargin = float(greaterMarginEntry.get())
+            smallerMargin = float(smallerMarginEntry.get())
+            if greaterMargin<0 or greaterMargin>1:
                 self.presenter.PrintError('Entry must be a number between 0 and 1.')
-                self.UpdateEntry(event.widget,previousVal)
+                self.UpdateEntry(greaterMarginEntry,previousVal)
+                return 1
             
-            if currentEntry<=otherEntry:
-                self.presenter.PrintError('Right margin must be smaller than left margin.')
-                self.UpdateEntry(event.widget,previousVal)
+            if greaterMargin<=smallerMargin:
+                self.presenter.PrintError('This margin cannot be smaller than ' + str(smallerMargin))
+                self.UpdateEntry(greaterMarginEntry,previousVal)
+                return 1
+            
+            return 0
+        
         except:
             self.presenter.PrintError('Entry must be a number between 0 and 1.')
-            self.UpdateEntry(event.widget,previousVal)
+            self.UpdateEntry(greaterMarginEntry,previousVal)
+            return 1
             
             
     def ValidateBottomMarginEntry(self,event,otherLimit, previousVal)->None:
@@ -227,13 +263,19 @@ class PlotOptions(tk.Frame):
             if currentEntry<0 or currentEntry>1:
                 self.presenter.PrintError('Entry must be a number between 0 and 1.')
                 self.UpdateEntry(event.widget,previousVal)
+                return 1
             
             if currentEntry>=otherEntry:
                 self.presenter.PrintError('Bottom margin must be smaller than top margin.')
                 self.UpdateEntry(event.widget,previousVal)
+                return 1
+            
+            return 0
+        
         except:
             self.presenter.PrintError('Entry must be a number between 0 and 1.')
             self.UpdateEntry(event.widget,previousVal)
+            return 1
             
             
     def ValidateTopMarginEntry(self,event,otherLimit, previousVal)->None:
@@ -246,13 +288,19 @@ class PlotOptions(tk.Frame):
             if currentEntry<0 or currentEntry>1:
                 self.presenter.PrintError('Entry must be a number between 0 and 1.')
                 self.UpdateEntry(event.widget,previousVal)
+                return 1
             
             if currentEntry<=otherEntry:
                 self.presenter.PrintError('Top margin must be greater than bottom margin.')
                 self.UpdateEntry(event.widget,previousVal)
+                return 1
+            
+            return 0
+        
         except:
             self.presenter.PrintError('Entry must be a number between 0 and 1.')
             self.UpdateEntry(event.widget,previousVal)
+            return 1
  
             
     def SelectCanvasColor(self):
