@@ -176,12 +176,13 @@ class PlotOptions(tk.Frame):
         err = 0
         err += self.ValidatePlotTitle(self.titleEntry, self.title)
         err += self.ValidateSmallerMarginEntry(self.plotMarginLeft, self.plotMarginRight)
-        # err += ValidateRightMarginEntry
-        # err += ValidateTopMarginEntry
-        # err += ValidateBottomMarginEntry
+        err += self.ValidateSmallerMarginEntry(self.plotMarginBottom, self.plotMarginTop)
+        err += self.ValidateGreaterMarginEntry(self.plotMarginRight, self.plotMarginLeft)
+        err += self.ValidateGreaterMarginEntry(self.plotMarginTop, self.plotMarginBottom)
         
         if not err: 
             self.presenter.ApplyPlotOptions(self)
+        
         
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
         """This function takes whatever entry, deleted the text, and write the new 
@@ -252,56 +253,6 @@ class PlotOptions(tk.Frame):
             self.UpdateEntry(greaterMarginEntry,previousVal)
             return 1
             
-            
-    def ValidateBottomMarginEntry(self,event,otherLimit, previousVal)->None:
-        '''Validate entries.'''
-        # Check if the entry is a number, and if it is right with respect to 
-        # its counterpart
-        try:
-            currentEntry = float(event.widget.get())
-            otherEntry = float(otherLimit.get())
-            if currentEntry<0 or currentEntry>1:
-                self.presenter.PrintError('Entry must be a number between 0 and 1.')
-                self.UpdateEntry(event.widget,previousVal)
-                return 1
-            
-            if currentEntry>=otherEntry:
-                self.presenter.PrintError('Bottom margin must be smaller than top margin.')
-                self.UpdateEntry(event.widget,previousVal)
-                return 1
-            
-            return 0
-        
-        except:
-            self.presenter.PrintError('Entry must be a number between 0 and 1.')
-            self.UpdateEntry(event.widget,previousVal)
-            return 1
-            
-            
-    def ValidateTopMarginEntry(self,event,otherLimit, previousVal)->None:
-        '''Validate entries.'''
-        # Check if the entry is a number, and if it is right with respect to 
-        # its counterpart
-        try:
-            currentEntry = float(event.widget.get())
-            otherEntry = float(otherLimit.get())
-            if currentEntry<0 or currentEntry>1:
-                self.presenter.PrintError('Entry must be a number between 0 and 1.')
-                self.UpdateEntry(event.widget,previousVal)
-                return 1
-            
-            if currentEntry<=otherEntry:
-                self.presenter.PrintError('Top margin must be greater than bottom margin.')
-                self.UpdateEntry(event.widget,previousVal)
-                return 1
-            
-            return 0
-        
-        except:
-            self.presenter.PrintError('Entry must be a number between 0 and 1.')
-            self.UpdateEntry(event.widget,previousVal)
-            return 1
- 
             
     def SelectCanvasColor(self):
         '''Select canvas color'''
