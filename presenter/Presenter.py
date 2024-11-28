@@ -107,9 +107,9 @@ class Presenter():
 
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
-    
-            
-            
+
+
+
     # PROJECT MANAGEMENT 
     def BrowseToDifferentProject(self)->None:
         '''Browse to a different project.'''
@@ -162,6 +162,7 @@ class Presenter():
     def ReloadProject(self):
         '''Reload project'''
         self.LoadProjectFromJson()
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def SetWorkingFolderManually(self,event=None)->None: # MUST BE REPRESTINATED
@@ -529,6 +530,7 @@ class Presenter():
         tabIndx = self.view.projectNotebook.index(tabSelected)
         noOfPlots = len(self.model.projectModel.containedPlots)
         
+        # Set tab selected
         self.model.projectModel.tabSelected = tabList[tabIndx-1]
         
         # If the right-most tab is cancelled move to the left one
@@ -593,6 +595,7 @@ class Presenter():
         self.model.projectModel.tabSelected = plotOptionsPane.titleEntry.get()
         
         # Redraw notebook
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def ClosePlotOptions(self,plotOptionsPane)->None:
@@ -606,9 +609,9 @@ class Presenter():
         self.ApplyPlotOptions(plotOptionsPane)
         # Close the plot options
         self.ClosePlotOptions(plotOptionsPane)
-     
-     
-     
+
+
+
     # SUBPLOT HANDLING
     def AddSubplot(self,plotManager)->None:
         '''Add subplot to PlotManager and Plot.
@@ -627,6 +630,7 @@ class Presenter():
         # Update PlotModel adding a SubplotModel
         self.model.projectModel.containedPlots[plotIndx].AddSubplot(subplot)
         
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
          
     def DeleteSubplot(self,subplotPane)->None:
@@ -636,6 +640,7 @@ class Presenter():
         plotIndx = self.view.projectNotebook.index(plotName)
         del self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotPane.index]
         
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
            
     def SelectXAxis(self,event,subplotPane)->None:
@@ -653,6 +658,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelectedIndx = selectedSigNo
         
         # Redraw PlotUI
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
                 
     def SaveSubplotStateIntoModel(self,subplotPane)->None:
@@ -664,9 +670,9 @@ class Presenter():
         subplotIndx = subplotPane.index
         
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].isCollapsed = subplotPane.isCollapsed
-                
-                
-                
+
+
+    
     # SUBPLOT OPTIONS
     def OpenSubplotOptions(self,subplotPane, subplotOptsBtn)->None:
         '''Open subplot options.'''   
@@ -719,6 +725,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].setGrid = subplotOptionsPane.gridVar.get()
         
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def CloseSubplotOptions(self,subplotOptionsPane)->None:
@@ -729,9 +736,9 @@ class Presenter():
         '''Ok Subplot Options'''
         self.ApplySubplotOptions(subplotOptionsPane)
         self.CloseSubplotOptions(subplotOptionsPane)
-        
 
-        
+
+
     # RESULT FILE HANDLING
     def AddResultFile(self, subplotPane)->None:
         '''Add ResultFile to Subplot.'''
@@ -748,7 +755,7 @@ class Presenter():
         # Update SubplotModel adding a ResultFile
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles.append(resultFileModel)
         
-        
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def DeleteResultFile(self,resFilePane)->None:
@@ -758,7 +765,7 @@ class Presenter():
         # Update SubplotModel adding a ResultFile
         self.model.projectModel.plotModel.containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
         
-        
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def BrowseResFile(self,fileSelector,resFilePane) -> None:
@@ -814,11 +821,11 @@ class Presenter():
                 self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignals.append(signal)
                 self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
         
-        
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
 
-        
-        
+
+
     # SIGNAL HANDLING
     def AddSignal(self, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
@@ -848,6 +855,7 @@ class Presenter():
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.append(plottedSignal)
         
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def AddXAxisSignal(self, resFilePane)->None:
@@ -874,6 +882,7 @@ class Presenter():
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal = plottedSignal
         
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def DeleteSignal(self, signalPane)->None:
@@ -893,6 +902,7 @@ class Presenter():
         # Remove signal from ResultFileModel selectedSignals list
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.pop(signalIndx)
         
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def ModifySignalScaling(self,event,signalPane, scalingList)->None:
@@ -924,6 +934,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scaledData = scaledData
         
         # Redraw PlotUI
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def GetUnitsList(self,signal):
@@ -980,11 +991,10 @@ class Presenter():
         colorCounterRem = colorCounter%noOfColors
         
         return colorList[colorCounterRem]
-        
-        
-        
+
+
+
     # SIGNAL OPTIONS
-    
     def OpenSignalOptions(self,signalPane, signalOptsBtn)->None:
         '''Open subplot options.'''   
         # Create new window
@@ -1046,6 +1056,7 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].style=lineStyle
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resIndx].selectedSignals[sigIndx].marker=lineMarker
                
+        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def CloseSignalOptions(self,signalOptionsPane)->None:
@@ -1056,7 +1067,7 @@ class Presenter():
         '''Apply the changes and close the window.'''
         self.ApplySignalOptions(signalOptionsPane)
         self.CloseSignalOptions(signalOptionsPane)
-        
+
 
 
   # LOAD SIGNALS
@@ -1183,7 +1194,7 @@ class Presenter():
                     axTest[jj].tick_params(axis='x', colors=textColor)
                     axTest[jj].tick_params(axis='y', colors=textColor)
                 
-                    axList[jj,0].set_facecolor(plotColor)
+                    # axList[jj,0].set_facecolor(plotColor)
                     axList[jj,0].grid(subplot.setGrid)
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
@@ -1279,10 +1290,7 @@ class Presenter():
                 plotPane.plotCanvas.toolbar.update()
                 plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-                
-                
-            
-        self.view.projectNotebook.update_idletasks()
+
         self.view.projectNotebook.set(self.model.projectModel.tabSelected)
 
 
