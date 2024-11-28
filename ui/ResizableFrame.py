@@ -141,7 +141,7 @@ class ResizableFrame(customtkinter.CTkFrame, ABC):
         """
         # Reset resize mode and cursor
         self.resizeMode = self.NONE
-        self.config(cursor='')
+        self.configure(cursor='')
 
 
 

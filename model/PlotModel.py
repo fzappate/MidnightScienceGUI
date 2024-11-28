@@ -12,9 +12,13 @@ class PlotModel():
         self.rightMargin = 0.9
         self.bottomMargin = 0.1
         self.topMargin = 0.9
-        self.canvasColor = '#FFFFFF'
-        self.plotColor = '#FFFFFF'
-        self.toolbarColor = '#FFFFFF'
+        
+        self.colorPalette = 0
+        
+        self.canvasColor = ["#ffffff","#666666","#666666"]
+        self.plotColor =  ["#ffffff","#666666","#666666"]
+        self.toolbarColor = ["#cccccc","#333333","#666666"]
+        self.textColor = ["#000000","#ffffff","#6666ff"]
         
         self.noOfSubplots = 0
         self.containedSubplots = []

@@ -241,9 +241,11 @@ class Presenter():
                 for ii, jsonPlot in enumerate(jsonContainedPlots):
                     plotModel = PlotModel()
                     plotModel.name = jsonPlot["name"]
+                    plotModel.colorPalette = jsonPlot["colorPalette"]
                     plotModel.canvasColor = jsonPlot["canvasColor"]
                     plotModel.plotColor = jsonPlot["plotColor"]
                     plotModel.toolbarColor = jsonPlot["toolbarColor"]
+                    plotModel.textColor = jsonPlot["textColor"]
                     plotModel.leftMargin = jsonPlot["leftMargin"]
                     plotModel.rightMargin = jsonPlot["rightMargin"]
                     plotModel.bottomMargin = jsonPlot["bottomMargin"]
@@ -393,14 +395,16 @@ class Presenter():
         '''Save PlotModel object to Json.'''
         f.write('{')
         f.write('"name": "'+ plotModel.name +'",\n')
-        f.write('"noOfSubplots": '+ str(plotModel.noOfSubplots) +',\n')
-        f.write('"canvasColor": "'+ plotModel.canvasColor +'",\n')
-        f.write('"plotColor": "'+ plotModel.plotColor +'",\n')
-        f.write('"toolbarColor": "'+ plotModel.toolbarColor +'",\n')
         f.write('"leftMargin": '+ str(plotModel.leftMargin) +',\n')
         f.write('"rightMargin": '+ str(plotModel.rightMargin) +',\n')
         f.write('"bottomMargin": '+ str(plotModel.bottomMargin) +',\n')
         f.write('"topMargin": '+ str(plotModel.topMargin) +',\n')
+        f.write('"colorPalette": '+ str(plotModel.colorPalette) +',\n')
+        f.write('"canvasColor": ["'+ plotModel.canvasColor[0] + '","' + plotModel.canvasColor[1] + '","' + plotModel.canvasColor[2] +'"],\n')
+        f.write('"plotColor": ["'+ plotModel.plotColor[0] + '","' + plotModel.plotColor[1] + '","' + plotModel.plotColor[2] +'"],\n')
+        f.write('"toolbarColor": ["'+ plotModel.toolbarColor[0] + '","' + plotModel.toolbarColor[1] + '","' + plotModel.toolbarColor[2] +'"],\n')
+        f.write('"textColor": ["'+ plotModel.textColor[0] + '","' + plotModel.textColor[1] + '","' + plotModel.textColor[2] +'"],\n')
+        f.write('"noOfSubplots": '+ str(plotModel.noOfSubplots) +',\n')
         f.write('"containedSubplots": [\n')
         
         # print subplots
@@ -578,9 +582,12 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].rightMargin = float(plotOptionsPane.plotMarginRight.get())
         self.model.projectModel.containedPlots[plotIndx].bottomMargin = float(plotOptionsPane.plotMarginBottom.get())
         self.model.projectModel.containedPlots[plotIndx].topMargin = float(plotOptionsPane.plotMarginTop.get())
+        
+        self.model.projectModel.containedPlots[plotIndx].colorPalette = plotOptionsPane.colorPalette
         self.model.projectModel.containedPlots[plotIndx].canvasColor = plotOptionsPane.selectedCanvasColor
         self.model.projectModel.containedPlots[plotIndx].plotColor = plotOptionsPane.selectedPlotColor
         self.model.projectModel.containedPlots[plotIndx].toolbarColor = plotOptionsPane.selectedToolbarColor
+        self.model.projectModel.containedPlots[plotIndx].textColor = plotOptionsPane.selectedTextColor
         
         # Update selected tab so that the right tab is selected after redrawing
         self.model.projectModel.tabSelected = plotOptionsPane.titleEntry.get()
@@ -1131,15 +1138,23 @@ class Presenter():
              
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
+            
+            # Extract plot color
+            canvasColor = plot.canvasColor[plot.colorPalette]
+            plotColor = plot.plotColor[plot.colorPalette]
+            toolbarColor = plot.toolbarColor[plot.colorPalette]
+            textColor = plot.textColor[plot.colorPalette]
+            
             if plot.name == '':
                 plotName = "Plot " + str(ii)
             else:
                 plotName = plot.name
                 
             self.view.projectNotebook.add(plotName)
+            
             plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
             plotPane.pack(fill="both", expand=True,padx = 6)
-                
+            self.view.projectNotebook.update_idletasks()
             # USELESS. PlotPane has just being creaed, no need to clean it.
             # Clear all the existing subplots, and create the axis for the new ones
             plotCanvasChildren = plotPane.plotCanvas.winfo_children() # Delete
@@ -1151,14 +1166,24 @@ class Presenter():
             if noOfSubplots>0:
                 
                 fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
+                axTest = fig.get_axes()
+                
                 plt.subplots_adjust(left=plot.leftMargin, right=plot.rightMargin, top=plot.topMargin, bottom=plot.bottomMargin)
-                fig.patch.set_facecolor(plot.canvasColor)
+                fig.patch.set_facecolor(canvasColor)
                 
                 
                 # REDRAW PLOT MANAGER ==========================
                 # Redraw subplots
                 for jj, subplot in enumerate(plot.containedSubplots):
-                    axList[jj,0].set_facecolor(plot.plotColor)
+                    # Color axis and fonts
+                    axTest[jj].spines['bottom'].set_color(textColor)
+                    axTest[jj].spines['top'].set_color(textColor)
+                    axTest[jj].spines['left'].set_color(textColor)
+                    axTest[jj].spines['right'].set_color(textColor)
+                    axTest[jj].tick_params(axis='x', colors=textColor)
+                    axTest[jj].tick_params(axis='y', colors=textColor)
+                
+                    axList[jj,0].set_facecolor(plotColor)
                     axList[jj,0].grid(subplot.setGrid)
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
@@ -1194,7 +1219,6 @@ class Presenter():
                             
                         
                             # REDRAW PLOT CANVAS ==========================
-                                                        
                             psCol=selectedSignal.color
                             psWidth=selectedSignal.width
                             psStyle=selectedSignal.style
@@ -1222,8 +1246,8 @@ class Presenter():
                             # Title
                             axList[jj,0].title.set_text(subplot.name)
                             # Labels
-                            axList[jj,0].set_xlabel(subplot.xLabel)
-                            axList[jj,0].set_ylabel(subplot.yLabel)
+                            axList[jj,0].set_xlabel(subplot.xLabel,color=textColor)
+                            axList[jj,0].set_ylabel(subplot.yLabel,color=textColor)
                             # Grid
                             axList[jj,0].grid(subplot.setGrid)
                             # Axis Limits
@@ -1246,16 +1270,19 @@ class Presenter():
                 # Draw the canvas and toolbar inside the Plotter object
                 plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
                 plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar.config(bg=plot.toolbarColor)
-                # for button in plotPane.plotCanvas.toolbar.winfo_children():
-                #     '''Use this to configure the button style'''
+                plotPane.plotCanvas.toolbar.config(bg=toolbarColor)
+                for button in plotPane.plotCanvas.toolbar.winfo_children():
+                    '''Use this to configure the button style'''
                     # Use this to configure the style of the buttons
-                    # button.config(bg="lightblue", fg="darkblue")        
+                    button.config(bg=toolbarColor)     
+                       
                 plotPane.plotCanvas.toolbar.update()
                 plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                
+                
             
-
+        self.view.projectNotebook.update_idletasks()
         self.view.projectNotebook.set(self.model.projectModel.tabSelected)
 
 

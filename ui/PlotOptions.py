@@ -29,10 +29,12 @@ class PlotOptions(tk.Frame):
         rightMargin = plotModel.rightMargin
         bottomMargin = plotModel.bottomMargin
         topMargin = plotModel.topMargin
+        self.colorPalette = plotModel.colorPalette
+        
         self.selectedCanvasColor = plotModel.canvasColor
         self.selectedPlotColor = plotModel.plotColor
         self.selectedToolbarColor = plotModel.toolbarColor
-        
+        self.selectedTextColor = plotModel.textColor
 
 
         # Title frame
@@ -93,11 +95,31 @@ class PlotOptions(tk.Frame):
         self.plotMarginTop.bind("<FocusOut>",lambda event: self.ValidateGreaterMarginEntry(self.plotMarginTop, self.plotMarginBottom, topMargin))
         self.plotMarginTop.bind("<Return>",lambda event: self.ValidateGreaterMarginEntry(self.plotMarginTop, self.plotMarginBottom, topMargin))
         
-     
-        # Select canvas color pane
+        
+        # Use default
         rowNo +=1
-        self.mainCanvasColorFrame = customtkinter.CTkFrame(parent)
-        self.mainCanvasColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        self.selectColorPaletteFrame = customtkinter.CTkFrame(parent)
+        self.selectColorPaletteFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        self.selectColorPaletteFrame.columnconfigure(1,weight=1)
+        
+        self.selectColorPaletteLab = customtkinter.CTkLabel(self.selectColorPaletteFrame, text = ' Use default color',anchor = 'w',width=labelSize)
+        self.selectColorPaletteLab.grid(row=0,column=0, pady=padY)
+        
+        opts = ['light','dark','custom']
+        self.selectColorPaletteCombo = customtkinter.CTkComboBox(self.selectColorPaletteFrame,values=opts,width=labelSize, command=lambda event: self.SetColorPalette())
+        self.selectColorPaletteCombo.grid(row=0,column=1)
+        self.selectColorPaletteCombo.set(opts[self.colorPalette])
+        
+        rowNo +=1
+        self.customColorFrame = customtkinter.CTkFrame(parent)
+        self.customColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        self.customColorFrame.columnconfigure(1,weight=1)
+        
+        
+        # Select canvas color pane
+        rowNoCst =0
+        self.mainCanvasColorFrame = customtkinter.CTkFrame(self.customColorFrame)
+        self.mainCanvasColorFrame.grid(row=rowNoCst,column=0, sticky = 'NEW')
         self.mainCanvasColorFrame.columnconfigure(1,weight=1)
         
         self.canvasColorLab = customtkinter.CTkLabel(self.mainCanvasColorFrame, anchor = 'w',text = ' Select canvas color',width=labelSize)
@@ -110,15 +132,16 @@ class PlotOptions(tk.Frame):
         
         self.canvasColorSample = customtkinter.CTkLabel(self.canvasColorFrame,text='\u2588\u2588\u2588\u2588')
         self.canvasColorSample.grid(row=0,column=0)
+        self.canvasColorSample.configure(text_color=self.selectedCanvasColor[2])
         
         self.canvasColorButton = customtkinter.CTkButton(self.canvasColorFrame,text='Color',command=self.SelectCanvasColor)
         self.canvasColorButton.grid(row=0,column=1)
         
         
         # Select plot color pane
-        rowNo +=1
-        self.mainPlotColorFrame = customtkinter.CTkFrame(parent)
-        self.mainPlotColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        rowNoCst +=1
+        self.mainPlotColorFrame = customtkinter.CTkFrame(self.customColorFrame)
+        self.mainPlotColorFrame.grid(row=rowNoCst,column=0, sticky = 'NEW')
         self.mainPlotColorFrame.columnconfigure(1,weight=1)
         
         self.plotColorLab = customtkinter.CTkLabel(self.mainPlotColorFrame, text = ' Select plot color', anchor = 'w',width=labelSize)
@@ -131,16 +154,16 @@ class PlotOptions(tk.Frame):
         
         self.plotColorSample = customtkinter.CTkLabel(self.plotColorFrame,text='\u2588\u2588\u2588\u2588')
         self.plotColorSample.grid(row=0,column=0)
+        self.plotColorSample.configure(text_color=self.selectedPlotColor[2])
         
         self.plotColorButton = customtkinter.CTkButton(self.plotColorFrame,text='Color',command=self.SelectPlotColor)
         self.plotColorButton.grid(row=0,column=1)
         
 
-    
         # Select toolbar color pane
-        rowNo +=1
-        self.mainToolbarColorFrame = customtkinter.CTkFrame(parent)
-        self.mainToolbarColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
+        rowNoCst +=1
+        self.mainToolbarColorFrame = customtkinter.CTkFrame(self.customColorFrame)
+        self.mainToolbarColorFrame.grid(row=rowNoCst,column=0, sticky = 'NEW')
         self.mainToolbarColorFrame.columnconfigure(1,weight=1)
         
         self.xAxisLabLab = customtkinter.CTkLabel(self.mainToolbarColorFrame, text = ' Select toolbar color',anchor = 'w',width=labelSize)
@@ -153,9 +176,33 @@ class PlotOptions(tk.Frame):
         
         self.toolbarColorSample = customtkinter.CTkLabel(self.toolbarColorFrame,text='\u2588\u2588\u2588\u2588')
         self.toolbarColorSample.grid(row=0,column=0)
+        self.toolbarColorSample.configure(text_color=self.selectedToolbarColor[2])
         
         self.plotColorButton = customtkinter.CTkButton(self.toolbarColorFrame,text='Color',command=self.SelectToolbarColor)
         self.plotColorButton.grid(row=0,column=1)
+        
+        
+        # Select text color pane
+        rowNoCst +=1
+        self.plotTextColorFrame = customtkinter.CTkFrame(self.customColorFrame)
+        self.plotTextColorFrame.grid(row=rowNoCst,column=0, sticky = 'NEW')
+        self.plotTextColorFrame.columnconfigure(1,weight=1)
+        
+        self.selectTextColorLab = customtkinter.CTkLabel(self.plotTextColorFrame, text = ' Select text color',anchor = 'w',width=labelSize)
+        self.selectTextColorLab.grid(row=0,column=0, pady=padY)
+        
+        self.textColorFrame = customtkinter.CTkFrame(self.plotTextColorFrame)
+        self.textColorFrame.grid(row=0,column=1, sticky = 'EW')
+        self.textColorFrame.columnconfigure(0,weight=1)
+        self.textColorFrame.columnconfigure(1,weight=1)
+        
+        self.textColorSample = customtkinter.CTkLabel(self.textColorFrame,text='\u2588\u2588\u2588\u2588')
+        self.textColorSample.grid(row=0,column=0)
+        self.textColorSample.configure(text_color=self.selectedTextColor[2])
+        
+        self.textColorButton = customtkinter.CTkButton(self.textColorFrame,text='Color',command=lambda : self.SelectTextColor())
+        self.textColorButton.grid(row=0,column=1)
+        
         
         # Button frame
         rowNo +=1
@@ -165,24 +212,13 @@ class PlotOptions(tk.Frame):
         
         cancelBtn = customtkinter.CTkButton(btnFrame,text = 'Cancel', width = btnSize, command=lambda:self.presenter.ClosePlotOptions(self))
         cancelBtn.grid(row = 0, column=0,padx = padX, pady = (6*padY,padY), sticky = 'E')
-        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.ApplyPlotOptions())
+        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.presenter.ApplyPlotOptions(self))
         applyBtn.grid(row = 0, column=1,padx = padX,pady = (6*padY,padY), sticky = 'E')
         okBtn = customtkinter.CTkButton(btnFrame,text = 'Ok', width = btnSize, command=lambda:self.presenter.OkPlotOptions(self))
         okBtn.grid(row = 0, column=2,padx = (padX, padX),pady = (6*padY,padY), sticky = 'E')
         
-    def ApplyPlotOptions(self)->None:
-        '''Run all the validations before applying.'''
-        
-        err = 0
-        err += self.ValidatePlotTitle(self.titleEntry, self.title)
-        err += self.ValidateSmallerMarginEntry(self.plotMarginLeft, self.plotMarginRight)
-        err += self.ValidateSmallerMarginEntry(self.plotMarginBottom, self.plotMarginTop)
-        err += self.ValidateGreaterMarginEntry(self.plotMarginRight, self.plotMarginLeft)
-        err += self.ValidateGreaterMarginEntry(self.plotMarginTop, self.plotMarginBottom)
-        
-        if not err: 
-            self.presenter.ApplyPlotOptions(self)
-        
+        self.SetColorPalette()
+                
         
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
         """This function takes whatever entry, deleted the text, and write the new 
@@ -259,7 +295,7 @@ class PlotOptions(tk.Frame):
         colorCode = colorchooser.askcolor(title='Select a canvas color')
             
         try:
-            self.selectedCanvasColor=colorCode[1]
+            self.selectedCanvasColor[2]=colorCode[1]
             self.canvasColorSample.configure(text_color=colorCode[1])
             
         except:
@@ -271,7 +307,7 @@ class PlotOptions(tk.Frame):
         colorCode = colorchooser.askcolor(title='Select a plot color')
             
         try:
-            self.selectedPlotColor=colorCode[1]
+            self.selectedPlotColor[2]=colorCode[1]
             self.plotColorSample.configure(text_color=colorCode[1])
             
         except:
@@ -283,9 +319,42 @@ class PlotOptions(tk.Frame):
         colorCode = colorchooser.askcolor(title='Select a toolbar color')
             
         try:
-            self.selectedToolbarColor=colorCode[1]
+            self.selectedToolbarColor[2]=colorCode[1]
             self.toolbarColorSample.configure(text_color=colorCode[1])
             
         except:
             '''Nothing'''
         
+        
+    def SelectTextColor(self):
+        '''Select toolbar color'''
+        colorCode = colorchooser.askcolor(title='Select a toolbar color')
+            
+        try:
+            self.selectedTextColor[2]=colorCode[1]
+            self.textColorSample.configure(text_color=colorCode[1])
+            
+        except:
+            '''Nothing'''
+        
+        
+    def SetColorPalette(self):
+        '''Select color palette'''
+        colorPalette = self.selectColorPaletteCombo.get()
+        
+        if colorPalette == 'light':
+            self.colorPalette = 0
+            self.customColorFrame.grid_remove()
+            
+        
+        elif colorPalette == 'dark':
+            self.colorPalette = 1            
+            self.customColorFrame.grid_remove()
+            
+        elif colorPalette == 'custom':
+            self.colorPalette = 2
+            self.customColorFrame.grid()
+            
+            
+            
+            
