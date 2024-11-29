@@ -874,7 +874,7 @@ class Presenter():
 
 
     # SIGNAL HANDLING
-    def AddSignal(self, resFilePane)->None:
+    def AddSignal(self, event,resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
         # Get useful information
         plotName = self.view.projectNotebook.get()
@@ -883,7 +883,7 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigName = resFilePane.ySignalCollection.get()
+        selectedSigName = event
         selectedSigIndex = resFilePane.signalList.index(selectedSigName)
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
@@ -905,7 +905,7 @@ class Presenter():
         self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
-    def AddXAxisSignal(self, resFilePane)->None:
+    def AddXAxisSignal(self, event,resFilePane)->None:
         '''Set the X Axis signal used in the result file model.'''
         # Get useful information
         plotName = self.view.projectNotebook.get()
@@ -914,7 +914,7 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigName = resFilePane.xSignalCollection.get()
+        selectedSigName = event
         selectedSigIndex = resFilePane.signalList.index(selectedSigName)
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
@@ -1291,8 +1291,8 @@ class Presenter():
                             axList[jj,0].legend()
                         
                             # Extract subplot default settings
-                            subplot.xLim = list(axList[jj,0].get_xlim())
-                            subplot.yLim = list(axList[jj,0].get_ylim())
+                            subplot.xLim = axList[jj,0].get_xlim()
+                            subplot.yLim = axList[jj,0].get_ylim()
                             yTicksArray = axList[jj,0].get_yticks()
                             xTicksArray = axList[jj,0].get_xticks()
                             xTicks = float(xTicksArray[1]) - float(xTicksArray[0])

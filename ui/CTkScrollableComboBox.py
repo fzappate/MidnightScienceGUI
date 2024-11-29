@@ -6,21 +6,31 @@ import customtkinter
 from ui.ctk_scrollable_dropdown import CTkScrollableDropdown
 
 class CTkScrollableComboBox(customtkinter.CTkFrame):
-    def __init__(self, parent,values = [],*args,**kwargs):
+    def __init__(self, parent, fcn, values = [],*args,**kwargs):
         super().__init__(parent,*args,**kwargs)
         '''init'''
         
+        self.fcn = fcn
         self.columnconfigure(0,weight=1)
 
         # Attach to Combobox
-        combobox = customtkinter.CTkComboBox(self)
-        combobox.grid(row=0, column = 0, sticky = 'EW',padx=0, pady=0)
+        self.combobox = customtkinter.CTkComboBox(self, state = 'readonly')
+        self.combobox.grid(row=0, column = 0, sticky = 'EW',padx=0, pady=0)
 
-        CTkScrollableDropdown(combobox, values=values, justify="left")
+        CTkScrollableDropdown(self.combobox, values=values, justify="left",command = lambda event: self.fcn(event, parent))
+        
+        self.combobox.set('')
+        
+    def get(self):
+        '''Get the content of the combobox'''
+        return self.combobox.get()
         
     
 class CTkScrollableDropdown(customtkinter.CTkToplevel):
-    
+    ''' 
+    Taken from:
+    https://github.com/Akascape/CTkScrollableDropdown
+    '''
     def __init__(self, attach, x=None, y=None, button_color=None, height: int = 300, width: int = None,
                  fg_color=None, button_height: int = 20, justify="center", scrollbar_button_color=None,
                  scrollbar=True, scrollbar_button_hover_color=None, frame_border_width=1, values=[],
@@ -68,7 +78,8 @@ class CTkScrollableDropdown(customtkinter.CTkToplevel):
         self.scroll_button_color = customtkinter.ThemeManager.theme["CTkScrollbar"]["button_color"] if scrollbar_button_color is None else scrollbar_button_color
         self.scroll_hover_color = customtkinter.ThemeManager.theme["CTkScrollbar"]["button_hover_color"] if scrollbar_button_hover_color is None else scrollbar_button_hover_color
         self.frame_border_color = customtkinter.ThemeManager.theme["CTkFrame"]["border_color"] if frame_border_color is None else frame_border_color
-        self.button_color = customtkinter.ThemeManager.theme["CTkButton"]["fg_color"] if button_color is None else button_color
+        self.button_color = customtkinter.ThemeManager.theme["CTkEntry"]["fg_color"] if fg_color is None else fg_color
+        # self.button_color = customtkinter.ThemeManager.theme["CTkButton"]["fg_color"] if button_color is None else button_color
         self.text_color = customtkinter.ThemeManager.theme["CTkLabel"]["text_color"] if text_color is None else text_color
         self.hover_color = customtkinter.ThemeManager.theme["CTkButton"]["hover_color"] if hover_color is None else hover_color
         
