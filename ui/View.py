@@ -59,7 +59,7 @@ class View(customtkinter.CTk):
         self.title("Midnight Science Plotter")
     
         # applyMSDarkTheme(self)
-        customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
+        customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
         customtkinter.set_default_color_theme("./utilities/MSdark.json")  # Themes: blue (default), dark-blue, green
         # customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
         

@@ -4,6 +4,8 @@ import customtkinter
 
 from ui.SignalPane import SignalPane
 from ui.FileSelector import FileSelectorDel
+from ui.ctk_scrollable_dropdown import CTkScrollableDropdown
+from ui.CTkScrollableComboBox import CTkScrollableComboBox
 
 class ResFilePane(customtkinter.CTkFrame):
     def __init__(self, parent, presenter,index = 0,entryText = '',comboboxList = [],*args,**kwargs)->None:
@@ -39,7 +41,8 @@ class ResFilePane(customtkinter.CTkFrame):
         self.selX = customtkinter.CTkLabel(self, text = 'Select X', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.xSignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList, command=lambda event: self.presenter.AddXAxisSignal(self))
+        # self.xSignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList, command=lambda event: self.presenter.AddXAxisSignal(self))
+        self.xSignalCollection = customtkinter.CTkComboBox(self,values = comboboxList)
         self.xSignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
         
         # Frame for selected X Axis signal
@@ -53,7 +56,8 @@ class ResFilePane(customtkinter.CTkFrame):
         self.selX = customtkinter.CTkLabel(self, text = 'Select Y', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.ySignalCollection = customtkinter.CTkComboBox(self,state='readonly',values=comboboxList, command=lambda event: self.presenter.AddSignal(self))
+        self.ySignalCollection = CTkScrollableComboBox(self,values=comboboxList)
+        # self.ySignalCollection = CTkScrollableComboBox(self,state='readonly',values=comboboxList, command=lambda event: self.presenter.AddSignal(self))
         self.ySignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
         
         # Frame for selected signals

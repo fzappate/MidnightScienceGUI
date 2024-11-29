@@ -69,8 +69,55 @@ class Presenter():
         entry.delete(0,tk.END)
         entry.insert(0,txt)
 
+    def ScrollCombobox(self, event,combobox):
+        """
+        Mimic the scroll buttons by changing the current selection in the ComboBox
+        using the mouse wheel.
+        """
+        print('scrolling')
+        
+        current_selection = combobox.get()  # Get the current index of the selected item
+        valList = combobox.cget('values')
+        if current_selection == '':
+            current_index = -1
+        else:
+            current_index = valList.index(current_selection)
+        
+        max_index = len(combobox._values) - 1  # Get the max index of the options
 
+        if event.delta > 0:  # Scroll up
+            new_index = max(current_index - 1, 0)  # Ensure we don't go below index 0
+        else:  # Scroll down
+            new_index = min(current_index + 1, max_index)  # Ensure we don't go beyond max index
 
+        # Update the combobox selection
+        combobox.set(combobox._values[new_index])
+
+    def bind_dropdown_mouse_wheel(self, event,combobox):
+        '''tets'''
+        """
+        Bind the mouse wheel event to the dropdown canvas for smooth scrolling.
+        """
+        print("Scroll 1")
+        # Access the internal dropdown (Toplevel widget)
+        dropdown_window = combobox._dropdown_menu
+        
+        if dropdown_window:  # Ensure the dropdown is open
+            canvas = dropdown_window.children.get("!ctkcanvas")
+            if canvas:  # Ensure the canvas exists
+                canvas.bind("<MouseWheel>", lambda e: self.scroll_dropdown(e, canvas))
+        
+    def scroll_dropdown(self, event, canvas):
+        """
+        Scroll the dropdown canvas with the mouse wheel.
+        """
+        if event.delta > 0:  # Scroll up
+            canvas.yview_scroll(-1, "units")
+        else:  # Scroll down
+            canvas.yview_scroll(1, "units")
+            
+        print("Scroll 2")
+            
     # GUI Initialization
     def LoadSettings(self) -> None:
         ''' This function loads the GUI settings.'''

@@ -152,5 +152,16 @@
       "size": 13,
       "weight": "normal"
     }
+  },
+  "CTkScrollableDropdown": {
+    "corner_radius": 0,
+    "border_width": 1,
+    "fg_color": ["#F9F9FA", "#464646"],
+    "border_color": ["#979DA2", "#323232"],
+    "button_color": ["#979DA2", "gray41"],
+    "button_hover_color": ["#6E7174", "#7A848D"],
+    "text_color": ["gray14", "red"],
+    "text_color_disabled": ["gray50", "gray45"]
+
   }
 }
