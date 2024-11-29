@@ -413,8 +413,8 @@ class Presenter():
         f.close()
         
         # If properly written overwrite official .json file
+        projModelLocation = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName
         if saveSuccessful: 
-            projModelLocation = self.model.settings.projectFolder + self.model.settings.defaultProjectModelName
             copy2(tempProjModelLocation, projModelLocation)            
             self.PrintMessage('Project model saved in ' + projModelLocation)
         else:
@@ -433,7 +433,6 @@ class Presenter():
         else:   
             for ii,plot in enumerate(self.model.projectModel.containedPlots):
                 self.SavePlotToJson(plot,f)
-                a = 2
                 if ii < noOfContainedPlots-1:
                     f.write('}\n,\n') # Close PlotModel object
                 else:
@@ -447,6 +446,7 @@ class Presenter():
         f.write('"rightMargin": '+ str(plotModel.rightMargin) +',\n')
         f.write('"bottomMargin": '+ str(plotModel.bottomMargin) +',\n')
         f.write('"topMargin": '+ str(plotModel.topMargin) +',\n')
+        
         f.write('"colorPalette": '+ str(plotModel.colorPalette) +',\n')
         f.write('"canvasColor": ["'+ plotModel.canvasColor[0] + '","' + plotModel.canvasColor[1] + '","' + plotModel.canvasColor[2] +'"],\n')
         f.write('"plotColor": ["'+ plotModel.plotColor[0] + '","' + plotModel.plotColor[1] + '","' + plotModel.plotColor[2] +'"],\n')
@@ -489,7 +489,7 @@ class Presenter():
         f.write('"setGrid": '+ str(subplotModel.setGrid) +',\n')
         f.write('"colorCounter": '+ str(subplotModel.colorCounter)+',\n')
         f.write('"noOfResFile": '+ str(subplotModel.noOfResFile)+',\n')
-        f.write('"xAxisSelectedIndx": '+ str(subplotModel.xAxisSelectedIndx)+',\n')
+        # f.write('"xAxisSelectedIndx": '+ str(subplotModel.xAxisSelectedIndx)+',\n')
         
         # Print Result files
         f.write('"containedResultFiles": [\n')
@@ -1291,8 +1291,8 @@ class Presenter():
                             axList[jj,0].legend()
                         
                             # Extract subplot default settings
-                            subplot.xLim = axList[jj,0].get_xlim()
-                            subplot.yLim = axList[jj,0].get_ylim()
+                            subplot.xLim = [float(axList[jj,0].get_xlim()[0]), float(axList[jj,0].get_xlim()[1])]
+                            subplot.yLim = [float(axList[jj,0].get_ylim()[0]), float(axList[jj,0].get_ylim()[1])]
                             yTicksArray = axList[jj,0].get_yticks()
                             xTicksArray = axList[jj,0].get_xticks()
                             xTicks = float(xTicksArray[1]) - float(xTicksArray[0])

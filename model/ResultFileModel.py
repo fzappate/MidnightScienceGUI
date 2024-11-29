@@ -15,7 +15,6 @@ class ResultFileModel():
         self.signals = []
         self.signalNames = []
         self.selectedSignals = []
-        self.selectedSignalsIndx = []
         
         self.xAxisSignal = PlottedSignalModel()
         

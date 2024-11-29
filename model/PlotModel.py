@@ -14,7 +14,6 @@ class PlotModel():
         self.topMargin = 0.9
         
         self.colorPalette = 0
-        
         self.canvasColor = ["#ffffff","#666666","#666666"]
         self.plotColor =  ["#ffffff","#666666","#666666"]
         self.toolbarColor = ["#cccccc","#333333","#666666"]

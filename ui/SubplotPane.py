@@ -20,7 +20,6 @@ class SubplotPane(CollapsiblePaneDelOpts):
         # Store the inputs
         self.index = index
         self.presenter = presenter
-        self.listOfSignals = subplotModel.xAxisSignalsName
         self.xAxisIndx = subplotModel.xAxisSelectedIndx
         
         # Configure the master widget
@@ -38,8 +37,6 @@ class SubplotPane(CollapsiblePaneDelOpts):
         self.noOfRows = 0
         self.addFileBtn = customtkinter.CTkButton(self.collapsibleFrame,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
         self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='EW', pady = (3,3))
-        # if len(self.listOfSignals)>0:
-        #     self.xAxisSelect.set(self.listOfSignals[0])
             
         self.noOfRows +=1
         self.interior = customtkinter.CTkFrame(self.collapsibleFrame,height=0)
