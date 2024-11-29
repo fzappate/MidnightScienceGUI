@@ -63,14 +63,5 @@ class ResFilePane(customtkinter.CTkFrame):
         self.yAxisInterior = customtkinter.CTkFrame(self,height=0,width=0)
         self.yAxisInterior.grid(row=self.noOfRows,column=0,sticky='NEW', padx = (3,0),columnspan=2)     
         self.yAxisInterior.columnconfigure(0,weight=1)   
-        
-
-    def PrintCombo(self,event):
-        '''Test fun'''
-        selection = self.signalCollection.get()
-        
-        self.noOfRows +=1
-        sigPane = SignalPane(self, self.presenter, sigName = selection, bg = 'red')
-        sigPane.grid(row=self.noOfRows,column=0,sticky='EW')
-        
+                
    

@@ -49,8 +49,6 @@ class PlotOptions(tk.Frame):
         self.titleEntry = customtkinter.CTkEntry(self.titleFrame)
         self.titleEntry.grid( row=0, column=1, padx=(padX, padX), sticky='EW')
         self.UpdateEntry(self.titleEntry, self.title)
-        self.titleEntry.bind("<FocusOut>",lambda event: self.ValidatePlotTitle( self.titleEntry,self.title))
-        self.titleEntry.bind("<Return>",lambda event: self.ValidatePlotTitle( self.titleEntry, self.title))
 
 
 
@@ -212,12 +210,21 @@ class PlotOptions(tk.Frame):
         
         cancelBtn = customtkinter.CTkButton(btnFrame,text = 'Cancel', width = btnSize, command=lambda:self.presenter.ClosePlotOptions(self))
         cancelBtn.grid(row = 0, column=0,padx = padX, pady = (6*padY,padY), sticky = 'E')
-        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.presenter.ApplyPlotOptions(self))
+        applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.ValidateAndApply())
+        # applyBtn = customtkinter.CTkButton(btnFrame,text = 'Apply', width = btnSize, command=lambda:self.presenter.ApplyPlotOptions(self))
         applyBtn.grid(row = 0, column=1,padx = padX,pady = (6*padY,padY), sticky = 'E')
         okBtn = customtkinter.CTkButton(btnFrame,text = 'Ok', width = btnSize, command=lambda:self.presenter.OkPlotOptions(self))
         okBtn.grid(row = 0, column=2,padx = (padX, padX),pady = (6*padY,padY), sticky = 'E')
         
         self.SetColorPalette()
+        
+    def ValidateAndApply(self):
+        '''ttt'''
+        err = self.ValidatePlotTitle(self.titleEntry, self.title)
+        if not err:
+            self.presenter.ApplyPlotOptions(self)
+        else:
+            self.presenter.PrintError("The tab "+ self.titleEntry.get() +" name input is already in use. Choose a different name.")
                 
         
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
@@ -230,7 +237,11 @@ class PlotOptions(tk.Frame):
         
     def ValidatePlotTitle(self,titleEntry, previousVal):
         '''Make sure that the plot title just entered doesn't already exists.'''
+        # Retrieve list of tabs
         tabListName = self.presenter.view.projectNotebook.list().copy()
+        # Remove the name of the tab that the user is working on
+        tabListName.remove(self.title)
+        # Extract entry content
         inputTitle = titleEntry.get()
         
         if inputTitle in tabListName:

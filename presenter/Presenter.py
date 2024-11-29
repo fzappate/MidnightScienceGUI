@@ -334,14 +334,23 @@ class Presenter():
                         for kk, jsonResFile in enumerate(jsonContainedResFile):
                             resFileModel = ResultFileModel()
                             resFileModel.name = jsonResFile["name"]
-                            resFileModel.absPath = jsonResFile["absPath"]
-                            xAxisSignName = jsonResFile["xAxisSigName"]
+                            
                             # If abs path is set, load the signals
+                            resFileModel.absPath = jsonResFile["absPath"]
                             if not resFileModel.absPath == '':
                                 resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
-                                
+                            
+                            # Store x signal data
+                            xAxisSignName = jsonResFile["xAxisSigName"]
+                            xAxisSignUnit = jsonResFile["xAxisUnit"]
+                            scalingFactor = jsonResFile["scalingFactor"]
+                            
                             xSigIndex = resFileModel.signalNames.index(xAxisSignName)
-                            resFileModel.xAxisSignal = resFileModel.signals[xSigIndex]
+                            xSig = resFileModel.signals[xSigIndex]
+                            xSig.units = xAxisSignUnit
+                            xSig.scalingFactor = scalingFactor
+                            
+                            resFileModel.xAxisSignal = xSig
                             
                             # Load selected signal data
                             jsonSelectedSignals = jsonResFile["selectedSignals"]
@@ -508,7 +517,11 @@ class Presenter():
         f.write('{')
         f.write('"name": "'+ resultFile.name +'",\n')
         f.write('"absPath": "'+ resultFile.absPath +'",\n')
+        
         f.write('"xAxisSigName": "'+ resultFile.xAxisSignal.name +'",\n')
+        f.write('"xAxisUnit": "'+ resultFile.xAxisSignal.units +'",\n')
+        f.write('"scalingFactor": "'+ str(resultFile.xAxisSignal.scalingFactor) +'",\n')
+        f.write('"quantity": "'+ resultFile.xAxisSignal.quantity +'",\n')
         
         f.write('"selectedSignals": [\n')
         
@@ -641,7 +654,6 @@ class Presenter():
         self.model.projectModel.tabSelected = plotOptionsPane.titleEntry.get()
         
         # Redraw notebook
-        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
     def ClosePlotOptions(self,plotOptionsPane)->None:
@@ -951,12 +963,11 @@ class Presenter():
         self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
         
-    def ModifySignalScaling(self,event,signalPane, scalingList)->None:
+    def ModifySignalScaling(self,event,signalPane, unitList, scalingList)->None:
         '''Change the scaling of the signal.'''
         # Get the combobox index, string, and scaling factor
-        optNoSelected = signalPane.unitsCb.current()
-        optStrSelected = event.widget.get()
-        scalingFactor = scalingList[optNoSelected]
+        unitIndx = unitList.index(event)
+        scalingFactor = scalingList[unitIndx]
         
         # Extract indexes
         signalIndx = signalPane.index
@@ -974,7 +985,7 @@ class Presenter():
         rawData = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].rawData
         scaledData = [scalingFactor*val for val in rawData] 
         # Save new units, scaling factor, and scaled data
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].units = optStrSelected
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].units = event
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scalingFactor = scalingFactor
         # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].plottedSignals[signalIndx].scaledData = scaledData 
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scaledData = scaledData
@@ -1240,7 +1251,7 @@ class Presenter():
                     axTest[jj].tick_params(axis='x', colors=textColor)
                     axTest[jj].tick_params(axis='y', colors=textColor)
                 
-                    # axList[jj,0].set_facecolor(plotColor)
+                    axList[jj,0].set_facecolor(plotColor)
                     axList[jj,0].grid(subplot.setGrid)
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 

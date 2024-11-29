@@ -27,7 +27,6 @@ class PlottedSignalModel(SignalModel):
         '''Take a signal of the Signal class, copy its properties into 
         a PlottedSignal instance.'''
         self.name = signal.name
-        self.indexInResFile = signal.indexInResFile
         self.label = signal.name
         self.units = signal.units
         self.rawData = signal.rawData

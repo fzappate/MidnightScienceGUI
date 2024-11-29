@@ -55,11 +55,10 @@ class SignalPane(customtkinter.CTkFrame):
         
         # Signal units
         colNo+=1
-        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList,command = lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
+        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList,command = lambda event: self.presenter.ModifySignalScaling(event, self, unitList, scalingList))
         self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,3))
         
         self.unitsCb.set(signal.units)
-        # self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
         
         # Signal options
         colNo+=1
