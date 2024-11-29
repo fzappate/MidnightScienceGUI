@@ -51,14 +51,15 @@ class SignalPane(customtkinter.CTkFrame):
         colNo+=1
         self.colorBox = customtkinter.CTkLabel(self,text = '\u2588\u2588\u2588\u2588')
         self.colorBox.grid(row=0,column=colNo, padx=(3,3))
+        self.colorBox.configure(text_color=self.signal.color)
         
         # Signal units
         colNo+=1
-        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList)
+        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList,command = lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
         self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,3))
         
         self.unitsCb.set(signal.units)
-        self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
+        # self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
         
         # Signal options
         colNo+=1

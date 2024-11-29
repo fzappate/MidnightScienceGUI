@@ -11,7 +11,6 @@ class SubplotPane(CollapsiblePaneDelOpts):
                  presenter,
                  index,
                  subplotModel,
-                 xAxisIndx = None,
                  *args,**kwargs):
     
         ''''''
@@ -20,7 +19,6 @@ class SubplotPane(CollapsiblePaneDelOpts):
         # Store the inputs
         self.index = index
         self.presenter = presenter
-        self.xAxisIndx = subplotModel.xAxisSelectedIndx
         
         # Configure the master widget
         btnSize = 30

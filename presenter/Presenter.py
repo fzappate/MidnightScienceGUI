@@ -327,7 +327,6 @@ class Presenter():
                         
                         subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
                         
-                        subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
                         
                         
                         # Load result files data
@@ -336,10 +335,13 @@ class Presenter():
                             resFileModel = ResultFileModel()
                             resFileModel.name = jsonResFile["name"]
                             resFileModel.absPath = jsonResFile["absPath"]
-                                                
+                            xAxisSignName = jsonResFile["xAxisSigName"]
                             # If abs path is set, load the signals
                             if not resFileModel.absPath == '':
                                 resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
+                                
+                            xSigIndex = resFileModel.signalNames.index(xAxisSignName)
+                            resFileModel.xAxisSignal = resFileModel.signals[xSigIndex]
                             
                             # Load selected signal data
                             jsonSelectedSignals = jsonResFile["selectedSignals"]
@@ -365,11 +367,6 @@ class Presenter():
                             
                             # Append ResultFileModel to SubplotModel.containedResultFiles
                             subplotModel.containedResultFiles.append(resFileModel)
-                        # REMOVED BECAUSE X AXIS ARE IN THE RES FILE NOW, NOT IN SUBPLOT
-                        # subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
-                        # subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
-                        # subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
-                        # subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
                             
                         # Append the SubplotModel inside the PlotModel.containedSubplots
                         plotModel.containedSubplots.append(subplotModel)
@@ -511,6 +508,8 @@ class Presenter():
         f.write('{')
         f.write('"name": "'+ resultFile.name +'",\n')
         f.write('"absPath": "'+ resultFile.absPath +'",\n')
+        f.write('"xAxisSigName": "'+ resultFile.xAxisSignal.name +'",\n')
+        
         f.write('"selectedSignals": [\n')
         
         # Print selected signals
