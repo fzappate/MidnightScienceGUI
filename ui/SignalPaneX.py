@@ -2,7 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 import customtkinter
 
-class SignalPane(customtkinter.CTkFrame):
+class SignalPaneX(customtkinter.CTkFrame):
     def __init__(self, 
                  parent, 
                  presenter,
@@ -47,27 +47,13 @@ class SignalPane(customtkinter.CTkFrame):
         
         unitList, scalingList = self.presenter.GetUnitsList(signal)
         
-        # Signal color
-        colNo+=1
-        self.colorBox = customtkinter.CTkLabel(self,text = '\u2588\u2588\u2588\u2588')
-        self.colorBox.grid(row=0,column=colNo, padx=(3,3))
-        self.colorBox.configure(text_color=self.signal.color)
-        
         # Signal units
         colNo+=1
-        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList,command = lambda event: self.presenter.ModifySignalScaling(event, self, unitList, scalingList))
-        self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,3))
+        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList)
+        self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
         
         self.unitsCb.set(signal.units)
-        
-        # Signal options
-        colNo+=1
-        self.optBtn = customtkinter.CTkButton(self,text = self.optIcon, width=30,command=lambda: self.presenter.OpenSignalOptions(self, self.optBtn))
-        self.optBtn.grid(row=0,column=colNo,sticky='EW', padx=(3,3))
-        
-        # Signal delete
-        colNo+=1
-        self.delBtn = customtkinter.CTkButton(self,text = self.delIcon, width=30,command=lambda: self.presenter.DeleteSignal(self))
-        self.delBtn.grid(row=0,column=colNo,sticky='EW', padx=(0,0))
+        self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
+
 
 
