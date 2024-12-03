@@ -3,7 +3,6 @@ class SignalModel():
                  name = '',
                  units = '',
                  quantity = '',
-                 indexInResFile = 0,
                  scalingFactor = 1)->None:
         '''
         Class that generates the model of a Signal class.
@@ -16,7 +15,6 @@ class SignalModel():
         self.units = units
         self.rawData = []
         self.scaledData = []
-        self.indexInResFile = indexInResFile
         self.scalingFactor = scalingFactor
         
     def AddData(self,data)->None:

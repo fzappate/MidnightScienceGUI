@@ -45,7 +45,7 @@ class Presenter():
         # Save model and view into the presenter
         self.model = model
         self.view = view
-    
+
     def RunUI(self):
         '''Run the UI.'''
         # Initialize UI and start the loop 
@@ -61,7 +61,7 @@ class Presenter():
     def OnClosing(self):
         self.view.quit()  # stops mainloop
         self.view.destroy()  # this is necessary on Windows to prevent Fatal Python Error: PyEval_RestoreThread: NULL tstate
-        
+
     def UpdateEntry(self,entry:ttk.Entry,txt:str)->None:
         """This function takes whatever entry, deleted the text, and write the new 
         text given as input. """
@@ -106,7 +106,7 @@ class Presenter():
             canvas = dropdown_window.children.get("!ctkcanvas")
             if canvas:  # Ensure the canvas exists
                 canvas.bind("<MouseWheel>", lambda e: self.scroll_dropdown(e, canvas))
-        
+
     def scroll_dropdown(self, event, canvas):
         """
         Scroll the dropdown canvas with the mouse wheel.
@@ -117,7 +117,8 @@ class Presenter():
             canvas.yview_scroll(1, "units")
             
         print("Scroll 2")
-            
+
+
     # GUI Initialization
     def LoadSettings(self) -> None:
         ''' This function loads the GUI settings.'''
@@ -342,15 +343,14 @@ class Presenter():
                             
                             # Store x signal data
                             xAxisSignName = jsonResFile["xAxisSigName"]
-                            xAxisSignUnit = jsonResFile["xAxisUnit"]
-                            scalingFactor = jsonResFile["scalingFactor"]
-                            
-                            xSigIndex = resFileModel.signalNames.index(xAxisSignName)
-                            xSig = resFileModel.signals[xSigIndex]
-                            xSig.units = xAxisSignUnit
-                            xSig.scalingFactor = scalingFactor
-                            
-                            resFileModel.xAxisSignal = xSig
+                            if not xAxisSignName == '':
+                                xAxisSignUnit = jsonResFile["xAxisUnit"]
+                                scalingFactor = jsonResFile["scalingFactor"]
+                                xSigIndex = resFileModel.signalNames.index(xAxisSignName)
+                                xSig = resFileModel.signals[xSigIndex]
+                                xSig.units = xAxisSignUnit
+                                xSig.scalingFactor = scalingFactor
+                                resFileModel.xAxisSignal = xSig
                             
                             # Load selected signal data
                             jsonSelectedSignals = jsonResFile["selectedSignals"]
@@ -366,9 +366,9 @@ class Presenter():
                                 selectedSignalModel.units = jsonSelSign["units"]
                                 selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
                                 selectedSignalModel.quantity = jsonSelSign["quantity"]
-                                selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
                                 
-                                selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
+                                selectedSignalIndex = resFileModel.signalNames.index(selectedSignalModel.name)
+                                selectedSignalModel.rawData = resFileModel.signals[selectedSignalIndex].rawData
                                 selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
                                 
                                 # Append PlottedSignal inside the ResultFileModel.selectedSignals
@@ -384,7 +384,8 @@ class Presenter():
                     projModel.containedPlots.append(plotModel)      
             
                 self.model.projectModel = projModel        
-            except:
+            except NameError as varName:
+                self.PrintError(varName)
                 self.PrintError('Something went wrong while reading ' + self.model.settings.defaultProjectModelName + '.')
                 self.PrintError('New project is started. Save current model in the selected folder to overwrite corrupted ' + self.model.settings.defaultProjectModelName + '.')
                 
@@ -550,7 +551,6 @@ class Presenter():
         f.write('"units": "'+ plottedSignal.units +'",\n')
         f.write('"scalingFactor": '+ str(plottedSignal.scalingFactor)+',\n')
         f.write('"quantity": "'+ plottedSignal.quantity +'"'+',\n')
-        f.write('"indexInResFile": '+ str(plottedSignal.indexInResFile)+'\n')
         f.write('}'+'\n')
 
 
@@ -868,17 +868,7 @@ class Presenter():
         
         # Set the first signal of the file as X axis
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal = signals[0]
-        
-        # If the first result pane is added
-        if resFilePane.index == 0:
-            # Load the first signal for the x axis
-            self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelected = signals[0]
-            self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelectedIndx = 0
-            # Add the signals to the x axis selection 
-            for signal, signalName in zip(signals, signalNames):
-                self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignals.append(signal)
-                self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
-        
+                
         self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
 
@@ -1149,7 +1139,7 @@ class Presenter():
             name = ":".join(name)
             units = signalTokens[-1]
             sigQuantity = self.DetermineSignalQuantity(name,units)
-            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indexInResFile=i)
+            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity)
             signals.append(sigTemp)
             signalNames.append(name)
         
@@ -1196,14 +1186,23 @@ class Presenter():
             print('Units of signal ' + name + ' not found.')
 
 
-
+    def DeleteChildren(self, widget):
+        '''Delete children'''
+        children = widget.winfo_children()
+        for child in children:
+            self.DeleteChildren(child)
+        
+        
     # REDRAW GUI
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
+
+        self.DeleteChildren( self.view.projectNotebook)
+            
         list = self.view.projectNotebook.list().copy()
         for tabName in list:
             self.view.projectNotebook.delete(tabName)
-             
+        
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
             
