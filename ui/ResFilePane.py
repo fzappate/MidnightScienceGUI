@@ -41,8 +41,10 @@ class ResFilePane(customtkinter.CTkFrame):
         self.selX = customtkinter.CTkLabel(self, text = 'Select X', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.xSignalCollection = CTkScrollableComboBox(self, self.presenter.AddXAxisSignal,values = comboboxList)
+        # self.xSignalCollection = CTkScrollableComboBox(self, self.presenter.AddXAxisSignal,values = comboboxList)
+        self.xSignalCollection = customtkinter.CTkComboBox(self, values = comboboxList, command = lambda event: self.presenter.AddXAxisSignal(event, self))
         self.xSignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
+        self.xSignalCollection.set('')
         
         # Frame for selected X Axis signal
         self.noOfRows +=1
@@ -55,13 +57,15 @@ class ResFilePane(customtkinter.CTkFrame):
         self.selX = customtkinter.CTkLabel(self, text = 'Select Y', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.ySignalCollection = CTkScrollableComboBox(self,self.presenter.AddSignal,values=comboboxList)
+        # self.ySignalCollection = CTkScrollableComboBox(self,self.presenter.AddSignal,values=comboboxList)
+        self.ySignalCollection = customtkinter.CTkComboBox(self,values=comboboxList, command = lambda event: self.presenter.AddSignal(event,self))
         self.ySignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,0), pady = 3)
+        self.ySignalCollection.set('')
         
         # Frame for selected signals
         self.noOfRows +=1
         self.yAxisInterior = customtkinter.CTkFrame(self,height=0,width=0)
-        self.yAxisInterior.grid(row=self.noOfRows,column=0,sticky='NEW', padx = (3,0),columnspan=2)     
+        self.yAxisInterior.grid(row=self.noOfRows,column=0,sticky='NEW', padx = (3,0),pady= (0,6),columnspan=2)     
         self.yAxisInterior.columnconfigure(0,weight=1)   
                 
    

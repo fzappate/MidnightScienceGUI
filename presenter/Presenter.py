@@ -818,10 +818,12 @@ class Presenter():
         
     def DeleteResultFile(self,resFilePane)->None:
         '''Delete ResultFile from the model and redraw the PlotManager.'''
-        subplotIndx = resFilePane.master.master.master.indx
+        plotName = self.view.projectNotebook.get()
+        plotIndx = self.view.projectNotebook.index(plotName)
+        subplotIndex = resFilePane.master.master.master.index
         
         # Update SubplotModel adding a ResultFile
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].DeleteResultFile(resFilePane)
         
         self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
@@ -1260,6 +1262,8 @@ class Presenter():
                     
                     # Redraw result files 
                     for kk, resultFile in enumerate(subplot.containedResultFiles):
+                        
+                        # If the signal list is empty don't do anything
                         resFile = ResFilePane(subplotPane.interior,
                                             self,
                                             index = kk,
@@ -1267,71 +1271,72 @@ class Presenter():
                                             comboboxList=resultFile.signalNames)
                         resFile.grid(row=kk,column=0,sticky='NEW')
                         
-                        if resultFile.xAxisSignal.name == '':
-                            continue
-                        
-                        xAxisSignal = resultFile.xAxisSignal
-                        xSigPane = SignalPaneX(   resFile.xAxisInterior,
-                                                    self,
-                                                    xAxisSignal)
-                        xSigPane.grid(row=0,column=0,sticky='EW')
+                        # Draw X signal if there is any
+                        if not resultFile.xAxisSignal.name == '':
+                            xAxisSignal = resultFile.xAxisSignal
+                            xSigPane = SignalPaneX(   resFile.xAxisInterior,
+                                                        self,
+                                                        xAxisSignal)
+                            xSigPane.grid(row=0,column=0,sticky='EW')
 
-                        # Redraw selected signals
+
+                        # Draw selected signals if there are any
                         for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
                             sigPane = SignalPane(   resFile.yAxisInterior,
                                                     self,
                                                     selectedSignal,
                                                     index = hh)
-                            sigPane.grid(row=hh,column=0,sticky='EW')
+                            sigPane.grid(row=hh,column=0,pady = 1,sticky='EW')
                             
-                        
-                            # REDRAW PLOT CANVAS ==========================
-                            psCol=selectedSignal.color
-                            psWidth=selectedSignal.width
-                            psStyle=selectedSignal.style
-                            psMarker=selectedSignal.marker
-                            psLabel=selectedSignal.label
-                            axList[jj,0].plot(xAxisSignal.scaledData,selectedSignal.scaledData,
-                                                color=psCol,
-                                                linewidth=psWidth,
-                                                linestyle=psStyle,
-                                                marker=psMarker,
-                                                label=psLabel)
-                            axList[jj,0].legend()
-                        
-                            # Extract subplot default settings
-                            subplot.xLim = [float(axList[jj,0].get_xlim()[0]), float(axList[jj,0].get_xlim()[1])]
-                            subplot.yLim = [float(axList[jj,0].get_ylim()[0]), float(axList[jj,0].get_ylim()[1])]
-                            yTicksArray = axList[jj,0].get_yticks()
-                            xTicksArray = axList[jj,0].get_xticks()
-                            xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
-                            yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
-                            subplot.xTick = xTicks
-                            subplot.yTick = yTicks
+                            # If there is an X and Y signals selected plot
+                            if not resultFile.xAxisSignal.name == '':
+                                # REDRAW PLOT CANVAS ==========================
+                                psCol=selectedSignal.color
+                                psWidth=selectedSignal.width
+                                psStyle=selectedSignal.style
+                                psMarker=selectedSignal.marker
+                                psLabel=selectedSignal.label
+                                axList[jj,0].plot(xAxisSignal.scaledData,selectedSignal.scaledData,
+                                                    color=psCol,
+                                                    linewidth=psWidth,
+                                                    linestyle=psStyle,
+                                                    marker=psMarker,
+                                                    label=psLabel)
+                                axList[jj,0].legend()
                             
-                            # Set subplot properties
-                            # Title
-                            axList[jj,0].title.set_text(subplot.name)
-                            # Labels
-                            axList[jj,0].set_xlabel(subplot.xLabel,color=textColor)
-                            axList[jj,0].set_ylabel(subplot.yLabel,color=textColor)
-                            # Grid
-                            axList[jj,0].grid(subplot.setGrid)
-                            # Axis Limits
-                            if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
-                                axList[jj,0].set_xlim(subplot.xLimUser)
-                            if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
-                                axList[jj,0].set_ylim(subplot.yLimUser)
-                            # Ticks
-                            if subplot.useUserTicks & (subplot.xTickUser!=0):
-                                currTickX = list(axList[jj,0].get_xlim())
-                                tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
-                                axList[jj,0].set_xticks(tickVectX)
+                                # Extract subplot default settings
+                                subplot.xLim = [float(axList[jj,0].get_xlim()[0]), float(axList[jj,0].get_xlim()[1])]
+                                subplot.yLim = [float(axList[jj,0].get_ylim()[0]), float(axList[jj,0].get_ylim()[1])]
+                                yTicksArray = axList[jj,0].get_yticks()
+                                xTicksArray = axList[jj,0].get_xticks()
+                                xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
+                                yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
+                                subplot.xTick = xTicks
+                                subplot.yTick = yTicks
                                 
-                            if subplot.useUserTicks & (subplot.yTickUser!=0):
-                                currTickY = list(axList[jj,0].get_ylim())
-                                tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
-                                axList[jj,0].set_yticks(tickVectY)
+                                # Set subplot properties
+                                # Title
+                                axList[jj,0].title.set_text(subplot.name)
+                                # Labels
+                                axList[jj,0].set_xlabel(subplot.xLabel,color=textColor)
+                                axList[jj,0].set_ylabel(subplot.yLabel,color=textColor)
+                                # Grid
+                                axList[jj,0].grid(subplot.setGrid)
+                                # Axis Limits
+                                if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
+                                    axList[jj,0].set_xlim(subplot.xLimUser)
+                                if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
+                                    axList[jj,0].set_ylim(subplot.yLimUser)
+                                # Ticks
+                                if subplot.useUserTicks & (subplot.xTickUser!=0):
+                                    currTickX = list(axList[jj,0].get_xlim())
+                                    tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                                    axList[jj,0].set_xticks(tickVectX)
+                                    
+                                if subplot.useUserTicks & (subplot.yTickUser!=0):
+                                    currTickY = list(axList[jj,0].get_ylim())
+                                    tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                                    axList[jj,0].set_yticks(tickVectY)
                                     
                             
                 # Draw the canvas and toolbar inside the Plotter object
