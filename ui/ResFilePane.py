@@ -4,7 +4,6 @@ import customtkinter
 
 from ui.SignalPane import SignalPane
 from ui.FileSelector import FileSelectorDel
-from ui.ctk_scrollable_dropdown import CTkScrollableDropdown
 from ui.CTkScrollableComboBox import CTkScrollableComboBox
 
 class ResFilePane(customtkinter.CTkFrame):
