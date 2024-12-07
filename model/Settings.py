@@ -32,3 +32,4 @@ class Settings():
         self.defaultProjectModelName = '/ProjectModel.json'
         self.defaultTempProjectModelName = '/ProjectModelTemp.json'
         self.projectFolder = ''
+        self.theme = ''

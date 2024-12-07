@@ -121,7 +121,14 @@ class Presenter():
     def ChangeTheme(self):
         '''Change theme'''
         print("Change theme")
-        customtkinter.set_appearance_mode("light")
+        if self.model.settings.theme == 'dark':
+            customtkinter.set_appearance_mode("light")
+            self.model.settings.theme = 'light'
+            self.UpdateSettingFile("Theme", "light")
+        elif self.model.settings.theme == 'light':
+            customtkinter.set_appearance_mode("dark")
+            self.model.settings.theme = 'dark'
+            self.UpdateSettingFile("Theme", "dark")
         
     # GUI Initialization
     def LoadSettings(self) -> None:
@@ -154,11 +161,16 @@ class Presenter():
                     
         file.close()
         
-        # load setting dictionary in setting structure
+        
+        # Extract useful entry
         self.model.settings.projectFolder = settingDict.get("ProjectFolder")
 
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
+        
+        # Set theme
+        self.model.settings.theme = settingDict.get("Theme")
+        customtkinter.set_appearance_mode(self.model.settings.theme)
 
 
 
