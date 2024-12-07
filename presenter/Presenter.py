@@ -118,7 +118,11 @@ class Presenter():
             
         print("Scroll 2")
 
-
+    def ChangeTheme(self):
+        '''Change theme'''
+        print("Change theme")
+        customtkinter.set_appearance_mode("light")
+        
     # GUI Initialization
     def LoadSettings(self) -> None:
         ''' This function loads the GUI settings.'''
