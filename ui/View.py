@@ -61,7 +61,7 @@ class View(customtkinter.CTk):
     
         # Set theme
         customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
-        customtkinter.set_default_color_theme("./utilities/MSdark.json")  # Themes: blue (default), dark-blue, green
+        customtkinter.set_default_color_theme("./utilities/MSdark.json") 
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
