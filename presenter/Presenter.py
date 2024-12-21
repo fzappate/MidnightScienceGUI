@@ -839,16 +839,10 @@ class Presenter():
         subplotIndex = resFilePane.master.master.master.index
         resFilePaneIndex = resFilePane.index
         
-        
         # Delete the result file pane
         containedResultFiles = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].containedResultFiles
-        resFilePane = containedResultFiles[resFilePaneIndex]
-        # resFilePane = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].containedResultFiles[resFilePaneIndex]
-        
         del self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].containedResultFiles[resFilePaneIndex]
         
-        
-        # self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         # Reassign containedResultFiles indx
         for ii, resFileTemp in enumerate(containedResultFiles):
             resFileTemp.index = ii
@@ -1215,7 +1209,6 @@ class Presenter():
         
         else:
             print('Units of signal ' + name + ' not found.')
-
 
     def DeleteChildren(self, widget):
         '''Delete children'''
