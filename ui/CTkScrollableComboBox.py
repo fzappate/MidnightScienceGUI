@@ -3,7 +3,7 @@ import difflib
 from typing import Union, Tuple, Callable, List, Optional, Any
 import time
 import customtkinter
-from ui.ctk_scrollable_dropdown import CTkScrollableDropdown
+# from ui.ctk_scrollable_dropdown import CTkScrollableDropdown
 
 class CTkScrollableComboBox(customtkinter.CTkFrame):
     def __init__(self, parent, fcn, values = [],*args,**kwargs):

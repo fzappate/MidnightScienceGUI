@@ -32,7 +32,7 @@ class SubplotOptions(tk.Frame):
         
         # Title frame
         rowNo = 0
-        self.frame1 = tk.Frame(parent, pady=3, bg = 'red')
+        self.frame1 = tk.Frame(parent, pady=3)
         self.frame1.grid(row=rowNo,column=0, pady=3, sticky = 'NEW')
         self.frame1.columnconfigure(1,weight=1)
         
@@ -44,7 +44,7 @@ class SubplotOptions(tk.Frame):
         
         # X Axis labels frame
         rowNo +=1
-        self.frame2 = tk.Frame(parent, pady=3, bg = 'blue')
+        self.frame2 = tk.Frame(parent, pady=3)
         self.frame2.grid(row=rowNo,column=0, sticky = 'NEW')
         self.frame2.columnconfigure(1,weight=1)
         
@@ -56,7 +56,7 @@ class SubplotOptions(tk.Frame):
         
         # Y Axis labels frame
         rowNo +=1
-        self.frame3 = tk.Frame(parent, pady=3, bg = 'blue')
+        self.frame3 = tk.Frame(parent, pady=3)
         self.frame3.grid(row=rowNo,column=0, sticky = 'NEW')
         self.frame3.columnconfigure(1,weight=1)
         self.yAxisLabLab = ttk.Label(self.frame3, text = 'Y Axis Label',width=labelSize)
@@ -67,7 +67,7 @@ class SubplotOptions(tk.Frame):
                 
         # X Axis limits frame
         rowNo +=1
-        self.frame4 = tk.Frame(parent, pady=3, bg = 'red')
+        self.frame4 = tk.Frame(parent, pady=3)
         self.frame4.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.xAxisLimLab = ttk.Label(self.frame4, text = 'X Axis Limits',width=labelSize)
@@ -88,7 +88,7 @@ class SubplotOptions(tk.Frame):
         
         # Y Axis limits frame
         rowNo +=1
-        self.frame5 = tk.Frame(parent, pady=3, bg = 'red')
+        self.frame5 = tk.Frame(parent, pady=3)
         self.frame5.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.yAxisLimLab = ttk.Label(self.frame5, text = 'Y Axis Limits',width=labelSize)
@@ -109,7 +109,7 @@ class SubplotOptions(tk.Frame):
 
         # X Axis Ticks
         rowNo +=1
-        self.frame6 = tk.Frame(parent, pady=3, bg = 'red')
+        self.frame6 = tk.Frame(parent, pady=3)
         self.frame6.grid(row=rowNo,column=0, sticky = 'NEW')
         self.xAxisTicksLab = ttk.Label(self.frame6, text = 'X Axis Ticks',width=labelSize)
         self.xAxisTicksLab.grid(row=1,column=0)
@@ -122,7 +122,7 @@ class SubplotOptions(tk.Frame):
                     
         # Y Axis Ticks
         rowNo +=1
-        self.frame7 = tk.Frame(parent, pady=3, bg = 'red')
+        self.frame7 = tk.Frame(parent, pady=3)
         self.frame7.grid(row=rowNo,column=0, sticky = 'NEW')
         self.yAxisTicksLab = ttk.Label(self.frame7, text = 'Y Axis Ticks',width=labelSize)
         self.yAxisTicksLab.grid(row=1,column=0)
@@ -134,7 +134,7 @@ class SubplotOptions(tk.Frame):
         
         # Set Use User Limits
         rowNo +=1
-        self.userLimFrame = tk.Frame(parent, pady=3, bg = 'green')
+        self.userLimFrame = tk.Frame(parent, pady=3)
         self.userLimFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.gridLab = ttk.Label(self.userLimFrame, text = 'Set Axis Limits',width=labelSize)
@@ -148,7 +148,7 @@ class SubplotOptions(tk.Frame):
         
         # Set Use User Ticks
         rowNo +=1
-        self.userTicksFrame = tk.Frame(parent, pady=3, bg = 'green')
+        self.userTicksFrame = tk.Frame(parent, pady=3)
         self.userTicksFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.userTicksLab = ttk.Label(self.userTicksFrame, text = 'Set Axis Ticks',width=labelSize)
@@ -162,7 +162,7 @@ class SubplotOptions(tk.Frame):
         
         # Grid frame
         rowNo +=1
-        self.gridFrame = tk.Frame(parent, pady=3, bg = 'green')
+        self.gridFrame = tk.Frame(parent, pady=3)
         self.gridFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.gridLab = ttk.Label(self.gridFrame, text = 'Grid',width=labelSize)
@@ -178,7 +178,7 @@ class SubplotOptions(tk.Frame):
         
         # Button frame
         rowNo +=1
-        btnFrame = tk.Frame(parent, pady=5, bg = 'cyan')
+        btnFrame = tk.Frame(parent, pady=5)
         btnFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         btnFrame.columnconfigure(0,weight=1)
         

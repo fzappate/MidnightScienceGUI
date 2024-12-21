@@ -27,6 +27,7 @@ from ui.PathSelector import PathSelector
 from ui.VerticalScrollText import VerticalScrollText
 from ui.AuxBar import AuxBar
 from ui.TabManager import TabManager
+from ui.ThemeManager import ThemeManager
 from ui.ProjectNotebook import ProjectNotebook
 
 # from utilities.MSStyles import applyMSDarkThemeK
@@ -58,10 +59,9 @@ class View(customtkinter.CTk):
         # Window title
         self.title("Midnight Science Plotter")
     
-        # applyMSDarkTheme(self)
+        # Set theme
         customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
-        customtkinter.set_default_color_theme("./utilities/MSdark.json")  # Themes: blue (default), dark-blue, green
-        # customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+        customtkinter.set_default_color_theme("./utilities/MSdark.json") 
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
@@ -99,14 +99,17 @@ class View(customtkinter.CTk):
         # Icon frame
         self.iconFrame = customtkinter.CTkFrame(self)
         self.iconFrame.grid(row=1, column=0, sticky='EW',ipady = 2)
-        self.iconFrame.columnconfigure(1, weight=1)
+        self.iconFrame.columnconfigure(2, weight=1)
 
         self.auxBar = AuxBar(self.iconFrame, presenter)
-        self.auxBar.grid(row=0, column=0, sticky='EW', padx=(0, 0), pady=(0, 0))
+        self.auxBar.grid(row=0, column=0, sticky='EW')
 
         self.tabManager = TabManager(self.iconFrame, presenter)
         self.tabManager.grid(row=0, column=1, sticky='EW')
-        self.tabManager.columnconfigure(2, weight=0)
+        
+        self.themeManager = ThemeManager(self.iconFrame, presenter)
+        self.themeManager.grid(row=0, column=2, sticky='E')
+        self.themeManager.columnconfigure(0, weight=1)
 
         # Main tabs
         self.projectNotebook = ProjectNotebook(self)

@@ -16,7 +16,7 @@ class PlotModel():
         self.colorPalette = 0
         self.canvasColor = ["#ffffff","#666666","#666666"]
         self.plotColor =  ["#ffffff","#666666","#666666"]
-        self.toolbarColor = ["#cccccc","#333333","#666666"]
+        self.toolbarColor = ["#D8D4D1","#323232","#666666"]
         self.textColor = ["#000000","#ffffff","#6666ff"]
         
         self.noOfSubplots = 0
