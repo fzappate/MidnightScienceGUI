@@ -837,11 +837,24 @@ class Presenter():
         plotName = self.view.projectNotebook.get()
         plotIndx = self.view.projectNotebook.index(plotName)
         subplotIndex = resFilePane.master.master.master.index
+        resFilePaneIndex = resFilePane.index
         
-        # Update SubplotModel adding a ResultFile
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].DeleteResultFile(resFilePane)
         
-        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
+        # Delete the result file pane
+        containedResultFiles = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].containedResultFiles
+        resFilePane = containedResultFiles[resFilePaneIndex]
+        # resFilePane = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].containedResultFiles[resFilePaneIndex]
+        
+        del self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndex].containedResultFiles[resFilePaneIndex]
+        
+        
+        # self.model.projectModel.tabSelected = self.view.projectNotebook.get()
+        # Reassign containedResultFiles indx
+        for ii, resFileTemp in enumerate(containedResultFiles):
+            resFileTemp.index = ii
+            
+        self.noOfResFile = len(containedResultFiles)
+        
         self.RedrawPlotNotebook()
         
     def BrowseResFile(self,fileSelector,resFilePane) -> None:

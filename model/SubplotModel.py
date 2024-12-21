@@ -12,12 +12,6 @@ class SubplotModel():
         self.isCollapsed = 1
         self.containedResultFiles = []
         
-        # self.xAxisSignals = []
-        # self.xAxisSignalsName = []
-        # self.xAxisSelected = []
-        # self.xAxisSelectedIndx = 0 
-        # self.xAxisSelectedName = '' # TO BE DELETED
-        
         self.xLabel = ''
         self.yLabel = ''
         self.xLim = [0.0, 1.0]
@@ -39,15 +33,17 @@ class SubplotModel():
         self.resultFiles.append(resultFileModel)
         self.noOfResFile = len(self.resultFiles)
         
+    
+    # DELETE
     def DeleteResultFile(self,resultFilePane):
         '''Remove a ResultFileModel from SubplotModel.'''
         # Remove result file
-        resultFileNo = resultFilePane.indx
+        resultFileNo = resultFilePane.index
         del self.resultFiles[resultFileNo]
         
         # Reassign result files indx
         for ii, resFileTemp in enumerate(self.resultFiles):
-            resFileTemp.indx = ii
+            resFileTemp.index = ii
             
         self.noOfResFile = len(self.resultFiles)
         
