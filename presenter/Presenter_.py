@@ -7,10 +7,10 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
-from ui.plotpane import PlotPane
+from ui.PlotPane_ import PlotPane
 from ui.PlotOptions import PlotOptions
-from ui.resfilepane import ResFilePane
-from ui.signalpane import SignalPane
+from ui.ResFilePane_ import ResFilePane
+from ui.SignalPane_ import SignalPane
 from ui.SubplotOptions import SubplotOptions
 from ui.SignalOptions import SignalOptions
 from ui.SubplotPane import SubplotPane

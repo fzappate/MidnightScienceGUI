@@ -37,9 +37,9 @@ Notes
   the application logic (Model), user interface (View), and UI logic (Presenter).
 
 """
-from model.model import Model
+from model.Model_ import Model
 from ui.View import View
-from presenter.presenter import Presenter
+from presenter.Presenter_ import Presenter
 
 try:
     from ctypes import windll

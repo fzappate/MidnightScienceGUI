@@ -1,7 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
-from ui.signalpane import SignalPane
-from ui.fileselector import FileSelectorDel
+from ui.SignalPane_ import SignalPane
+from ui.FileSelector_ import FileSelectorDel
 
 class ResFilePane(tk.Frame):
     def __init__(self, parent, presenter,index = 0,entryText = '',comboboxList = [],*args,**kwargs)->None:
