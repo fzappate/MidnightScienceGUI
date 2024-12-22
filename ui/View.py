@@ -19,10 +19,10 @@ View(tk.Tk)
 """
 
 import tkinter as tk
-from presenter.Presenter import Presenter
-from ui.PathSelector import PathSelector
+from presenter.presenter import Presenter
+from ui.pathselector import PathSelector
 from ui.VerticalScrollText import VerticalScrollText
-from ui.AuxBar import AuxBar
+from ui.auxbar import AuxBar
 from ui.TabManager import TabManager
 from ui.ProjectNotebook import ProjectNotebook
 

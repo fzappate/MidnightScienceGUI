@@ -39,7 +39,7 @@ Notes
 """
 from model.Model import Model
 from ui.View import View
-from presenter.Presenter import Presenter
+from presenter.presenter import Presenter
 
 try:
     from ctypes import windll
@@ -47,11 +47,38 @@ try:
 except (ImportError, AttributeError):
     pass
 
+import datetime
+
+
+global counter
+counter = 0
+
+def PrintFPS(view):
+    global counter
+    current_time = datetime.datetime.now().strftime("%H:%M:%S:%m")
+    # print("\rApp is running..." + current_time)
+    print("\rCounter: " + str(counter))
+    counter = 0
+    view.after(1000, lambda: PrintFPS(view))  # Schedule this function to run again in 1000 milliseconds (1 second)
+
+def counter_fun(view):
+    global counter
+    counter = counter+1
+    view.after(1, lambda: counter_fun(view))
+    
+    
 def main() -> None:
     '''Initializes and runs the application.'''
     model = Model()
     view = View()
     presenter = Presenter(model, view)
+    
+        
+    # Start the recurring function
+    PrintFPS(view)
+    counter_fun(view)
+    
+    
     presenter.RunUI()
 
 if __name__ == "__main__":
