@@ -705,7 +705,8 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].AddSubplot(subplot)
         
         self.model.projectModel.tabSelected = self.view.projectNotebook.get()
-        self.RedrawPlotNotebook()
+        self.RedrawPlotPane(self,self.model.projectModel.containedPlots[plotIndx])
+        # self.RedrawPlotNotebook()
          
     def DeleteSubplot(self,subplotPane)->None:
         '''Delete a toggle pane and connected subplot.'''        
@@ -1219,165 +1220,177 @@ class Presenter():
         
     # REDRAW GUI
     def RedrawPlotNotebook(self)->None:
-        '''Redraw plot tab.'''
-
+        '''Redraw ProjectNotebook.'''
+        # ERASE CONTENT
+        # Remove all th e children of ProjectNotebook
         self.DeleteChildren( self.view.projectNotebook)
-            
+        # Clean the list of tabs of the ProjectNotebook
         list = self.view.projectNotebook.list().copy()
         for tabName in list:
             self.view.projectNotebook.delete(tabName)
         
-        # Redraw tabs
-        for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            
-            # Extract plot color
-            canvasColor = plot.canvasColor[plot.colorPalette]
-            plotColor = plot.plotColor[plot.colorPalette]
-            toolbarColor = plot.toolbarColor[plot.colorPalette]
-            textColor = plot.textColor[plot.colorPalette]
-            
-            if plot.name == '':
-                plotName = "Plot " + str(ii)
+        # REDRAW CONTENT
+        # Redraw the tabs one by one
+        for plotIndex, plotModel in enumerate(self.model.projectModel.containedPlots):
+            if plotModel.name == '':
+                plotName = "Plot " + str(plotIndex)
             else:
-                plotName = plot.name
+                plotName = plotModel.name
                 
             self.view.projectNotebook.add(plotName)
             
-            plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,ii)
+            plotPane = PlotPane(self.view.projectNotebook.tab(plotName),self,plotIndex)
             plotPane.pack(fill="both", expand=True,padx = 6)
-            self.view.projectNotebook.update_idletasks()
-            # USELESS. PlotPane has just being creaed, no need to clean it.
-            # Clear all the existing subplots, and create the axis for the new ones
-            plotCanvasChildren = plotPane.plotCanvas.winfo_children() # Delete
-            for ii,child in enumerate(plotCanvasChildren): # Delete
-                plt.close() # Delete
-                child.destroy() # Delete
-                
-            noOfSubplots = len(plot.containedSubplots)
-            if noOfSubplots>0:
-                
-                fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
-                axTest = fig.get_axes()
-                
-                plt.subplots_adjust(left=plot.leftMargin, right=plot.rightMargin, top=plot.topMargin, bottom=plot.bottomMargin)
-                fig.patch.set_facecolor(canvasColor)
-                
-                
-                # REDRAW PLOT MANAGER ==========================
-                # Redraw subplots
-                for jj, subplot in enumerate(plot.containedSubplots):
-                    # Color axis and fonts
-                    axTest[jj].spines['bottom'].set_color(textColor)
-                    axTest[jj].spines['top'].set_color(textColor)
-                    axTest[jj].spines['left'].set_color(textColor)
-                    axTest[jj].spines['right'].set_color(textColor)
-                    axTest[jj].tick_params(axis='x', colors=textColor)
-                    axTest[jj].tick_params(axis='y', colors=textColor)
-                
-                    axList[jj,0].set_facecolor(plotColor)
-                    axList[jj,0].grid(subplot.setGrid)
-                    subplotPane = SubplotPane(plotPane.plotManager.interior,
-                                            self, 
-                                            jj,
-                                            subplot)
-                    subplotPane.grid(row=jj,column=0,sticky='NEW',pady = (2,2))
-                    
-                    # Redraw result files 
-                    for kk, resultFile in enumerate(subplot.containedResultFiles):
-                        
-                        # If the signal list is empty don't do anything
-                        resFile = ResFilePane(subplotPane.interior,
-                                            self,
-                                            index = kk,
-                                            entryText=resultFile.absPath,
-                                            comboboxList=resultFile.signalNames)
-                        resFile.grid(row=kk,column=0,sticky='NEW')
-                        
-                        # Draw X signal if there is any
-                        if not resultFile.xAxisSignal.name == '':
-                            xAxisSignal = resultFile.xAxisSignal
-                            xSigPane = SignalPaneX(   resFile.xAxisInterior,
-                                                        self,
-                                                        xAxisSignal)
-                            xSigPane.grid(row=0,column=0,sticky='EW')
-
-
-                        # Draw selected signals if there are any
-                        for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
-                            sigPane = SignalPane(   resFile.yAxisInterior,
-                                                    self,
-                                                    selectedSignal,
-                                                    index = hh)
-                            sigPane.grid(row=hh,column=0,pady = 1,sticky='EW')
-                            
-                            # If there is an X and Y signals selected plot
-                            if not resultFile.xAxisSignal.name == '':
-                                # REDRAW PLOT CANVAS ==========================
-                                psCol=selectedSignal.color
-                                psWidth=selectedSignal.width
-                                psStyle=selectedSignal.style
-                                psMarker=selectedSignal.marker
-                                psLabel=selectedSignal.label
-                                axList[jj,0].plot(xAxisSignal.scaledData,selectedSignal.scaledData,
-                                                    color=psCol,
-                                                    linewidth=psWidth,
-                                                    linestyle=psStyle,
-                                                    marker=psMarker,
-                                                    label=psLabel)
-                                axList[jj,0].legend()
-                            
-                                # Extract subplot default settings
-                                subplot.xLim = [float(axList[jj,0].get_xlim()[0]), float(axList[jj,0].get_xlim()[1])]
-                                subplot.yLim = [float(axList[jj,0].get_ylim()[0]), float(axList[jj,0].get_ylim()[1])]
-                                yTicksArray = axList[jj,0].get_yticks()
-                                xTicksArray = axList[jj,0].get_xticks()
-                                xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
-                                yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
-                                subplot.xTick = xTicks
-                                subplot.yTick = yTicks
-                                
-                                # Set subplot properties
-                                # Title
-                                axList[jj,0].title.set_text(subplot.name)
-                                # Labels
-                                axList[jj,0].set_xlabel(subplot.xLabel,color=textColor)
-                                axList[jj,0].set_ylabel(subplot.yLabel,color=textColor)
-                                # Grid
-                                axList[jj,0].grid(subplot.setGrid)
-                                # Axis Limits
-                                if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
-                                    axList[jj,0].set_xlim(subplot.xLimUser)
-                                if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
-                                    axList[jj,0].set_ylim(subplot.yLimUser)
-                                # Ticks
-                                if subplot.useUserTicks & (subplot.xTickUser!=0):
-                                    currTickX = list(axList[jj,0].get_xlim())
-                                    tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
-                                    axList[jj,0].set_xticks(tickVectX)
-                                    
-                                if subplot.useUserTicks & (subplot.yTickUser!=0):
-                                    currTickY = list(axList[jj,0].get_ylim())
-                                    tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
-                                    axList[jj,0].set_yticks(tickVectY)
-                                    
-                            
-                # Draw the canvas and toolbar inside the Plotter object
-                plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar.config(bg=toolbarColor)
-                for button in plotPane.plotCanvas.toolbar.winfo_children():
-                    '''Use this to configure the button style'''
-                    # Use this to configure the style of the buttons
-                    button.config(bg=toolbarColor)     
-                       
-                plotPane.plotCanvas.toolbar.update()
-                plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-                plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
+            
+            self.RedrawPlotPane( plotModel, plotPane)
+            
+        # Set the right tab when redrawing
         self.view.projectNotebook.set(self.model.projectModel.tabSelected)
+     
+        
+            
+    def RedrawPlotPane(self, plotModel, plotPane)->None:
+        '''Redraw plot pane.'''
+        # ERASE CONTENT
+        # Erase PlotCanvas content
+        plotCanvasChildren = plotPane.plotCanvas.winfo_children()
+        for child in plotCanvasChildren: 
+            plt.close() 
+            child.destroy() 
+            
+        # Erase PlotManager content
+        plotManagerChildren = plotPane.plotManager.interior.winfo_children()
+        for child in plotManagerChildren:
+            child.destroy()
+        
+        # REDRAW CONTENT
+        # Extract plot color
+        canvasColor = plotModel.canvasColor[plotModel.colorPalette]
+        plotColor = plotModel.plotColor[plotModel.colorPalette]
+        toolbarColor = plotModel.toolbarColor[plotModel.colorPalette]
+        textColor = plotModel.textColor[plotModel.colorPalette]
+        
+        noOfSubplots = len(plotModel.containedSubplots)
+        if noOfSubplots>0:
+            
+            fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
+            axTest = fig.get_axes()
+            
+            plt.subplots_adjust(left=plotModel.leftMargin, right=plotModel.rightMargin, top=plotModel.topMargin, bottom=plotModel.bottomMargin)
+            fig.patch.set_facecolor(canvasColor)
+            
+            
+            # REDRAW PLOT MANAGER
+            # Redraw subplots
+            for jj, subplot in enumerate(plotModel.containedSubplots):
+                # Color axis and fonts
+                axTest[jj].spines['bottom'].set_color(textColor)
+                axTest[jj].spines['top'].set_color(textColor)
+                axTest[jj].spines['left'].set_color(textColor)
+                axTest[jj].spines['right'].set_color(textColor)
+                axTest[jj].tick_params(axis='x', colors=textColor)
+                axTest[jj].tick_params(axis='y', colors=textColor)
+            
+                axList[jj,0].set_facecolor(plotColor)
+                axList[jj,0].grid(subplot.setGrid)
+                subplotPane = SubplotPane(plotPane.plotManager.interior,
+                                        self, 
+                                        jj,
+                                        subplot)
+                subplotPane.grid(row=jj,column=0,sticky='NEW',pady = (2,2))
+                
+                # Redraw result files 
+                for kk, resultFile in enumerate(subplot.containedResultFiles):
+                    
+                    # If the signal list is empty don't do anything
+                    resFile = ResFilePane(subplotPane.interior,
+                                        self,
+                                        index = kk,
+                                        entryText=resultFile.absPath,
+                                        comboboxList=resultFile.signalNames)
+                    resFile.grid(row=kk,column=0,sticky='NEW')
 
-
-
+                    # If there is an X and Y signals selected plot
+                    if not resultFile.xAxisSignal.name == '':
+                        xAxisSignal = resultFile.xAxisSignal                        
+                        xSigPane = SignalPaneX(   resFile.xAxisInterior,
+                                                    self,
+                                                    xAxisSignal)
+                        xSigPane.grid(row=0,column=0,sticky='EW')
+                        
+                    # Draw selected signals if there are any
+                    for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
+                        sigPane = SignalPane(   resFile.yAxisInterior,
+                                                self,
+                                                selectedSignal,
+                                                index = hh)
+                        sigPane.grid(row=hh,column=0,pady = 1,sticky='EW')
+                        
+                        # If there is an X and Y signals selected plot
+                        if not resultFile.xAxisSignal.name == '':                        
+                            # REDRAW PLOT CANVAS ==========================
+                            psCol=selectedSignal.color
+                            psWidth=selectedSignal.width
+                            psStyle=selectedSignal.style
+                            psMarker=selectedSignal.marker
+                            psLabel=selectedSignal.label
+                            axList[jj,0].plot(xAxisSignal.scaledData,selectedSignal.scaledData,
+                                                color=psCol,
+                                                linewidth=psWidth,
+                                                linestyle=psStyle,
+                                                marker=psMarker,
+                                                label=psLabel)
+                            axList[jj,0].legend()
+                        
+                            # Extract subplot default settings and save them before maybe apply the custom ones
+                            subplot.xLim = [float(axList[jj,0].get_xlim()[0]), float(axList[jj,0].get_xlim()[1])]
+                            subplot.yLim = [float(axList[jj,0].get_ylim()[0]), float(axList[jj,0].get_ylim()[1])]
+                            yTicksArray = axList[jj,0].get_yticks()
+                            xTicksArray = axList[jj,0].get_xticks()
+                            xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
+                            yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
+                            subplot.xTick = xTicks
+                            subplot.yTick = yTicks
+                            
+                            # Set subplot properties
+                            # Title
+                            axList[jj,0].title.set_text(subplot.name)
+                            # Labels
+                            axList[jj,0].set_xlabel(subplot.xLabel,color=textColor)
+                            axList[jj,0].set_ylabel(subplot.yLabel,color=textColor)
+                            # Grid
+                            axList[jj,0].grid(subplot.setGrid)
+                            # Axis Limits
+                            if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
+                                axList[jj,0].set_xlim(subplot.xLimUser)
+                            if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
+                                axList[jj,0].set_ylim(subplot.yLimUser)
+                            # Ticks
+                            if subplot.useUserTicks & (subplot.xTickUser!=0):
+                                currTickX = list(axList[jj,0].get_xlim())
+                                tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                                axList[jj,0].set_xticks(tickVectX)
+                                
+                            if subplot.useUserTicks & (subplot.yTickUser!=0):
+                                currTickY = list(axList[jj,0].get_ylim())
+                                tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                                axList[jj,0].set_yticks(tickVectY)
+                                
+                        
+            # Draw the canvas and toolbar inside the Plotter object
+            plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
+            plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
+            plotPane.plotCanvas.toolbar.config(bg=toolbarColor)
+            for button in plotPane.plotCanvas.toolbar.winfo_children():
+                '''Use this to configure the button style'''
+                # Use this to configure the style of the buttons
+                button.config(bg=toolbarColor)     
+                    
+            plotPane.plotCanvas.toolbar.update()
+            plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+            plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        
+                
     # TEXT
     def PrintMessage(self, message)->None:
         '''Print message.'''
