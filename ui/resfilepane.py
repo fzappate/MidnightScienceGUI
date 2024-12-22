@@ -28,7 +28,7 @@ class ResFilePane(tk.Frame):
         self.noOfRows = 0
         self.presenter = presenter
         
-        self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText, bg = 'grey40')
+        self.fileSelector = FileSelectorDel(self,presenter,entryText=entryText)
         self.fileSelector.grid(row=self.noOfRows,column=0,sticky='EW')
         
         self.noOfRows +=1
@@ -47,7 +47,7 @@ class ResFilePane(tk.Frame):
         selection = self.signalCollection.get()
         
         self.noOfRows +=1
-        sigPane = SignalPane(self, self.presenter, sigName = selection, bg = 'red')
+        sigPane = SignalPane(self, self.presenter, sigName = selection)
         sigPane.grid(row=self.noOfRows,column=0,sticky='EW')
         
     

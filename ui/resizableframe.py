@@ -231,7 +231,7 @@ class ResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
         resScrollFrame.grid(row=0, column=0, sticky='NWS')
         
         # Add content inside the frame
-        frame = tk.Frame(resScrollFrame.scrollFrame, bg='blue')
+        frame = tk.Frame(resScrollFrame.scrollFrame)
         frame.grid(row=0, column=0, sticky='NEWS')
     """
     
@@ -267,7 +267,7 @@ class ResizableFrameRightEdgeScrollV(ResizableFrameRightEdge):
         self.canvas.yview_moveto(0)
 
         # Create a frame inside the canvas which will contain the scrollable content
-        self.scrollFrame = tk.Frame(self.canvas, bg='red')
+        self.scrollFrame = tk.Frame(self.canvas)
         self.scrollFrame.columnconfigure(0, weight=1)
         self.scrollFrame.rowconfigure(0, weight=1)
         

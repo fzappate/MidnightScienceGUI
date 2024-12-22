@@ -897,8 +897,7 @@ class Presenter():
                                    signal,
                                    sigIndx= signalIndx,
                                    resIndx = resFileIndx,
-                                   subplotIndx = subplotIndx,
-                                   bg ='cyan')
+                                   subplotIndx = subplotIndx)
         signalOpts.grid(row=0,column=0,sticky='NEWS')
     
     def ApplySignalOptions(self,signalOptions)->None:
@@ -1019,7 +1018,7 @@ class Presenter():
              self.view.projectNotebook.forget(tab)
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
-            plotPane = PlotPane(self.view.projectNotebook,self,ii, bg='gray30')
+            plotPane = PlotPane(self.view.projectNotebook,self,ii)
             if plot.name == '':
                 self.view.projectNotebook.add(plotPane, text = "Plot " + str(ii))
             else:
@@ -1042,13 +1041,11 @@ class Presenter():
                 # REDRAW PLOT MANAGER ==========================
                 # Redraw subplots
                 for jj, subplot in enumerate(plot.containedSubplots):
-                    axList[jj,0].set_facecolor(plot.plotColor)
                     axList[jj,0].grid(subplot.setGrid)
                     subplotPane = SubplotPane(plotPane.plotManager.interior,
                                             self, 
                                             jj,
-                                            subplot,
-                                            bg = 'blue')
+                                            subplot)
                     subplotPane.grid(row=jj,column=0,sticky='NEW')
                     
                     # Redraw result files 
@@ -1065,8 +1062,7 @@ class Presenter():
                             sigPane = SignalPane(   resFile.interior,
                                                     self,
                                                     selectedSignal,
-                                                    index = hh,
-                                                    bg = 'gray18')
+                                                    index = hh)
                             sigPane.grid(row=hh,column=0,sticky='EW')
                             
                         
@@ -1132,11 +1128,7 @@ class Presenter():
                 # Draw the canvas and toolbar inside the Plotter object
                 plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
                 plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
-                plotPane.plotCanvas.toolbar.config(bg=plot.toolbarColor)
-                # for button in plotPane.plotCanvas.toolbar.winfo_children():
-                #     '''Use this to configure the button style'''
-                    # Use this to configure the style of the buttons
-                    # button.config(bg="lightblue", fg="darkblue")        
+      
                 plotPane.plotCanvas.toolbar.update()
                 plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)

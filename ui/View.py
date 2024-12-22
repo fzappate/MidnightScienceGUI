@@ -46,12 +46,12 @@ class View(tk.Tk):
         Sets up the main application window, including size and background configuration.
         """
         super().__init__()
-        self.title("Midnight Science GUI")
+        self.title("Midnight Science Plotter")
 
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
         hs = self.winfo_screenheight()  # Height of the screen
-        self.config(bg='black')
+        self.config()
         
         # Set window dimensions to 70% of screen size
         w = 0.7 * ws
@@ -79,19 +79,19 @@ class View(tk.Tk):
         self.rowconfigure(3, weight=0)
 
         # Path selector
-        self.pathSelector = PathSelector(self, presenter, background='gray30')
+        self.pathSelector = PathSelector(self, presenter)
         self.pathSelector.grid(row=0, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
 
         # Icon frame
-        self.iconFrame = tk.Frame(self, bg='blue')
+        self.iconFrame = tk.Frame(self)
         self.iconFrame.grid(row=1, column=0, sticky='EW')
-        self.iconFrame.columnconfigure(0, weight=1)
+        self.iconFrame.columnconfigure(1, weight=1)
 
-        self.auxBar = AuxBar(self.iconFrame, presenter, background='gray30')
-        self.auxBar.grid(row=0, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))
+        self.auxBar = AuxBar(self.iconFrame, presenter)
+        self.auxBar.grid(row=0, column=0, sticky='W', padx=(3, 3), pady=(2, 2))
 
         self.tabManager = TabManager(self.iconFrame, presenter)
-        self.tabManager.grid(row=0, column=1, sticky='EW')
+        self.tabManager.grid(row=0, column=1, sticky='W')
         self.tabManager.columnconfigure(0, weight=1)
 
         # Main tabs
@@ -99,6 +99,6 @@ class View(tk.Tk):
         self.projectNotebook.grid(row=2, column=0, sticky='NEWS', padx=(3, 3), pady=(2, 2))
 
         # Text widget
-        self.textPane = VerticalScrollText(self, height=150, background='gray30')
+        self.textPane = VerticalScrollText(self, height=150)
         self.textPane.text.config(state='disabled')
         self.textPane.grid(row=3, column=0, sticky='EW', padx=(3, 3), pady=(2, 2))

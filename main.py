@@ -37,7 +37,7 @@ Notes
   the application logic (Model), user interface (View), and UI logic (Presenter).
 
 """
-from model.Model import Model
+from model.model import Model
 from ui.View import View
 from presenter.presenter import Presenter
 
@@ -56,7 +56,6 @@ counter = 0
 def PrintFPS(view):
     global counter
     current_time = datetime.datetime.now().strftime("%H:%M:%S:%m")
-    # print("\rApp is running..." + current_time)
     print("\rCounter: " + str(counter))
     counter = 0
     view.after(1000, lambda: PrintFPS(view))  # Schedule this function to run again in 1000 milliseconds (1 second)
@@ -73,11 +72,9 @@ def main() -> None:
     view = View()
     presenter = Presenter(model, view)
     
-        
     # Start the recurring function
-    PrintFPS(view)
-    counter_fun(view)
-    
+    # PrintFPS(view)
+    # counter_fun(view)
     
     presenter.RunUI()
 

@@ -32,7 +32,7 @@ class PlotOptions(tk.Frame):
         
         # Title frame
         rowNo = 0
-        self.titleFrame = tk.Frame(parent, pady=3, bg = 'red')
+        self.titleFrame = tk.Frame(parent, pady=3)
         self.titleFrame.grid(row=rowNo,column=0, pady=3, sticky = 'NEW')
         self.titleFrame.columnconfigure(1,weight=1)
         
@@ -47,7 +47,7 @@ class PlotOptions(tk.Frame):
                 
         # Plot margins
         rowNo +=1
-        self.plotMarginsFrame = tk.Frame(parent, pady=3, bg = 'red')
+        self.plotMarginsFrame = tk.Frame(parent, pady=3)
         self.plotMarginsFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         
         self.xAxisLimLab = ttk.Label(self.plotMarginsFrame, text = 'Set plot margins',width=labelSize)
@@ -85,14 +85,14 @@ class PlotOptions(tk.Frame):
                 
         # Select canvas color pane
         rowNo +=1
-        self.mainCanvasColorFrame = tk.Frame(parent, pady=3, bg = 'blue')
+        self.mainCanvasColorFrame = tk.Frame(parent, pady=3)
         self.mainCanvasColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         self.mainCanvasColorFrame.columnconfigure(1,weight=1)
         
         self.canvasColorLab = ttk.Label(self.mainCanvasColorFrame, text = 'Select canvas color',width=labelSize)
         self.canvasColorLab.grid(row=0,column=0)
         
-        self.canvasColorFrame = tk.Frame(self.mainCanvasColorFrame, bg='black')
+        self.canvasColorFrame = tk.Frame(self.mainCanvasColorFrame)
         self.canvasColorFrame.grid(row=0,column=1, sticky = 'EW')
         self.canvasColorFrame.columnconfigure(0,weight=1)
         self.canvasColorFrame.columnconfigure(1,weight=1)
@@ -105,14 +105,14 @@ class PlotOptions(tk.Frame):
         
         # Select plot color pane
         rowNo +=1
-        self.mainPlotColorFrame = tk.Frame(parent, pady=3, bg = 'blue')
+        self.mainPlotColorFrame = tk.Frame(parent, pady=3)
         self.mainPlotColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         self.mainPlotColorFrame.columnconfigure(1,weight=1)
         
         self.plotColorLab = ttk.Label(self.mainPlotColorFrame, text = 'Select plot color',width=labelSize)
         self.plotColorLab.grid(row=0,column=0)
         
-        self.plotColorFrame = tk.Frame(self.mainPlotColorFrame, bg='black')
+        self.plotColorFrame = tk.Frame(self.mainPlotColorFrame)
         self.plotColorFrame.grid(row=0,column=1, sticky = 'EW')
         self.plotColorFrame.columnconfigure(0,weight=1)
         self.plotColorFrame.columnconfigure(1,weight=1)
@@ -125,14 +125,14 @@ class PlotOptions(tk.Frame):
         
         # Select toolbar color pane
         rowNo +=1
-        self.mainToolbarColorFrame = tk.Frame(parent, pady=3, bg = 'blue')
+        self.mainToolbarColorFrame = tk.Frame(parent, pady=3)
         self.mainToolbarColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         self.mainToolbarColorFrame.columnconfigure(1,weight=1)
         
         self.xAxisLabLab = ttk.Label(self.mainToolbarColorFrame, text = 'Select toolbar color',width=labelSize)
         self.xAxisLabLab.grid(row=0,column=0)
         
-        self.toolbarColorFrame = tk.Frame(self.mainToolbarColorFrame, bg='black')
+        self.toolbarColorFrame = tk.Frame(self.mainToolbarColorFrame)
         self.toolbarColorFrame.grid(row=0,column=1, sticky = 'EW')
         self.toolbarColorFrame.columnconfigure(0,weight=1)
         self.toolbarColorFrame.columnconfigure(1,weight=1)
@@ -145,7 +145,7 @@ class PlotOptions(tk.Frame):
         
         # Button frame
         rowNo +=1
-        btnFrame = tk.Frame(parent, pady=5, bg = 'cyan')
+        btnFrame = tk.Frame(parent, pady=5)
         btnFrame.grid(row=rowNo,column=0, sticky = 'NEW')
         btnFrame.columnconfigure(0,weight=1)
         

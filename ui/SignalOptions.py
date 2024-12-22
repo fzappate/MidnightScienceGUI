@@ -47,7 +47,7 @@ class SignalOptions(tk.Frame):
         self.lineMarkerOptsList = ['None','.','o','s','^','v','*','+','x','D','>','<']
         
         # OPTIONS FRAME
-        self.optsFrame = tk.Frame(self,width=self.optsWidth,bg='blue')
+        self.optsFrame = tk.Frame(self,width=self.optsWidth)
         self.optsFrame.columnconfigure(0,weight=1)
         self.optsFrame.grid(row=0,column=0,sticky='NEWS')
         
@@ -96,7 +96,7 @@ class SignalOptions(tk.Frame):
         self.lineMarkerCb.set(markerSymbol)
         
         # BUTTON FRAME
-        self.buttonFrame = tk.Frame(self,bg = 'black')
+        self.buttonFrame = tk.Frame(self)
         self.buttonFrame.grid(row=1,column=0,sticky='EW')
         self.buttonFrame.columnconfigure(0,weight=1)
         
