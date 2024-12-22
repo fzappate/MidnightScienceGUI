@@ -1,7 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
 
-from ui.resizableframe import ResizableFrameRightEdgeScrollV
+from ui.ResizableFrame import ResizableFrameRightEdgeScrollV
 
 
 class PlotManager(ResizableFrameRightEdgeScrollV):    

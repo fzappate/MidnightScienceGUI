@@ -3,7 +3,7 @@ from tkinter import ttk
 
 # from ui.plotpane import PlotPane
 from ui.PlotCanvas import PlotCanvas
-from ui.ResFilePane import ResizableFrameRightEdgeScrollV
+from ui.ResizableFrame import ResizableFrameRightEdgeScrollV
 from ui.PlotManager import PlotManager
 try:
     from ctypes import windll
