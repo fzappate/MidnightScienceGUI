@@ -21,7 +21,7 @@ PathSelector(tk.Frame)
 import tkinter as tk
 from tkinter import ttk
 
-from presenter.Presenter_ import Presenter
+from presenter.Presenter import Presenter
 
 # Try to set the process DPI awareness on Windows for proper scaling
 try:

@@ -3,8 +3,8 @@ from tkinter import ttk
 
 # from ui.plotpane import PlotPane
 from ui.PlotCanvas import PlotCanvas
-from ui.ResFilePane_ import ResizableFrameRightEdgeScrollV
-from ui.PlotManager_ import PlotManager
+from ui.ResFilePane import ResizableFrameRightEdgeScrollV
+from ui.PlotManager import PlotManager
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)

@@ -19,7 +19,7 @@ Model:
 
 """
 
-from model.Settings_ import Settings
+from model.Settings import Settings
 from model.ProjectModel import ProjectModel
 
 class Model:
