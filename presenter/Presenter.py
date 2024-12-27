@@ -235,8 +235,6 @@ class Presenter():
                 
             self.model.projectModel = projModel
          
-
-    
     def SaveProjectModel(self)->None:
         '''Save project model.'''
         projModelLocation = "./utilities/ProjectModel.json"
@@ -361,12 +359,16 @@ class Presenter():
         and store its path in the main control models. """
         # Open the dialog window
         folder = filedialog.askdirectory()
+        
         # Update the working folder entry with the selecter folder 
         self.UpdateEntry(self.view.pathSelector.pathEntry,folder)
         # Update model setting
-        self.model.settings.workingFolder = folder
+        self.model.settings.projectFolder = folder
         # Set the workign folder of the setting object the same as the content of the entry 
         self.UpdateSettingFile("ProjectFolder", folder)
+        
+        # Redraw notebook
+        self.LoadProject()
                     
     def SetWorkingFolderManually(self,event=None)->None:
         """This function allows the user to select a working directory by copying 
