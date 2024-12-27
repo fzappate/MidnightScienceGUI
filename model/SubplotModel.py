@@ -12,12 +12,6 @@ class SubplotModel():
         self.isCollapsed = 1
         self.containedResultFiles = []
         
-        self.xAxisSignals = []
-        self.xAxisSignalsName = []
-        self.xAxisSelected = []
-        self.xAxisSelectedIndx = 0 
-        self.xAxisSelectedName = '' # TO BE DELETED
-        
         self.xLabel = ''
         self.yLabel = ''
         self.xLim = [0.0, 1.0]

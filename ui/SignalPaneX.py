@@ -1,8 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
-import customtkinter
 
-class SignalPaneX(customtkinter.CTkFrame):
+class SignalPaneX(ttk.Frame):
     def __init__(self, 
                  parent, 
                  presenter,
@@ -42,14 +41,14 @@ class SignalPaneX(customtkinter.CTkFrame):
         
         # Signal label
         colNo = 0
-        self.label = customtkinter.CTkLabel(self,text=self.signal.name)
+        self.label = ttk.Label(self,text=self.signal.name)
         self.label.grid(row=0,column=colNo,sticky='W',padx = (0,0))
         
         unitList, scalingList = self.presenter.GetUnitsList(signal)
         
         # Signal units
         colNo+=1
-        self.unitsCb = customtkinter.CTkComboBox(self,width = 70,values=unitList)
+        self.unitsCb = ttk.Combobox(self,width = 7,values=unitList,state='readonly')
         self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
         
         self.unitsCb.set(signal.units)

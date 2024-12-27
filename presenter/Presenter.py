@@ -110,6 +110,7 @@ class Presenter():
             
         
     # JSON HANDLING
+    
     def LoadProject(self)->None:
         self.LoadProjectModel()
         self.RedrawPlotNotebook()
@@ -119,110 +120,122 @@ class Presenter():
         # Check that a ProjectModel.json exists
         projectModelPath = self.model.settings.projectFolder + "/ProjectModel.json"
         projectModelFileExists = os.path.exists(projectModelPath)
-        if (projectModelFileExists):
-            print('Project file found at: ' + projectModelPath)
-        else:
-            print(' file not found at: ' + projectModelPath)
-            
-        # Load ProjectModel.json
-        f = open(projectModelPath,'r')
-        jsonProjMod = json.load(f)
-        
-        # Load project data
-        projModel = ProjectModel()
-        projModel.tabSelected = jsonProjMod["tabSelected"]
-        
-        # Load plot data        
-        jsonContainedPlots = jsonProjMod["containedPlots"]
-        for ii, jsonPlot in enumerate(jsonContainedPlots):
+        if not projectModelFileExists:
+            print('No project file found at: ' + projectModelPath)
+            print('Creating empty project.')
+            # Create empty project
+            projModel = ProjectModel()
             plotModel = PlotModel()
-            plotModel.name = jsonPlot["name"]
-            plotModel.indx = jsonPlot["indx"]
-            plotModel.leftMargin = jsonPlot["leftMargin"]
-            plotModel.rightMargin = jsonPlot["rightMargin"]
-            plotModel.bottomMargin = jsonPlot["bottomMargin"]
-            plotModel.topMargin = jsonPlot["topMargin"]
-        
-            plotModel.noOfSubplots = jsonPlot["noOfSubplots"]
+            subplotModel = SubplotModel()
             
-            # Load subplot data
-            jsonContainedSubplots = jsonPlot["containedSubplots"]
-            for jj, jsonSubplot in enumerate(jsonContainedSubplots):
-                subplotModel = SubplotModel()
-                subplotModel.name = jsonSubplot["name"]
-                subplotModel.indx = jsonSubplot["indx"]
-                subplotModel.isCollapsed = jsonSubplot["isCollapsed"]
-                
-                subplotModel.xLabel = jsonSubplot["xLabel"]
-                subplotModel.yLabel = jsonSubplot["yLabel"]
-                subplotModel.xLim = jsonSubplot["xLim"]
-                subplotModel.yLim = jsonSubplot["yLim"]
-                subplotModel.xLimUser = jsonSubplot["xLimUser"]
-                subplotModel.yLimUser = jsonSubplot["yLimUser"]
-                subplotModel.useUserLim = jsonSubplot["useUserLim"]
-                subplotModel.xTick = jsonSubplot["xTick"]
-                subplotModel.yTick = jsonSubplot["yTick"]
-                subplotModel.xTickUser = jsonSubplot["xTickUser"]
-                subplotModel.yTickUser = jsonSubplot["yTickUser"]
-                subplotModel.useUserTicks = jsonSubplot["useUserTicks"]
-                subplotModel.setGrid = jsonSubplot["setGrid"]
-                
-                subplotModel.colorCounter = jsonSubplot["colorCounter"]
-                
-                subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
-                
-                subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
-                
-                
-                # Load result files data
-                jsonContainedResFile = jsonSubplot["containedResultFiles"]
-                for kk, jsonResFile in enumerate(jsonContainedResFile):
-                    resFileModel = ResultFileModel()
-                    resFileModel.name = jsonResFile["name"]
-                    resFileModel.indx = jsonResFile["indx"]
-                    resFileModel.absPath = jsonResFile["absPath"]
-                                        
-                    resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
-                    
-                    # Load selected signal data
-                    jsonSelectedSignals = jsonResFile["selectedSignals"]
-                    for hh, jsonSelSign in enumerate(jsonSelectedSignals):
-                        selectedSignalModel = PlottedSignalModel()
-                        selectedSignalModel.name = jsonSelSign["name"]
-                        selectedSignalModel.width = jsonSelSign["width"]
-                        selectedSignalModel.style = jsonSelSign["style"]
-                        selectedSignalModel.marker = jsonSelSign["marker"]
-                        selectedSignalModel.color = jsonSelSign["color"]
-                        selectedSignalModel.label = jsonSelSign["label"]
-                        selectedSignalModel.label = jsonSelSign["name"]
-                        selectedSignalModel.units = jsonSelSign["units"]
-                        selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
-                        selectedSignalModel.quantity = jsonSelSign["quantity"]
-                        selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
-                        
-                        selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
-                        selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
-                        
-                        # Append PlottedSignal inside the ResultFileModel.selectedSignals
-                        resFileModel.selectedSignals.append(selectedSignalModel)
-                    
-                    # Append ResultFileModel to SubplotModel.containedResultFiles
-                    subplotModel.containedResultFiles.append(resFileModel)
-                
-                subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
-                subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
-                subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
-                subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
-                       
-                # Append the SubplotModel inside the PlotModel.containedSubplots
-                plotModel.containedSubplots.append(subplotModel)
-                
+            # Append the SubplotModel inside the PlotModel.containedSubplots
+            plotModel.containedSubplots.append(subplotModel)
             # Append the PlotModel inside the ProjectModel.containedPlots
             projModel.containedPlots.append(plotModel)      
+            # Add the project model into 
+            self.model.projectModel = projModel
+        else:
+            print('Project file found at: ' + projectModelPath)
             
-        self.model.projectModel = projModel
+            # Load ProjectModel.json
+            f = open(projectModelPath,'r')
+            jsonProjMod = json.load(f)
+            
+            # Load project data
+            projModel = ProjectModel()
+            projModel.tabSelected = jsonProjMod["tabSelected"]
+            
+            # Load plot data        
+            jsonContainedPlots = jsonProjMod["containedPlots"]
+            for ii, jsonPlot in enumerate(jsonContainedPlots):
+                plotModel = PlotModel()
+                plotModel.name = jsonPlot["name"]
+                plotModel.indx = jsonPlot["indx"]
+                plotModel.leftMargin = jsonPlot["leftMargin"]
+                plotModel.rightMargin = jsonPlot["rightMargin"]
+                plotModel.bottomMargin = jsonPlot["bottomMargin"]
+                plotModel.topMargin = jsonPlot["topMargin"]
+            
+                plotModel.noOfSubplots = jsonPlot["noOfSubplots"]
+                
+                # Load subplot data
+                jsonContainedSubplots = jsonPlot["containedSubplots"]
+                for jj, jsonSubplot in enumerate(jsonContainedSubplots):
+                    subplotModel = SubplotModel()
+                    subplotModel.name = jsonSubplot["name"]
+                    subplotModel.indx = jsonSubplot["indx"]
+                    subplotModel.isCollapsed = jsonSubplot["isCollapsed"]
+                    
+                    subplotModel.xLabel = jsonSubplot["xLabel"]
+                    subplotModel.yLabel = jsonSubplot["yLabel"]
+                    subplotModel.xLim = jsonSubplot["xLim"]
+                    subplotModel.yLim = jsonSubplot["yLim"]
+                    subplotModel.xLimUser = jsonSubplot["xLimUser"]
+                    subplotModel.yLimUser = jsonSubplot["yLimUser"]
+                    subplotModel.useUserLim = jsonSubplot["useUserLim"]
+                    subplotModel.xTick = jsonSubplot["xTick"]
+                    subplotModel.yTick = jsonSubplot["yTick"]
+                    subplotModel.xTickUser = jsonSubplot["xTickUser"]
+                    subplotModel.yTickUser = jsonSubplot["yTickUser"]
+                    subplotModel.useUserTicks = jsonSubplot["useUserTicks"]
+                    subplotModel.setGrid = jsonSubplot["setGrid"]
+                    
+                    subplotModel.colorCounter = jsonSubplot["colorCounter"]
+                    
+                    subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
+                    
+                    subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
+                    
+                    
+                    # Load result files data
+                    jsonContainedResFile = jsonSubplot["containedResultFiles"]
+                    for kk, jsonResFile in enumerate(jsonContainedResFile):
+                        resFileModel = ResultFileModel()
+                        resFileModel.name = jsonResFile["name"]
+                        resFileModel.indx = jsonResFile["indx"]
+                        resFileModel.absPath = jsonResFile["absPath"]
+                                            
+                        resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
+                        
+                        # Load selected signal data
+                        jsonSelectedSignals = jsonResFile["selectedSignals"]
+                        for hh, jsonSelSign in enumerate(jsonSelectedSignals):
+                            selectedSignalModel = PlottedSignalModel()
+                            selectedSignalModel.name = jsonSelSign["name"]
+                            selectedSignalModel.width = jsonSelSign["width"]
+                            selectedSignalModel.style = jsonSelSign["style"]
+                            selectedSignalModel.marker = jsonSelSign["marker"]
+                            selectedSignalModel.color = jsonSelSign["color"]
+                            selectedSignalModel.label = jsonSelSign["label"]
+                            selectedSignalModel.label = jsonSelSign["name"]
+                            selectedSignalModel.units = jsonSelSign["units"]
+                            selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
+                            selectedSignalModel.quantity = jsonSelSign["quantity"]
+                            selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
+                            
+                            selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
+                            selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
+                            
+                            # Append PlottedSignal inside the ResultFileModel.selectedSignals
+                            resFileModel.selectedSignals.append(selectedSignalModel)
+                        
+                        # Append ResultFileModel to SubplotModel.containedResultFiles
+                        subplotModel.containedResultFiles.append(resFileModel)
+                    
+                    subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
+                    subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
+                    subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
+                    subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
+                        
+                    # Append the SubplotModel inside the PlotModel.containedSubplots
+                    plotModel.containedSubplots.append(subplotModel)
+                    
+                # Append the PlotModel inside the ProjectModel.containedPlots
+                projModel.containedPlots.append(plotModel)      
+                
+            self.model.projectModel = projModel
          
-        # Plot Manager
+
     
     def SaveProjectModel(self)->None:
         '''Save project model.'''
@@ -256,9 +269,6 @@ class Presenter():
         f.write('"name": "'+ plotModel.name +'",\n')
         f.write('"indx": '+ str(plotModel.indx) +',\n')
         f.write('"noOfSubplots": '+ str(plotModel.noOfSubplots) +',\n')
-        f.write('"canvasColor": "'+ plotModel.canvasColor +'",\n')
-        f.write('"plotColor": "'+ plotModel.plotColor +'",\n')
-        f.write('"toolbarColor": "'+ plotModel.toolbarColor +'",\n')
         f.write('"leftMargin": '+ str(plotModel.leftMargin) +',\n')
         f.write('"rightMargin": '+ str(plotModel.rightMargin) +',\n')
         f.write('"bottomMargin": '+ str(plotModel.bottomMargin) +',\n')
@@ -732,8 +742,8 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigName = event
-        selectedSigIndex = resFilePane.signalList.index(selectedSigName)
+        selectedSigIndex = event.widget.current()
+        # selectedSigIndex = resFilePane.signalList.index(selectedSigName)
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
         
@@ -741,13 +751,13 @@ class Presenter():
         plottedSignal = PlottedSignalModel()
         # Copy the signal properties into the PlottedSignal
         plottedSignal.CopySignalProperties(signalToPlot)
-        # Assign the PlottedSignal a color
+        # Assign the PlottedSignal a dummy color
         plottedSignal.color='#000000'
         
         # Add it to the ResultFilePane selectedSignals list (for the left pane with the plot controls)
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal = plottedSignal
         
-        self.model.projectModel.tabSelected = self.view.projectNotebook.get()
+        # self.model.projectModel.tabSelected = self.view.projectNotebook.get()
         self.RedrawPlotNotebook()
     
     def AddSignal(self,event, resFilePane)->None:
@@ -759,8 +769,7 @@ class Presenter():
         resFileIndx = resFilePane.index
         
         # Find the index of the signal selected
-        selectedSigName = resFilePane.signalCollection.get()
-        selectedSigIndex = resFilePane.signalCollection.current()
+        selectedSigIndex = event.widget.current()
         # Extract from the ResultFileModel the signal selected
         signalToPlot = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals[selectedSigIndex]
         
@@ -1166,7 +1175,7 @@ class Presenter():
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
         # Move to the newly created tab
-        self.view.projectNotebook.select(self.model.projectModel.tabSelected)
+        # self.view.projectNotebook.select(self.model.projectModel.tabSelected)
         
         self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         

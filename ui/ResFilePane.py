@@ -41,7 +41,7 @@ class ResFilePane(ttk.Frame):
         self.selX = ttk.Label(self, text = 'Select X', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.xSignalCollection = ttk.Combobox(self, values = comboboxList)
+        self.xSignalCollection = ttk.Combobox(self, values = comboboxList,state='readonly')
         self.xSignalCollection.bind('<<ComboboxSelected>>', lambda event:self.presenter.AddXAxisSignal(event, self))
         self.xSignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,1), pady = 3)
         self.xSignalCollection.set('')
@@ -57,8 +57,9 @@ class ResFilePane(ttk.Frame):
         self.selX = ttk.Label(self, text = 'Select Y', anchor = 'w',width = labelWidth)
         self.selX.grid(row=self.noOfRows,column=0,sticky='EW', padx = (3,0), pady = 3)
         
-        self.ySignalCollection = ttk.Combobox(self,values=comboboxList)
+        self.ySignalCollection = ttk.Combobox(self,values=comboboxList,state='readonly')
         self.ySignalCollection.bind('<<ComboboxSelected>>', lambda event:self.presenter.AddSignal(event, self))
+        self.ySignalCollection.bind('<<MouseWheel>>', lambda event: self.dontscroll())
         self.ySignalCollection.grid(row=self.noOfRows,column=1,sticky='EW', padx = (3,1), pady = 3)
         self.ySignalCollection.set('')
         
@@ -76,4 +77,6 @@ class ResFilePane(ttk.Frame):
         sigPane = SignalPane(self, self.presenter, sigName = selection)
         sigPane.grid(row=self.noOfRows,column=0,sticky='EW')
         
-    
+    def dontscroll(event):
+        print("Dontscroll")
+        return 
