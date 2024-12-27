@@ -441,21 +441,26 @@ class Presenter():
         '''Update the selected tab index in the project model.'''
         notebook = event.widget
         selTabName = notebook.select()
-        selTabIndx = notebook.index(selTabName)
-        self.model.projectModel.tabSelected = selTabIndx
+        if not selTabName == '':
+            selTabIndx = notebook.index(selTabName)
+            self.model.projectModel.tabSelected = selTabIndx
+        else:
+            self.model.projectModel.tabSelected = -1
+            
+            
         
     def AddPlotTab(self)->None:
         '''Add a Plot in the ProjectModel containedPlots list.'''
         # Build default plot model 
         plot = PlotModel()
         # Assign an index to the plot model
-        plot.indx = len(self.model.projectModel.containedPlots) + 1
+        plot.indx = len(self.model.projectModel.containedPlots)
         # Assign name to the plot name
         plot.name = 'Plot ' + str(plot.indx)
         # Append plot model to project model
         self.model.projectModel.containedPlots.append(plot)
         # Set the newly created plot as selected folder
-        self.model.projectModel.tabSelected = plot.indx-1
+        self.model.projectModel.tabSelected = plot.indx
         # Redraw plot notebook 
         self.RedrawPlotNotebook()
         
@@ -509,9 +514,6 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].rightMargin = float(plotOptionsPane.plotMarginRight.get())
         self.model.projectModel.containedPlots[plotIndx].bottomMargin = float(plotOptionsPane.plotMarginBottom.get())
         self.model.projectModel.containedPlots[plotIndx].topMargin = float(plotOptionsPane.plotMarginTop.get())
-        self.model.projectModel.containedPlots[plotIndx].canvasColor = plotOptionsPane.selectedCanvasColor
-        self.model.projectModel.containedPlots[plotIndx].plotColor = plotOptionsPane.selectedPlotColor
-        self.model.projectModel.containedPlots[plotIndx].toolbarColor = plotOptionsPane.selectedToolbarColor
         
         # Redraw notebook
         self.RedrawPlotNotebook()
@@ -1175,7 +1177,7 @@ class Presenter():
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             
         # Move to the newly created tab
-        # self.view.projectNotebook.select(self.model.projectModel.tabSelected)
+        self.view.projectNotebook.select(self.model.projectModel.tabSelected)
         
         self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
         

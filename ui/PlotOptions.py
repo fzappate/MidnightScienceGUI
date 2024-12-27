@@ -26,9 +26,6 @@ class PlotOptions(tk.Frame):
         rightMargin = plotModel.rightMargin
         bottomMargin = plotModel.bottomMargin
         topMargin = plotModel.topMargin
-        self.selectedCanvasColor = plotModel.canvasColor
-        self.selectedPlotColor = plotModel.plotColor
-        self.selectedToolbarColor = plotModel.toolbarColor
         
         # Title frame
         rowNo = 0
@@ -81,67 +78,6 @@ class PlotOptions(tk.Frame):
         self.plotMarginBottom.bind("<Return>",lambda event: self.ValidateBottomMarginEntry(event, self.plotMarginTop, bottomMargin))
         self.plotMarginTop.bind("<FocusOut>",lambda event: self.ValidateTopMarginEntry(event, self.plotMarginBottom, topMargin))
         self.plotMarginTop.bind("<Return>",lambda event: self.ValidateTopMarginEntry(event, self.plotMarginBottom, topMargin))
-        
-                
-        # Select canvas color pane
-        rowNo +=1
-        self.mainCanvasColorFrame = tk.Frame(parent, pady=3)
-        self.mainCanvasColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
-        self.mainCanvasColorFrame.columnconfigure(1,weight=1)
-        
-        self.canvasColorLab = ttk.Label(self.mainCanvasColorFrame, text = 'Select canvas color',width=labelSize)
-        self.canvasColorLab.grid(row=0,column=0)
-        
-        self.canvasColorFrame = tk.Frame(self.mainCanvasColorFrame)
-        self.canvasColorFrame.grid(row=0,column=1, sticky = 'EW')
-        self.canvasColorFrame.columnconfigure(0,weight=1)
-        self.canvasColorFrame.columnconfigure(1,weight=1)
-        
-        self.canvasColorSample = ttk.Label(self.canvasColorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedCanvasColor)
-        self.canvasColorSample.grid(row=0,column=0)
-        
-        self.canvasColorButton = ttk.Button(self.canvasColorFrame,text='Color',command=self.SelectCanvasColor)
-        self.canvasColorButton.grid(row=0,column=1,padx=3,pady=3)
-        
-        # Select plot color pane
-        rowNo +=1
-        self.mainPlotColorFrame = tk.Frame(parent, pady=3)
-        self.mainPlotColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
-        self.mainPlotColorFrame.columnconfigure(1,weight=1)
-        
-        self.plotColorLab = ttk.Label(self.mainPlotColorFrame, text = 'Select plot color',width=labelSize)
-        self.plotColorLab.grid(row=0,column=0)
-        
-        self.plotColorFrame = tk.Frame(self.mainPlotColorFrame)
-        self.plotColorFrame.grid(row=0,column=1, sticky = 'EW')
-        self.plotColorFrame.columnconfigure(0,weight=1)
-        self.plotColorFrame.columnconfigure(1,weight=1)
-        
-        self.plotColorSample = ttk.Label(self.plotColorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedPlotColor)
-        self.plotColorSample.grid(row=0,column=0)
-        
-        self.plotColorButton = ttk.Button(self.plotColorFrame,text='Color',command=self.SelectPlotColor)
-        self.plotColorButton.grid(row=0,column=1,padx=3,pady=3)
-        
-        # Select toolbar color pane
-        rowNo +=1
-        self.mainToolbarColorFrame = tk.Frame(parent, pady=3)
-        self.mainToolbarColorFrame.grid(row=rowNo,column=0, sticky = 'NEW')
-        self.mainToolbarColorFrame.columnconfigure(1,weight=1)
-        
-        self.xAxisLabLab = ttk.Label(self.mainToolbarColorFrame, text = 'Select toolbar color',width=labelSize)
-        self.xAxisLabLab.grid(row=0,column=0)
-        
-        self.toolbarColorFrame = tk.Frame(self.mainToolbarColorFrame)
-        self.toolbarColorFrame.grid(row=0,column=1, sticky = 'EW')
-        self.toolbarColorFrame.columnconfigure(0,weight=1)
-        self.toolbarColorFrame.columnconfigure(1,weight=1)
-        
-        self.toolbarColorSample = ttk.Label(self.toolbarColorFrame,text='\u2588\u2588\u2588\u2588', foreground=self.selectedToolbarColor)
-        self.toolbarColorSample.grid(row=0,column=0)
-        
-        self.plotColorButton = ttk.Button(self.toolbarColorFrame,text='Color',command=self.SelectToolbarColor)
-        self.plotColorButton.grid(row=0,column=1,padx=3,pady=3)
         
         # Button frame
         rowNo +=1
