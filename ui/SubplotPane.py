@@ -48,7 +48,7 @@ class SubplotPane(CollapsiblePaneDelOpts):
             
         self.noOfRows +=1
         self.interior = tk.Frame(self.collapsibleFrame)
-        self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS')
+        self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS', pady = [0,15])
         self.interior.columnconfigure(0,weight=1)
         
     def UpdateSubplotPaneAndModelState(self)->None:
