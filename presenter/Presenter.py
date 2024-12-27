@@ -138,9 +138,6 @@ class Presenter():
             plotModel = PlotModel()
             plotModel.name = jsonPlot["name"]
             plotModel.indx = jsonPlot["indx"]
-            plotModel.canvasColor = jsonPlot["canvasColor"]
-            plotModel.plotColor = jsonPlot["plotColor"]
-            plotModel.toolbarColor = jsonPlot["toolbarColor"]
             plotModel.leftMargin = jsonPlot["leftMargin"]
             plotModel.rightMargin = jsonPlot["rightMargin"]
             plotModel.bottomMargin = jsonPlot["bottomMargin"]
@@ -1061,8 +1058,6 @@ class Presenter():
                 
                 fig, axList = plt.subplots(noOfSubplots,1, squeeze=False)
                 plt.subplots_adjust(left=plot.leftMargin, right=plot.rightMargin, top=plot.topMargin, bottom=plot.bottomMargin)
-                fig.patch.set_facecolor(plot.canvasColor)
-                
                 
                 # REDRAW PLOT MANAGER ==========================
                 # Redraw subplots
