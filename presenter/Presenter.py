@@ -660,10 +660,11 @@ class Presenter():
         
     def DeleteResultFile(self,resFilePane)->None:
         '''Delete ResultFile from the model and redraw the PlotManager.'''
-        subplotIndx = resFilePane.master.master.master.indx
+        subplotIndx = resFilePane.master.master.master.index
+        plotIndx = self.model.projectModel.tabSelected
         
         # Update SubplotModel adding a ResultFile
-        self.model.projectModel.plotModel.containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
         
         
         self.RedrawPlotNotebook()

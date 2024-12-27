@@ -36,20 +36,20 @@ class SubplotModel():
         
     def AddResultFile(self,resultFileModel):
         '''Add ResultFileModel to SubplotModel.'''
-        self.resultFiles.append(resultFileModel)
-        self.noOfResFile = len(self.resultFiles)
+        self.containedResultFiles.append(resultFileModel)
+        self.noOfResFile = len(self.containedResultFiles)
         
     def DeleteResultFile(self,resultFilePane):
         '''Remove a ResultFileModel from SubplotModel.'''
         # Remove result file
-        resultFileNo = resultFilePane.indx
-        del self.resultFiles[resultFileNo]
+        resultFileNo = resultFilePane.index
+        del self.containedResultFiles[resultFileNo]
         
         # Reassign result files indx
-        for ii, resFileTemp in enumerate(self.resultFiles):
-            resFileTemp.indx = ii
+        for ii, resFileTemp in enumerate(self.containedResultFiles):
+            resFileTemp.index = ii
             
-        self.noOfResFile = len(self.resultFiles)
+        self.noOfResFile = len(self.containedResultFiles)
         
         
         
