@@ -3,6 +3,7 @@ from tkinter import filedialog, ttk
 import os
 import json
 import numpy as np
+from shutil import copy2
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
@@ -102,6 +103,7 @@ class Presenter():
         # Load settings
         self.model.settings.projectFolder = settingDict.get("ProjectFolder")
         self.model.settings.projectFileName = settingDict.get("ProjectFileName")
+        self.model.settings.projectFileNameTemp = settingDict.get("ProjectFileNameTemp")
         
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
@@ -233,29 +235,44 @@ class Presenter():
         
     def SaveProjectModel(self)->None:
         '''Save project model.'''
-        projModelLocation = self.model.settings.projectFolder + self.model.settings.projectFileName
-        f = open(projModelLocation, "w")
         
+        # Save temporary project file
+        tempProjModelLocation = self.model.settings.projectFolder + self.model.settings.projectFileNameTemp
+        f = open(tempProjModelLocation, "w")        
         self.SaveProjectToJson(self.model.projectModel,f)
+        f.close()
         
-        self.PrintMessage('Project model saved in ' + projModelLocation)
+        # Verify that the file was properly written
+        f = open(tempProjModelLocation,'r')
+        saveSuccessful = 1
+        try:
+            jsonProjMod = json.load(f)
+        except:
+            saveSuccessful = 0
+        f.close()
+        
+        # If properly written overwrite official .json file
+        projModelLocation = self.model.settings.projectFolder + self.model.settings.projectFileName
+        if saveSuccessful: 
+            copy2(tempProjModelLocation, projModelLocation)            
+            self.PrintMessage('Project model saved in ' + projModelLocation)
+        else:
+            self.PrintMessage("Something went wrong while saving the project in " + projModelLocation)
         
     def SaveProjectToJson(self,projectModel,f)->None:
         f.write('{')
         f.write('"name": "'+ projectModel.name +'",\n')
         f.write('"tabSelected": '+ str(projectModel.tabSelected) +',\n')
-        f.write('"containedPlots": [\n')
         
+        f.write('"containedPlots": [\n')
         noOfContainedPlots = len(self.model.projectModel.containedPlots)-1
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
             self.SavePlotToJson(plot,f)
-            a = 2
             if ii < noOfContainedPlots:
-                f.write('}\n,\n') # Close PlotModel object
-            else:
-                f.write('}\n]\n}') # Close containedPlots list
-                    
-            # f.write('}') # Close the ProjectModel
+                f.write(',\n') # Close PlotModel object
+        f.write(']\n') # Close containedPlots list
+        
+        f.write('}\n') # Close the ProjectModel
                 
     def SavePlotToJson(self,plotModel,f)->None:
         '''Save PlotModel object to Json.'''
@@ -267,18 +284,17 @@ class Presenter():
         f.write('"rightMargin": '+ str(plotModel.rightMargin) +',\n')
         f.write('"bottomMargin": '+ str(plotModel.bottomMargin) +',\n')
         f.write('"topMargin": '+ str(plotModel.topMargin) +',\n')
-        f.write('"containedSubplots": [\n')
         
-        # print subplots
+        f.write('"containedSubplots": [\n')
         noOfContainedSubplots = len(plotModel.containedSubplots)-1
         for jj, subplot in enumerate(plotModel.containedSubplots):
             self.SaveSubplotToJson(subplot,f)
-            
             if jj < noOfContainedSubplots:
-                f.write('}\n,\n') # Close SubplotModel object
-            else:
-                f.write('}\n]\n') # Close containedSubplots list
-               
+                f.write(',\n') # Close SubplotModel object
+        f.write(']\n') # Close containedSubplots list        
+        
+        f.write('}\n') # Close PlotModel object
+        
     def SaveSubplotToJson(self,subplotModel,f)->None:
         '''Save SubplotModel to Json.'''
         f.write('{')
@@ -306,32 +322,28 @@ class Presenter():
         noOfResltFile = len(subplotModel.containedResultFiles)-1
         for kk, resultFile in enumerate(subplotModel.containedResultFiles):
             self.SaveResultFileToJson(resultFile,f)
-            f.write('}\n,\n') # Close ResultFile object
-
             if kk < noOfResltFile:
-                f.write('}\n,\n') # Close ResultFile object
-            else:
-                f.write('}\n') # Close containedResultFiles list
-                
+                f.write(',\n') # Add a comma in between ResultFile objects
         f.write(']\n') # Close containedResultFiles list
                 
+        f.write('}\n')
+        
     def SaveResultFileToJson(self,resultFile,f)->None:
         '''Save ResultFile object to Json.'''
         f.write('{')
         f.write('"name": "'+ resultFile.name +'",\n')
         f.write('"indx": '+ str(resultFile.indx) +',\n')
         f.write('"absPath": "'+ resultFile.absPath +'",\n')
-        f.write('"selectedSignals": [\n')
         
+        f.write('"selectedSignals": [\n')
         # Print selected signals
         noOfSelSignals = len(resultFile.selectedSignals)-1
         for hh, selectedSignal in enumerate(resultFile.selectedSignals): 
             self.SavePlottedSignalToJson(selectedSignal,f)
-            
             if hh < noOfSelSignals:
                 f.write(',\n') # Close SelectedSignal object
-                
         f.write(']\n') # Close SelectedSignals list
+        f.write('}\n')
         
     def SavePlottedSignalToJson(self, plottedSignal, f)->None:
         '''Save PlottedSignal object to Json.'''
@@ -346,7 +358,7 @@ class Presenter():
         f.write('"scalingFactor": '+ str(plottedSignal.scalingFactor)+',\n')
         f.write('"quantity": "'+ plottedSignal.quantity +'"'+',\n')
         f.write('"indexInResFile": '+ str(plottedSignal.indexInResFile)+'\n')
-        f.write('}'+'\n')
+        f.write('}\n')
                               
                               
   
@@ -447,8 +459,6 @@ class Presenter():
         else:
             self.model.projectModel.tabSelected = -1
             
-            
-        
     def AddPlotTab(self)->None:
         '''Add a Plot in the ProjectModel containedPlots list.'''
         # Build default plot model 
@@ -650,7 +660,6 @@ class Presenter():
         
 
         
-        
     # RESULT FILE HANDLING
         
     def AddResultFile(self, subplotPane)->None:
@@ -719,22 +728,15 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signals = signals
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].signalNames = signalNames
         
-        # If the first result pane is added
-        if resFilePane.index == 0:
-            # Load the first signal for the x axis
-            self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelected = signals[0]
-            self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSelectedIndx = 0
-            # Add the signals to the x axis selection 
-            for signal, signalName in zip(signals, signalNames):
-                self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignals.append(signal)
-                self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xAxisSignalsName.append(signalName)
-        
+        # Set the first signal of the file as X axis by default
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal = signals[0]
         
         self.RedrawPlotNotebook()
 
         
         
     # SIGNAL HANDLING
+    
     def AddXAxisSignal(self, event,resFilePane)->None:
         '''Set the X Axis signal used in the result file model.'''
         # Get useful information
