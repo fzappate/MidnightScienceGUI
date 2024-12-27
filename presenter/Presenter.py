@@ -291,13 +291,13 @@ class Presenter():
         f.write('"yLim": '+ str(subplotModel.yLim) + ',\n')
         f.write('"xLimUser": '+ str(subplotModel.xLimUser) + ',\n')
         f.write('"yLimUser": '+ str(subplotModel.yLimUser) + ',\n')
-        f.write('"useUserLim": '+ str(subplotModel.useUserLim) + ',\n')
+        f.write('"useUserLim": '+ str(float(subplotModel.useUserLim)) + ',\n')
         f.write('"xTick": '+ str(subplotModel.xTick)+',\n')
         f.write('"yTick": '+ str(subplotModel.yTick)+',\n')
         f.write('"xTickUser": '+ str(subplotModel.xTickUser)+',\n')
         f.write('"yTickUser": '+ str(subplotModel.yTickUser)+',\n')
-        f.write('"useUserTicks": '+ str(subplotModel.useUserTicks) +',\n')
-        f.write('"setGrid": '+ str(subplotModel.setGrid) +',\n')
+        f.write('"useUserTicks": '+ str(float(subplotModel.useUserTicks)) +',\n')
+        f.write('"setGrid": '+ str(float(subplotModel.setGrid)) +',\n')
         f.write('"colorCounter": '+ str(subplotModel.colorCounter)+',\n')
         f.write('"noOfResFile": '+ str(subplotModel.noOfResFile)+',\n')
         
@@ -631,11 +631,11 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yLabel = subplotOptionsPane.yAxisLabEntry.get()
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xLimUser = [float(subplotOptionsPane.xAxisLowLimEntry.get()), float(subplotOptionsPane.xAxisUpLimEntry.get())]
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yLimUser = [float(subplotOptionsPane.yAxisLowLimEntry.get()), float(subplotOptionsPane.yAxisUpLimEntry.get())]
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserLim = subplotOptionsPane.userLimVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserLim = float(subplotOptionsPane.userLimVar.get())
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].xTickUser = float(subplotOptionsPane.xAxisTicksEntry.get())
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].yTickUser = float(subplotOptionsPane.yAxisTicksEntry.get())
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserTicks = subplotOptionsPane.userTicksVar.get()
-        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].setGrid = subplotOptionsPane.gridVar.get()
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].useUserTicks = float(subplotOptionsPane.userTicksVar.get())
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].setGrid = float(subplotOptionsPane.gridVar.get())
         
         self.RedrawPlotNotebook()
         
@@ -677,7 +677,6 @@ class Presenter():
         
         # Update SubplotModel adding a ResultFile
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].DeleteResultFile(resFilePane)
-        
         
         self.RedrawPlotNotebook()
         
@@ -1081,10 +1080,36 @@ class Presenter():
                                             subplot)
                     subplotPane.grid(row=jj,column=0,padx = [6,0],pady = [3,0],sticky='NEW')
                     
+                    # PLOT CANVAS ==========================
+                    # Title
+                    axList[jj,0].title.set_text(subplot.name)
+                    # Labels
+                    axList[jj,0].set_xlabel(subplot.xLabel)
+                    axList[jj,0].set_ylabel(subplot.yLabel)
+                    # Grid
+                    axList[jj,0].grid(subplot.setGrid)
+                    # Axis Limits                        
+                    if subplot.useUserLim:
+                        axList[jj,0].set_xlim(subplot.xLimUser)
+                        
+                    if subplot.useUserLim:
+                        axList[jj,0].set_ylim(subplot.yLimUser)
+                                               
+                    # Ticks
+                    if bool(subplot.useUserTicks) & (subplot.xTickUser!=0):
+                        currTickX = list(axList[jj,0].get_xlim())
+                        tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
+                        axList[jj,0].set_xticks(tickVectX)
+                        
+                    if bool(subplot.useUserTicks) & (subplot.yTickUser!=0):
+                        currTickY = list(axList[jj,0].get_ylim())
+                        tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
+                        axList[jj,0].set_yticks(tickVectY)
 
         
-                    # Redraw result files 
+                    # Draw result files 
                     for kk, resultFile in enumerate(subplot.containedResultFiles):
+                        # PLOT MANAGER ==========================
                         resFile = ResFilePane(subplotPane.interior,
                                             self,
                                             index = kk,
@@ -1092,6 +1117,9 @@ class Presenter():
                                             comboboxList=resultFile.signalNames)
                         resFile.grid(row=kk,column=0,padx = [6,0],sticky='NEW')
 
+                        
+                                
+                        # PLOT MANAGER ==========================
                         # If there is an X and Y signals selected plot
                         if not resultFile.xAxisSignal.name == '':
                             xAxisSignal = resultFile.xAxisSignal                        
@@ -1109,7 +1137,7 @@ class Presenter():
                             sigPane.grid(row=hh,column=0,sticky='EW')
                             
                         
-                            # REDRAW PLOT CANVAS ==========================
+                            # PLOT CANVAS ==========================
                             # Extract x axis signal 
                             xAxisSelected = subplot.xAxisSelected
                                     
@@ -1143,29 +1171,7 @@ class Presenter():
                             subplot.xTick = xTicks
                             subplot.yTick = yTicks
                             
-                            # Set subplot properties
-                            # Title
-                            axList[jj,0].title.set_text(subplot.name)
-                            # Labels
-                            axList[jj,0].set_xlabel(subplot.xLabel)
-                            axList[jj,0].set_ylabel(subplot.yLabel)
-                            # Grid
-                            axList[jj,0].grid(subplot.setGrid)
-                            # Axis Limits
-                            if subplot.useUserLim & (subplot.xLimUser[0] != subplot.xLimUser[1]):
-                                axList[jj,0].set_xlim(subplot.xLimUser)
-                            if subplot.useUserLim & (subplot.yLimUser[0] != subplot.yLimUser[1]):
-                                axList[jj,0].set_ylim(subplot.yLimUser)
-                            # Ticks
-                            if subplot.useUserTicks & (subplot.xTickUser!=0):
-                                currTickX = list(axList[jj,0].get_xlim())
-                                tickVectX = np.arange(currTickX[0],currTickX[1], subplot.xTickUser).tolist()
-                                axList[jj,0].set_xticks(tickVectX)
-                                
-                            if subplot.useUserTicks & (subplot.yTickUser!=0):
-                                currTickY = list(axList[jj,0].get_ylim())
-                                tickVectY = np.arange(currTickY[0],currTickY[1],subplot.yTickUser).tolist()
-                                axList[jj,0].set_yticks(tickVectY)
+                            
                                     
                             
                 # Draw the canvas and toolbar inside the Plotter object

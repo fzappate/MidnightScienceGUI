@@ -139,7 +139,7 @@ class SubplotOptions(tk.Frame):
         
         self.gridLab = ttk.Label(self.userLimFrame, text = 'Set Axis Limits',width=labelSize)
         self.gridLab.grid(row=0,column=1)
-        self.userLimVar = tk.BooleanVar(value=useUserLim)
+        self.userLimVar = tk.DoubleVar(value=useUserLim)
         
         self.userLimCheckbox = ttk.Checkbutton(self.userLimFrame,variable=self.userLimVar, command = self.SetLimEntryState)
         self.userLimCheckbox.grid(row=0,column=2)
@@ -153,7 +153,7 @@ class SubplotOptions(tk.Frame):
         
         self.userTicksLab = ttk.Label(self.userTicksFrame, text = 'Set Axis Ticks',width=labelSize)
         self.userTicksLab.grid(row=0,column=1)
-        self.userTicksVar = tk.BooleanVar(value=self.useUserLim)
+        self.userTicksVar = tk.DoubleVar(value=self.useUserLim)
         
         self.userTicksCheckbox = ttk.Checkbutton(self.userTicksFrame,variable=self.userTicksVar,command = self.SetTicksEntryState)
         self.userTicksCheckbox.grid(row=0,column=2)
@@ -167,7 +167,7 @@ class SubplotOptions(tk.Frame):
         
         self.gridLab = ttk.Label(self.gridFrame, text = 'Grid',width=labelSize)
         self.gridLab.grid(row=0,column=1)
-        self.gridVar = tk.BooleanVar(value=self.setGrid)
+        self.gridVar = tk.DoubleVar(value=self.setGrid)
         
         self.gridCheckbox = ttk.Checkbutton(self.gridFrame,onvalue = 'on',variable=self.gridVar)
         if setGrid == True:
