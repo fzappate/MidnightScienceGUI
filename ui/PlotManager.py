@@ -31,7 +31,11 @@ class PlotManager(ResizableFrameRightEdgeScrollV):
         # Results file selection
         self.noOfRows = 0
         self.addPlot = ttk.Button(self.scrollFrame,text='Add Subplot',command = lambda:self.presenter.AddSubplot(self)) 
-        self.addPlot.grid(row=self.noOfRows,column=0,sticky='NEW')
+        self.addPlot.grid(row=self.noOfRows,column=0,pady= [3,0],sticky='NEW')
+        
+        self.noOfRows += 1  
+        self.separator = ttk.Separator(self.scrollFrame,orient='horizontal')
+        self.separator.grid(row=self.noOfRows,column=0,sticky='EW',padx=3,pady=3)
         
         self.noOfRows += 1    
         self.noOfIntRows = 0    

@@ -67,6 +67,6 @@ class SignalPane(tk.Frame):
         # Signal delete
         colNo+=1
         self.delBtn = ttk.Button(self,text = self.delIcon, width=3,command=lambda: self.presenter.DeleteSignal(self))
-        self.delBtn.grid(row=0,column=colNo,sticky='EW', padx = 3)
+        self.delBtn.grid(row=0,column=colNo,sticky='EW', padx = (3,0))
 
 

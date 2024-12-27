@@ -1072,8 +1072,10 @@ class Presenter():
                                             self, 
                                             jj,
                                             subplot)
-                    subplotPane.grid(row=jj,column=0,sticky='NEW')
+                    subplotPane.grid(row=jj,column=0,padx = [6,0],pady = [3,0],sticky='NEW')
                     
+
+        
                     # Redraw result files 
                     for kk, resultFile in enumerate(subplot.containedResultFiles):
                         resFile = ResFilePane(subplotPane.interior,
@@ -1081,7 +1083,7 @@ class Presenter():
                                             index = kk,
                                             entryText=resultFile.absPath,
                                             comboboxList=resultFile.signalNames)
-                        resFile.grid(row=kk,column=0,sticky='NEW')
+                        resFile.grid(row=kk,column=0,padx = [6,0],sticky='NEW')
 
                         # If there is an X and Y signals selected plot
                         if not resultFile.xAxisSignal.name == '':

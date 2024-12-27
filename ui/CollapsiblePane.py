@@ -761,6 +761,6 @@ class CollapsiblePaneDelOpts(CollapsiblePane):
         # Create header delete button
         self.delIcon = '\u274C' # X
         self.delBtn = ttk.Button( self.headerFrame, text = self.delIcon, command=self.DelBtnClick,width=3)
-        self.delBtn.grid(row = 0, column=3,sticky='E')
+        self.delBtn.grid(row = 0, column=3,sticky='E',padx = (3,0))
         
         

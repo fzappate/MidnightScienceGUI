@@ -10,7 +10,6 @@ class SubplotPane(CollapsiblePaneDelOpts):
                  presenter,
                  index,
                  subplotModel,
-                 xAxisIndx = None,
                  *args,**kwargs):
     
         ''''''
@@ -19,37 +18,24 @@ class SubplotPane(CollapsiblePaneDelOpts):
         # Store the inputs
         self.index = index
         self.presenter = presenter
-        self.listOfSignals = subplotModel.xAxisSignalsName
-        self.xAxisIndx = subplotModel.xAxisSelectedIndx
         
         # Configure the master widget
         self.collapsibleFrame.rowconfigure(3,weight=1)
         self.headerLabel.configure(text=subplotModel.name)
         self.expandButton.configure(command = lambda:self.UpdateSubplotPaneAndModelState())
         self.optsBtn.configure(command=lambda:self.presenter.OpenSubplotOptions(self,self.optsBtn))
-        self.delBtn.configure( command=lambda:self.presenter.DeleteSubplot(self))
+        self.delBtn.configure(command=lambda:self.presenter.DeleteSubplot(self))
         
         # Add the widgets        
         self.noOfRows = 0
-        self.xAxisLabel = ttk.Label(self.collapsibleFrame,text = 'Select X axis')
-        self.xAxisLabel.grid(row=self.noOfRows,column=0,sticky='W')
-        
-        self.noOfRows +=1
-        self.xAxisSelect = ttk.Combobox(self.collapsibleFrame,state='readonly',values=self.listOfSignals)
-        self.xAxisSelect.grid(row=self.noOfRows,column=0,sticky='EW')
-        self.xAxisSelect.bind("<<ComboboxSelected>>",lambda event: self.presenter.SelectXAxis(event, self))
-        
-        self.noOfRows +=1
         self.addFileBtn = ttk.Button(self.collapsibleFrame,text='Add Result File', command= lambda:self.presenter.AddResultFile(self))
-        self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='W')
-        # Check if the list of signals is empty, if not set the first one
-        if len(self.listOfSignals)>0:
-            self.xAxisSelect.current(self.xAxisIndx)
+        self.addFileBtn.grid(row=self.noOfRows,column=0,sticky='EW', pady = (3,3))
             
         self.noOfRows +=1
-        self.interior = tk.Frame(self.collapsibleFrame)
-        self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS', pady = [0,15])
+        self.interior = ttk.Frame(self.collapsibleFrame,height=0)
+        self.interior.grid(row=self.noOfRows,column=0,sticky='NEWS',pady = (3,12))
         self.interior.columnconfigure(0,weight=1)
+
         
     def UpdateSubplotPaneAndModelState(self)->None:
         '''First it calls the SwitchState function of the parent CollapsiblePane to update its status.
