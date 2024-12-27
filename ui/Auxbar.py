@@ -54,23 +54,17 @@ class AuxBar(tk.Frame):
         iconSize = (30, 30)
 
         # Load save image
-        saveIconPath = os.path.join(os.getcwd(), './images/saveIcon.png')
+        saveIconPath = os.path.join(os.getcwd(), './docs/images/saveProjIcon.png')
         self.saveIcon = Image.open(saveIconPath)
         self.saveIcon = self.saveIcon.resize(iconSize)
         self.saveIcon = ImageTk.PhotoImage(self.saveIcon)
 
         # Load load image
-        loadIconPath = os.path.join(os.getcwd(), './images/loadIcon.png')
+        loadIconPath = os.path.join(os.getcwd(), './docs/images/loadProjIcon.png')
         self.loadIcon = Image.open(loadIconPath)
         self.loadIcon = self.loadIcon.resize(iconSize)
         self.loadIcon = ImageTk.PhotoImage(self.loadIcon)
         
-        # Load reload image
-        reloadIconPath = os.path.join(os.getcwd(), './images/reloadIcon.png')
-        self.reloadIcon = Image.open(reloadIconPath)
-        self.reloadIcon = self.reloadIcon.resize(iconSize)
-        self.reloadIcon = ImageTk.PhotoImage(self.reloadIcon)
-
         # Save button 
         save_button = ttk.Button(self, image=self.saveIcon, command=presenter.SaveProjectModel)
         save_button.grid(row=0, column=0, padx=(3, 3), ipady=1, ipadx=1)

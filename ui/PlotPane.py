@@ -30,7 +30,7 @@ class PlotPane(tk.Frame):
         self.columnconfigure(1,weight=1)
         
         # Plot manager        
-        self.plotManager = PlotManager(self,presenter,width=200)
+        self.plotManager = PlotManager(self,presenter,width=400)
         self.plotManager.grid(row=0,column=0,sticky='NEWS')
         
         # Plot frame
