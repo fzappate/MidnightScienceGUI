@@ -30,3 +30,4 @@ class Settings():
         
         self.settingsFilePath = './utilities/settings.md'
         self.projectFolder = ''
+        self.projectFileName = ''

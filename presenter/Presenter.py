@@ -78,10 +78,8 @@ class Presenter():
         
         if (settingsFileExist):
             self.PrintMessage('Settings file found at: ' + self.model.settings.settingsFilePath)
-            print('Settings file found at: ' + self.model.settings.settingsFilePath)
         else:
             self.PrintError('Settings file found at: ' + self.model.settings.settingsFilePath)
-            print('Settings file not found at: ' + self.model.settings.settingsFilePath)
             
         # Read setting file
         file = open(self.model.settings.settingsFilePath,'r')
@@ -101,9 +99,10 @@ class Presenter():
                     
         file.close()
         
-        # load setting dictionary in setting structure
+        # Load settings
         self.model.settings.projectFolder = settingDict.get("ProjectFolder")
-
+        self.model.settings.projectFileName = settingDict.get("ProjectFileName")
+        
         # Update entries
         self.UpdateEntry(self.view.pathSelector.pathEntry,settingDict.get("ProjectFolder"))
     
@@ -121,21 +120,12 @@ class Presenter():
         projectModelPath = self.model.settings.projectFolder + "/ProjectModel.json"
         projectModelFileExists = os.path.exists(projectModelPath)
         if not projectModelFileExists:
-            print('No project file found at: ' + projectModelPath)
-            print('Creating empty project.')
-            # Create empty project
-            projModel = ProjectModel()
-            plotModel = PlotModel()
-            subplotModel = SubplotModel()
-            
-            # Append the SubplotModel inside the PlotModel.containedSubplots
-            plotModel.containedSubplots.append(subplotModel)
-            # Append the PlotModel inside the ProjectModel.containedPlots
-            projModel.containedPlots.append(plotModel)      
-            # Add the project model into 
-            self.model.projectModel = projModel
+            self.PrintMessage('No project file found at: ' + projectModelPath)
+            self.PrintMessage('Creating empty project.')
+            self.CreateEmptyProject()
+
         else:
-            print('Project file found at: ' + projectModelPath)
+            self.PrintMessage('Project file found at: ' + projectModelPath)
             
             # Load ProjectModel.json
             f = open(projectModelPath,'r')
@@ -179,12 +169,9 @@ class Presenter():
                     subplotModel.yTickUser = jsonSubplot["yTickUser"]
                     subplotModel.useUserTicks = jsonSubplot["useUserTicks"]
                     subplotModel.setGrid = jsonSubplot["setGrid"]
-                    
                     subplotModel.colorCounter = jsonSubplot["colorCounter"]
-                    
                     subplotModel.noOfResFile = jsonSubplot["noOfResFile"]
                     
-                    subplotModel.xAxisSelectedIndx = jsonSubplot["xAxisSelectedIndx"]
                     
                     
                     # Load result files data
@@ -222,11 +209,6 @@ class Presenter():
                         # Append ResultFileModel to SubplotModel.containedResultFiles
                         subplotModel.containedResultFiles.append(resFileModel)
                     
-                    subplotModel.xAxisSignals = subplotModel.containedResultFiles[0].signals
-                    subplotModel.xAxisSignalsName = subplotModel.containedResultFiles[0].signalNames
-                    subplotModel.xAxisSelected = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx]
-                    subplotModel.xAxisSelectedName = subplotModel.containedResultFiles[0].signals[subplotModel.xAxisSelectedIndx].name
-                        
                     # Append the SubplotModel inside the PlotModel.containedSubplots
                     plotModel.containedSubplots.append(subplotModel)
                     
@@ -235,9 +217,23 @@ class Presenter():
                 
             self.model.projectModel = projModel
          
+    def CreateEmptyProject(self):
+        '''Create an empty project.'''
+        # Create empty project
+        projModel = ProjectModel()
+        plotModel = PlotModel()
+        subplotModel = SubplotModel()
+        
+        # Append the SubplotModel inside the PlotModel.containedSubplots
+        plotModel.containedSubplots.append(subplotModel)
+        # Append the PlotModel inside the ProjectModel.containedPlots
+        projModel.containedPlots.append(plotModel)      
+        # Add the project model into 
+        self.model.projectModel = projModel
+        
     def SaveProjectModel(self)->None:
         '''Save project model.'''
-        projModelLocation = "./utilities/ProjectModel.json"
+        projModelLocation = self.model.settings.projectFolder + self.model.settings.projectFileName
         f = open(projModelLocation, "w")
         
         self.SaveProjectToJson(self.model.projectModel,f)
@@ -304,18 +300,20 @@ class Presenter():
         f.write('"setGrid": '+ str(subplotModel.setGrid) +',\n')
         f.write('"colorCounter": '+ str(subplotModel.colorCounter)+',\n')
         f.write('"noOfResFile": '+ str(subplotModel.noOfResFile)+',\n')
-        f.write('"xAxisSelectedIndx": '+ str(subplotModel.xAxisSelectedIndx)+',\n')
         
         # Print Result files
         f.write('"containedResultFiles": [\n')
         noOfResltFile = len(subplotModel.containedResultFiles)-1
         for kk, resultFile in enumerate(subplotModel.containedResultFiles):
             self.SaveResultFileToJson(resultFile,f)
+            f.write('}\n,\n') # Close ResultFile object
 
             if kk < noOfResltFile:
                 f.write('}\n,\n') # Close ResultFile object
             else:
-                f.write('}\n]\n') # Close containedResultFiles list
+                f.write('}\n') # Close containedResultFiles list
+                
+        f.write(']\n') # Close containedResultFiles list
                 
     def SaveResultFileToJson(self,resultFile,f)->None:
         '''Save ResultFile object to Json.'''
@@ -332,8 +330,8 @@ class Presenter():
             
             if hh < noOfSelSignals:
                 f.write(',\n') # Close SelectedSignal object
-            else:
-                f.write(']\n') # Close SelectedSignals list
+                
+        f.write(']\n') # Close SelectedSignals list
         
     def SavePlottedSignalToJson(self, plottedSignal, f)->None:
         '''Save PlottedSignal object to Json.'''

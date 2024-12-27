@@ -4,3 +4,32 @@
 {"name": "",
 "indx": 0,
 "noOfSubplots": 0,
+"leftMargin": 0.1,
+"rightMargin": 0.9,
+"bottomMargin": 0.1,
+"topMargin": 0.9,
+"containedSubplots": [
+{"name": "",
+"indx": 0,
+"isCollapsed": 1,
+"xLabel": "",
+"yLabel": "",
+"xLim": [0.0, 1.0],
+"yLim": [0.0, 1.0],
+"xLimUser": [0.0, 1.0],
+"yLimUser": [0.0, 1.0],
+"useUserLim": 0,
+"xTick": 0.2,
+"yTick": 0.2,
+"xTickUser": 0.2,
+"yTickUser": 0.2,
+"useUserTicks": 0,
+"setGrid": 1,
+"colorCounter": 0,
+"noOfResFile": 0,
+"containedResultFiles": [
+}
+]
+}
+]
+}
