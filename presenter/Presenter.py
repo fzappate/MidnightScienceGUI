@@ -835,7 +835,36 @@ class Presenter():
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals.pop(signalIndx)
         
         self.RedrawPlotNotebook()
+    
+    def ModifyXSignalScaling(self,event,signalPane, scalingList)->None:
+        '''Change the scaling of the signal.'''
+        # Get the combobox index, string, and scaling factor
+        optNoSelected = signalPane.unitsCb.current()
+        optStrSelected = event.widget.get()
+        scalingFactor = scalingList[optNoSelected]
         
+        # Extract indexes
+        signalIndx = signalPane.index
+        resFilePaneIntern = signalPane.master
+        resFilePane = signalPane.master.master
+        resFileIndx = resFilePane.index
+        collapsPaneIntern = signalPane.master.master.master
+        collapsPane = signalPane.master.master.master.master
+        subplotPane = signalPane.master.master.master.master.master
+        subplotIndx = subplotPane.index
+        plotIndx = self.model.projectModel.tabSelected
+        
+        # Extract row data and calculate scaled data
+        rawData = self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal.rawData
+        scaledData = [scalingFactor*val for val in rawData] 
+        # Save new units, scaling factor, and scaled data
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal.units = optStrSelected
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal.scalingFactor = scalingFactor
+        self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].xAxisSignal.scaledData = scaledData
+        
+        # Redraw PlotUI
+        self.RedrawPlotNotebook()
+            
     def ModifySignalScaling(self,event,signalPane, scalingList)->None:
         '''Change the scaling of the signal.'''
         # Get the combobox index, string, and scaling factor
@@ -860,7 +889,6 @@ class Presenter():
         # Save new units, scaling factor, and scaled data
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].units = optStrSelected
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scalingFactor = scalingFactor
-        # self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].plottedSignals[signalIndx].scaledData = scaledData 
         self.model.projectModel.containedPlots[plotIndx].containedSubplots[subplotIndx].containedResultFiles[resFileIndx].selectedSignals[signalIndx].scaledData = scaledData
         
         # Redraw PlotUI

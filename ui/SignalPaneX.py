@@ -52,7 +52,7 @@ class SignalPaneX(ttk.Frame):
         self.unitsCb.grid(row=0,column=colNo,sticky='EW', padx=(3,0))
         
         self.unitsCb.set(signal.units)
-        self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifySignalScaling(event, self, scalingList))
+        self.unitsCb.bind("<<ComboboxSelected>>",lambda event: self.presenter.ModifyXSignalScaling(event, self, scalingList))
 
 
 
