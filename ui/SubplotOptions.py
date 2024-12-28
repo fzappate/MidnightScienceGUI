@@ -11,11 +11,11 @@ class SubplotOptions(tk.Frame):
                  yLabel = '',
                  xLim = [0, 0],
                  yLim = [0, 0],
-                 useUserLim = False, 
+                 useUserLim = 0, 
                  xTick = 0,
                  yTick = 0,
-                 useUserTicks = False,
-                 setGrid = True,
+                 useUserTicks = 0,
+                 setGrid = 1,
                  *args,
                  **kwargs):
         
@@ -28,6 +28,7 @@ class SubplotOptions(tk.Frame):
         self.presenter = presenter
         self.index = index
         self.useUserLim = useUserLim
+        self.useUserTicks = useUserTicks
         self.setGrid = setGrid
         
         # Title frame
@@ -142,6 +143,10 @@ class SubplotOptions(tk.Frame):
         self.userLimVar = tk.DoubleVar(value=useUserLim)
         
         self.userLimCheckbox = ttk.Checkbutton(self.userLimFrame,variable=self.userLimVar, command = self.SetLimEntryState)
+        if self.userLimVar.get() == True:
+            self.userLimCheckbox.state(['selected'])
+        else:
+            self.userLimCheckbox.state(['!selected'])
         self.userLimCheckbox.grid(row=0,column=2)
         
         self.SetLimEntryState()
@@ -156,8 +161,11 @@ class SubplotOptions(tk.Frame):
         self.userTicksVar = tk.DoubleVar(value=self.useUserLim)
         
         self.userTicksCheckbox = ttk.Checkbutton(self.userTicksFrame,variable=self.userTicksVar,command = self.SetTicksEntryState)
+        if  self.userTicksVar.get() == True:
+            self.userTicksCheckbox.state(['selected'])
+        else:
+            self.userTicksCheckbox.state(['!selected'])
         self.userTicksCheckbox.grid(row=0,column=2)
-        
         self.SetTicksEntryState()
         
         # Grid frame
@@ -167,10 +175,10 @@ class SubplotOptions(tk.Frame):
         
         self.gridLab = ttk.Label(self.gridFrame, text = 'Grid',width=labelSize)
         self.gridLab.grid(row=0,column=1)
-        self.gridVar = tk.DoubleVar(value=self.setGrid)
         
-        self.gridCheckbox = ttk.Checkbutton(self.gridFrame,onvalue = 'on',variable=self.gridVar)
-        if setGrid == True:
+        self.gridVar = tk.DoubleVar(value=self.setGrid)
+        self.gridCheckbox = ttk.Checkbutton(self.gridFrame,variable=self.gridVar)
+        if self.gridVar.get() == True:
             self.gridCheckbox.state(['selected'])
         else:
             self.gridCheckbox.state(['!selected'])
@@ -214,7 +222,7 @@ class SubplotOptions(tk.Frame):
             
     def SetTicksEntryState(self)->None:
         '''Set the state of the user ticks entries.'''
-        
+        a = self.userTicksVar.get()
         if self.userTicksVar.get():
             self.xAxisTicksEntry.config(state="normal")
             self.yAxisTicksEntry.config(state="normal")
