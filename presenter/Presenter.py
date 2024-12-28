@@ -77,15 +77,16 @@ class Presenter():
         ''' This function loads the GUI settings.'''
         
         # Check that the settings file exists
-        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
+        settingFilePath = self.ResourcePath(self.model.settings.settingsFilePath)
+        settingsFileExist = os.path.exists(settingFilePath)
         
         if (settingsFileExist):
-            self.PrintMessage('Settings file found at: ' + self.model.settings.settingsFilePath)
+            self.PrintMessage('Settings file found at: ' + settingFilePath)
         else:
-            self.PrintError('Settings file found at: ' + self.model.settings.settingsFilePath)
+            self.PrintError('Settings file found at: ' + settingFilePath)
             
         # Read setting file
-        file = open(self.model.settings.settingsFilePath,'r')
+        file = open(settingFilePath,'r')
         lines = file.readlines()
         
         # Create setting dictionary
