@@ -122,7 +122,6 @@ class SignalOptions(tk.Frame):
         '''Open color chooser.'''
         colorCode = colorchooser.askcolor(title='Select a color')
         try:
-            print("color selected")
             self.selectedColor=colorCode[1]
             self.colorSample.config(foreground=colorCode[1])
             

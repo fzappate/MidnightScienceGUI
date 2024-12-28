@@ -791,7 +791,6 @@ class Presenter():
     
     def AddSignal(self,event, resFilePane)->None:
         '''Moves one signal from the ResultModel to the PlottedSignal.'''
-        print('Adding signal')
         # Get useful information
         plotIndx = self.model.projectModel.tabSelected
         subplotIndx = resFilePane.master.master.master.index
