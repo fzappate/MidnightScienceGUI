@@ -208,6 +208,27 @@ class Presenter():
                             # Append PlottedSignal inside the ResultFileModel.selectedSignals
                             resFileModel.selectedSignals.append(selectedSignalModel)
                         
+                        jsonXAxisSignals = jsonResFile["xAxisSignal"]
+                        for jsonXAxisSignal in jsonXAxisSignals:
+                            xAxisSignal = PlottedSignalModel()
+                            xAxisSignal.name = jsonXAxisSignal["name"]
+                            xAxisSignal.width = jsonXAxisSignal["width"]
+                            xAxisSignal.style = jsonXAxisSignal["style"]
+                            xAxisSignal.marker = jsonXAxisSignal["marker"]
+                            xAxisSignal.color = jsonXAxisSignal["color"]
+                            xAxisSignal.label = jsonXAxisSignal["label"]
+                            xAxisSignal.label = jsonXAxisSignal["name"]
+                            xAxisSignal.units = jsonXAxisSignal["units"]
+                            xAxisSignal.scalingFactor = jsonXAxisSignal["scalingFactor"] 
+                            xAxisSignal.quantity = jsonXAxisSignal["quantity"]
+                            xAxisSignal.indexInResFile = jsonXAxisSignal["indexInResFile"]
+                            
+                            xAxisSignal.rawData = resFileModel.signals[xAxisSignal.indexInResFile].rawData
+                            xAxisSignal.scaledData = [dataPoint*xAxisSignal.scalingFactor for dataPoint in xAxisSignal.rawData]
+                            
+                        # Use PlottedSignal as xAxisSignal
+                        resFileModel.xAxisSignal = xAxisSignal
+                        
                         # Append ResultFileModel to SubplotModel.containedResultFiles
                         subplotModel.containedResultFiles.append(resFileModel)
                     
@@ -342,7 +363,12 @@ class Presenter():
             self.SavePlottedSignalToJson(selectedSignal,f)
             if hh < noOfSelSignals:
                 f.write(',\n') # Close SelectedSignal object
-        f.write(']\n') # Close SelectedSignals list
+        f.write('],\n') # Close SelectedSignals list
+        
+        f.write('"xAxisSignal": [')
+        self.SavePlottedSignalToJson(resultFile.xAxisSignal,f)
+        f.write(']\n')
+        
         f.write('}\n')
         
     def SavePlottedSignalToJson(self, plottedSignal, f)->None:
@@ -1139,39 +1165,33 @@ class Presenter():
                             sigPane.grid(row=hh,column=0,sticky='EW')
                             
                         
-                            # PLOT CANVAS ==========================
-                            # Extract x axis signal 
-                            xAxisSelected = subplot.xAxisSelected
-                                    
-                            # Do not plot anything if the x axis is not selected
-                            if xAxisSelected == []:
-                                continue
+                            if not resultFile.xAxisSignal.name == '':
+                                # PLOT CANVAS ==========================
+                                # Extract plotted signals and plot them
+                                plottedSig = selectedSignal
+                                
+                                psCol=plottedSig.color
+                                psWidth=plottedSig.width
+                                psStyle=plottedSig.style
+                                psMarker=plottedSig.marker
+                                psLabel=plottedSig.label
+                                axList[jj,0].plot(xAxisSignal.scaledData,selectedSignal.scaledData,
+                                                    color=psCol,
+                                                    linewidth=psWidth,
+                                                    linestyle=psStyle,
+                                                    marker=psMarker,
+                                                    label=psLabel)
+                                axList[jj,0].legend()
                             
-                            # Extract plotted signals and plot them
-                            plottedSig = selectedSignal
-                            
-                            psCol=plottedSig.color
-                            psWidth=plottedSig.width
-                            psStyle=plottedSig.style
-                            psMarker=plottedSig.marker
-                            psLabel=plottedSig.label
-                            axList[jj,0].plot(xAxisSelected.scaledData,plottedSig.scaledData,
-                                                color=psCol,
-                                                linewidth=psWidth,
-                                                linestyle=psStyle,
-                                                marker=psMarker,
-                                                label=psLabel)
-                            axList[jj,0].legend()
-                        
-                            # Extract subplot default settings
-                            subplot.xLim = list(axList[jj,0].get_xlim())
-                            subplot.yLim = list(axList[jj,0].get_ylim())
-                            yTicksArray = axList[jj,0].get_yticks()
-                            xTicksArray = axList[jj,0].get_xticks()
-                            xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
-                            yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
-                            subplot.xTick = xTicks
-                            subplot.yTick = yTicks
+                                # Extract subplot default settings
+                                subplot.xLim = list(axList[jj,0].get_xlim())
+                                subplot.yLim = list(axList[jj,0].get_ylim())
+                                yTicksArray = axList[jj,0].get_yticks()
+                                xTicksArray = axList[jj,0].get_xticks()
+                                xTicks = float(xTicksArray[1]) - float(xTicksArray[0])
+                                yTicks = float(yTicksArray[1]) - float(yTicksArray[0])
+                                subplot.xTick = xTicks
+                                subplot.yTick = yTicks
                             
                             
                                     
