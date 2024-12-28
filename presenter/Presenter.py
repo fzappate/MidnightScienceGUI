@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 import os
+import sys
+
 import json
 import numpy as np
 from shutil import copy2
@@ -1258,3 +1260,23 @@ class Presenter():
         self.view.textPane.text.insert(tk.END,message,"red_text")
         self.view.textPane.text.config(state='normal')
         
+
+    # PYINSTALLER UTILITIES
+    
+    def ResourcePath(self,relative_path):
+        """
+        https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+        Get absolute path to resource, works for dev and for PyInstaller.
+        Wherever there is a path to an asset, wrap the path to that asset in this function.
+        For example:
+        
+        Logo = ResourcePath("Logo.png")
+        """
+        
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
