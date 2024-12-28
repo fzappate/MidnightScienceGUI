@@ -51,7 +51,6 @@ class View(tk.Tk):
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
         hs = self.winfo_screenheight()  # Height of the screen
-        self.config()
         
         # Set window dimensions to 70% of screen size
         w = 0.7 * ws

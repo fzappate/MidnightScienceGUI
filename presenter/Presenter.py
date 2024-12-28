@@ -51,8 +51,7 @@ class Presenter():
         # Initialize UI and start the loop 
         self.view.initView(self)
         self.LoadSettings()
-        self.LoadProjectModel()
-        self.RedrawPlotNotebook()
+        self.LoadProject()
         
         # Force closing when using matplotlib
         self.view.protocol("WM_DELETE_WINDOW", self._on_closing)   
@@ -1101,13 +1100,12 @@ class Presenter():
     
     def RedrawPlotNotebook(self)->None:
         '''Redraw plot tab.'''
-        
-        self.view.projectNotebook.unbind("<<NotebookTabChanged>>")
-        
         # Delete existing tabs
         tabs = self.view.projectNotebook.tabs()
         for ii, tab in enumerate(self.view.projectNotebook.tabs()):
              self.view.projectNotebook.forget(tab)
+             
+        
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
             plotPane = PlotPane(self.view.projectNotebook,self,ii)
@@ -1119,7 +1117,9 @@ class Presenter():
             # Clear all the existing subplots, and create the axis for the new ones
             plotCanvasChildren = plotPane.plotCanvas.winfo_children()
             for ii,child in enumerate(plotCanvasChildren):
-                plt.close()
+                # THIS CAUSES THE WINDOW TO GO BEHIND THE LATEST WINDOW OPEN
+                # It seems useless, comment now, may delete later
+                # plt.close() 
                 child.destroy()
                 
             noOfSubplots = len(plot.containedSubplots)
@@ -1223,9 +1223,6 @@ class Presenter():
                                 subplot.xTick = xTicks
                                 subplot.yTick = yTicks
                             
-                            
-                                    
-                            
                 # Draw the canvas and toolbar inside the Plotter object
                 plotPane.plotCanvas.canvas = FigureCanvasTkAgg(fig, master=plotPane.plotCanvas)
                 plotPane.plotCanvas.toolbar = NavigationToolbar2Tk(plotPane.plotCanvas.canvas, plotPane.plotCanvas)
@@ -1233,11 +1230,7 @@ class Presenter():
                 plotPane.plotCanvas.toolbar.update()
                 plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            
-        # Move to the newly created tab
-        self.view.projectNotebook.select(self.model.projectModel.tabSelected)
-        
-        self.view.projectNotebook.bind("<<NotebookTabChanged>>", self.UpdateSelectedTabIndx)
+    
         
     def UpdateEmpty(self, event)->None:
         '''Empty function'''
