@@ -40,15 +40,13 @@ Notes
 from model.Model import Model
 from ui.View import View
 from presenter.Presenter import Presenter
+import datetime
 
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
 except (ImportError, AttributeError):
     pass
-
-import datetime
-
 
 global counter
 counter = 0
@@ -64,7 +62,6 @@ def counter_fun(view):
     global counter
     counter = counter+1
     view.after(1, lambda: counter_fun(view))
-    
     
 def main() -> None:
     '''Initializes and runs the application.'''

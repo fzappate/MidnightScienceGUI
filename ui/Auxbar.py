@@ -51,16 +51,18 @@ class AuxBar(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         '''Initialize the aux bar object.'''
         
+        self.presenter = presenter
+        
         iconSize = (30, 30)
 
         # Load save image
-        saveIconPath = os.path.join(os.getcwd(), './assets/saveProjIcon.png')
+        saveIconPath = os.path.join(os.getcwd(), self.presenter.ResourcePath('./assets/saveProjIcon.png'))
         self.saveIcon = Image.open(saveIconPath)
         self.saveIcon = self.saveIcon.resize(iconSize)
         self.saveIcon = ImageTk.PhotoImage(self.saveIcon)
 
         # Load load image
-        loadIconPath = os.path.join(os.getcwd(), './assets/loadProjIcon.png')
+        loadIconPath = os.path.join(os.getcwd(), self.presenter.ResourcePath('./assets/loadProjIcon.png'))
         self.loadIcon = Image.open(loadIconPath)
         self.loadIcon = self.loadIcon.resize(iconSize)
         self.loadIcon = ImageTk.PhotoImage(self.loadIcon)

@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 import os
+import sys
+
 import json
 import numpy as np
 from shutil import copy2
@@ -75,15 +77,16 @@ class Presenter():
         ''' This function loads the GUI settings.'''
         
         # Check that the settings file exists
-        settingsFileExist = os.path.exists(self.model.settings.settingsFilePath)
+        settingFilePath = self.ResourcePath(self.model.settings.settingsFilePath)
+        settingsFileExist = os.path.exists(settingFilePath)
         
         if (settingsFileExist):
-            self.PrintMessage('Settings file found at: ' + self.model.settings.settingsFilePath)
+            self.PrintMessage('Settings file found at: ' + settingFilePath)
         else:
-            self.PrintError('Settings file found at: ' + self.model.settings.settingsFilePath)
+            self.PrintError('Settings file found at: ' + settingFilePath)
             
         # Read setting file
-        file = open(self.model.settings.settingsFilePath,'r')
+        file = open(settingFilePath,'r')
         lines = file.readlines()
         
         # Create setting dictionary
@@ -1258,3 +1261,23 @@ class Presenter():
         self.view.textPane.text.insert(tk.END,message,"red_text")
         self.view.textPane.text.config(state='normal')
         
+
+    # PYINSTALLER UTILITIES
+    
+    def ResourcePath(self,relative_path):
+        """
+        https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+        Get absolute path to resource, works for dev and for PyInstaller.
+        Wherever there is a path to an asset, wrap the path to that asset in this function.
+        For example:
+        
+        Logo = ResourcePath("Logo.png")
+        """
+        
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
