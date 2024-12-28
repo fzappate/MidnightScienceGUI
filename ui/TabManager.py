@@ -59,19 +59,19 @@ class TabManager(tk.Frame):
         iconSize = (30, 30)
 
         # Load add tab image
-        addTabIconPath = os.path.join(os.getcwd(), './docs/images/newTabIcon.png')
+        addTabIconPath = os.path.join(os.getcwd(), './assets/newTabIcon.png')
         self.addTabIcon = Image.open(addTabIconPath)
         self.addTabIcon = self.addTabIcon.resize(iconSize)
         self.addTabIcon = ImageTk.PhotoImage(self.addTabIcon)
 
         # # Load load image
-        delTabIconPath = os.path.join(os.getcwd(), './docs/images/delTabIcon.png')
+        delTabIconPath = os.path.join(os.getcwd(), './assets/delTabIcon.png')
         self.delTabIcon = Image.open(delTabIconPath)
         self.delTabIcon = self.delTabIcon.resize(iconSize)
         self.delTabIcon = ImageTk.PhotoImage(self.delTabIcon)
         
         # # Load reload image
-        optsTabIconPath = os.path.join(os.getcwd(), './docs/images/optsTabIcon.png')
+        optsTabIconPath = os.path.join(os.getcwd(), './assets/optsTabIcon.png')
         self.optsTabIcon = Image.open(optsTabIconPath)
         self.optsTabIcon = self.optsTabIcon.resize(iconSize)
         self.optsTabIcon = ImageTk.PhotoImage(self.optsTabIcon)
