@@ -49,7 +49,7 @@ class View(tk.Tk):
         self.title("Midnight Science Plotter")
 
         # Set icon
-        self.iconbitmap('assets/IconTrans.ico')
+        self.iconbitmap('assets/MSPlotterIcon.ico')
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
