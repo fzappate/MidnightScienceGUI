@@ -48,6 +48,9 @@ class View(tk.Tk):
         super().__init__()
         self.title("Midnight Science Plotter")
 
+        # Set icon
+        self.iconbitmap('assets/IconTrans.ico')
+        
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
         hs = self.winfo_screenheight()  # Height of the screen
