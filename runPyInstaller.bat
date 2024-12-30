@@ -1,1 +1,0 @@
-pyinstaller --name MSPlotter --clean --onefile --specpath dist --windowed --icon=..\assets\IconTrans.ico --add-data "../assets:assets" --add-data "../utilities:utilities" main.py
