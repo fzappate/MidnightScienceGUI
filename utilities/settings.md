@@ -1,4 +1,4 @@
 # Settings
-- ProjectFolder, C:/Software/MACnCheese/build/Debug/PlotProject
+- ProjectFolder, 
 - ProjectFileName, ./ProjectModel.json
 - ProjectFileNameTemp, ./ProjectModelTemp.json

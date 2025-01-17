@@ -48,8 +48,7 @@ class View(tk.Tk):
         super().__init__()
         self.title("Midnight Science Plotter")
 
-        # Set icon
-        self.iconbitmap('assets/MSPlotterIcon.ico')
+
         
         # Get screen width and height
         ws = self.winfo_screenwidth()  # Width of the screen
@@ -79,6 +78,11 @@ class View(tk.Tk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=0)
+        
+        # Set icon
+        # Get absolute path to resource, works for dev and for PyInstaller.
+        iconPath = self.presenter.ResourcePath('./assets/MSPlotterIcon.ico')
+        self.iconbitmap(iconPath)
 
         # Path selector
         self.pathSelector = PathSelector(self, presenter)
