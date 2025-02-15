@@ -37,7 +37,7 @@ class ProjectNotebook(ttk.Notebook):
         notebook = ProjectNotebook(parent_widget)
     """
     
-    def __init__(self, parent, *args, **kwargs) -> None:
+    def __init__(self, parent, presenter, *args, **kwargs) -> None:
         """
         Initializes the ProjectNotebook widget, which will be populated with tabs 
         dynamically by the presenter.
@@ -49,3 +49,5 @@ class ProjectNotebook(ttk.Notebook):
         """
         '''Initialize the notebook widget of the application UI.'''
         super().__init__(parent, *args, **kwargs)
+        
+        self.bind("<<NotebookTabChanged>>", presenter.UpdateSelectedTabIndx)
