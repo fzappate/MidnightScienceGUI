@@ -1259,6 +1259,8 @@ class Presenter():
                 plotPane.plotCanvas.toolbar.update()
                 plotPane.plotCanvas.toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
                 plotPane.plotCanvas.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                
+        self.view.projectNotebook.select(self.model.projectModel.tabSelected)
     
         
     def UpdateEmpty(self, event)->None:

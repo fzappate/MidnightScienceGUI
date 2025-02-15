@@ -101,7 +101,7 @@ class View(tk.Tk):
         self.tabManager.columnconfigure(0, weight=1)
 
         # Main tabs
-        self.projectNotebook = ProjectNotebook(self)
+        self.projectNotebook = ProjectNotebook(self, presenter)
         self.projectNotebook.grid(row=2, column=0, sticky='NEWS', padx=(3, 3), pady=(2, 2))
 
         # Text widget
