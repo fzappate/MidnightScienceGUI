@@ -1083,8 +1083,6 @@ class Presenter():
              self.PrintError('Results File ' + filePath + ' not found.')
                     
         return signals, signalNames
-
-   
              
     def DetermineSignalQuantity(self,name,units)->str:
         '''Take the unit of the signal, and determine its quantity.'''
@@ -1141,8 +1139,7 @@ class Presenter():
         tabs = self.view.projectNotebook.tabs()
         for ii, tab in enumerate(self.view.projectNotebook.tabs()):
              self.view.projectNotebook.forget(tab)
-             
-        
+                     
         # Redraw tabs
         for ii,plot in enumerate(self.model.projectModel.containedPlots):
             plotPane = PlotPane(self.view.projectNotebook,self,ii)
@@ -1156,7 +1153,7 @@ class Presenter():
             for ii,child in enumerate(plotCanvasChildren):
                 # THIS CAUSES THE WINDOW TO GO BEHIND THE LATEST WINDOW OPEN
                 # It seems useless, comment now, may delete later
-                # plt.close() 
+                plt.close('all') 
                 child.destroy()
                 
             noOfSubplots = len(plot.containedSubplots)
@@ -1270,7 +1267,6 @@ class Presenter():
                 
         self.view.projectNotebook.select(self.model.projectModel.tabSelected)
     
-        
     def UpdateEmpty(self, event)->None:
         '''Empty function'''
         
