@@ -3,6 +3,7 @@ class SignalModel():
                  name = '',
                  units = '',
                  quantity = '',
+                 width = 1,
                  indexInResFile = 0,
                  scalingFactor = 1)->None:
         '''
@@ -14,6 +15,7 @@ class SignalModel():
         self.name = name
         self.quantity = quantity
         self.units = units
+        self.width = width
         self.rawData = []
         self.scaledData = []
         self.indexInResFile = indexInResFile

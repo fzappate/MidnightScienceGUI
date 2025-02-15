@@ -188,51 +188,52 @@ class Presenter():
                                             
                         resFileModel.signals, resFileModel.signalNames = self.LoadSignalsFromResFile(resFileModel.absPath)
                         
-                        # Load selected signal data
-                        jsonSelectedSignals = jsonResFile["selectedSignals"]
-                        for hh, jsonSelSign in enumerate(jsonSelectedSignals):
-                            selectedSignalModel = PlottedSignalModel()
-                            selectedSignalModel.name = jsonSelSign["name"]
-                            selectedSignalModel.width = jsonSelSign["width"]
-                            selectedSignalModel.style = jsonSelSign["style"]
-                            selectedSignalModel.marker = jsonSelSign["marker"]
-                            selectedSignalModel.color = jsonSelSign["color"]
-                            selectedSignalModel.label = jsonSelSign["label"]
-                            selectedSignalModel.label = jsonSelSign["name"]
-                            selectedSignalModel.units = jsonSelSign["units"]
-                            selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
-                            selectedSignalModel.quantity = jsonSelSign["quantity"]
-                            selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
+                        if not len(resFileModel.signals)==0:
+                            # Load selected signal data
+                            jsonSelectedSignals = jsonResFile["selectedSignals"]
+                            for hh, jsonSelSign in enumerate(jsonSelectedSignals):
+                                selectedSignalModel = PlottedSignalModel()
+                                selectedSignalModel.name = jsonSelSign["name"]
+                                selectedSignalModel.width = jsonSelSign["width"]
+                                selectedSignalModel.style = jsonSelSign["style"]
+                                selectedSignalModel.marker = jsonSelSign["marker"]
+                                selectedSignalModel.color = jsonSelSign["color"]
+                                selectedSignalModel.label = jsonSelSign["label"]
+                                selectedSignalModel.label = jsonSelSign["name"]
+                                selectedSignalModel.units = jsonSelSign["units"]
+                                selectedSignalModel.scalingFactor = jsonSelSign["scalingFactor"] 
+                                selectedSignalModel.quantity = jsonSelSign["quantity"]
+                                selectedSignalModel.indexInResFile = jsonSelSign["indexInResFile"]
+                                
+                                selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
+                                selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
+                                
+                                # Append PlottedSignal inside the ResultFileModel.selectedSignals
+                                resFileModel.selectedSignals.append(selectedSignalModel)
                             
-                            selectedSignalModel.rawData = resFileModel.signals[selectedSignalModel.indexInResFile].rawData
-                            selectedSignalModel.scaledData = [dataPoint*selectedSignalModel.scalingFactor for dataPoint in selectedSignalModel.rawData]
+                            jsonXAxisSignals = jsonResFile["xAxisSignal"]
+                            for jsonXAxisSignal in jsonXAxisSignals:
+                                xAxisSignal = PlottedSignalModel()
+                                xAxisSignal.name = jsonXAxisSignal["name"]
+                                xAxisSignal.width = jsonXAxisSignal["width"]
+                                xAxisSignal.style = jsonXAxisSignal["style"]
+                                xAxisSignal.marker = jsonXAxisSignal["marker"]
+                                xAxisSignal.color = jsonXAxisSignal["color"]
+                                xAxisSignal.label = jsonXAxisSignal["label"]
+                                xAxisSignal.label = jsonXAxisSignal["name"]
+                                xAxisSignal.units = jsonXAxisSignal["units"]
+                                xAxisSignal.scalingFactor = jsonXAxisSignal["scalingFactor"] 
+                                xAxisSignal.quantity = jsonXAxisSignal["quantity"]
+                                xAxisSignal.indexInResFile = jsonXAxisSignal["indexInResFile"]
+                                
+                                xAxisSignal.rawData = resFileModel.signals[xAxisSignal.indexInResFile].rawData
+                                xAxisSignal.scaledData = [dataPoint*xAxisSignal.scalingFactor for dataPoint in xAxisSignal.rawData]
+                                
+                            # Use PlottedSignal as xAxisSignal
+                            resFileModel.xAxisSignal = xAxisSignal
                             
-                            # Append PlottedSignal inside the ResultFileModel.selectedSignals
-                            resFileModel.selectedSignals.append(selectedSignalModel)
-                        
-                        jsonXAxisSignals = jsonResFile["xAxisSignal"]
-                        for jsonXAxisSignal in jsonXAxisSignals:
-                            xAxisSignal = PlottedSignalModel()
-                            xAxisSignal.name = jsonXAxisSignal["name"]
-                            xAxisSignal.width = jsonXAxisSignal["width"]
-                            xAxisSignal.style = jsonXAxisSignal["style"]
-                            xAxisSignal.marker = jsonXAxisSignal["marker"]
-                            xAxisSignal.color = jsonXAxisSignal["color"]
-                            xAxisSignal.label = jsonXAxisSignal["label"]
-                            xAxisSignal.label = jsonXAxisSignal["name"]
-                            xAxisSignal.units = jsonXAxisSignal["units"]
-                            xAxisSignal.scalingFactor = jsonXAxisSignal["scalingFactor"] 
-                            xAxisSignal.quantity = jsonXAxisSignal["quantity"]
-                            xAxisSignal.indexInResFile = jsonXAxisSignal["indexInResFile"]
-                            
-                            xAxisSignal.rawData = resFileModel.signals[xAxisSignal.indexInResFile].rawData
-                            xAxisSignal.scaledData = [dataPoint*xAxisSignal.scalingFactor for dataPoint in xAxisSignal.rawData]
-                            
-                        # Use PlottedSignal as xAxisSignal
-                        resFileModel.xAxisSignal = xAxisSignal
-                        
-                        # Append ResultFileModel to SubplotModel.containedResultFiles
-                        subplotModel.containedResultFiles.append(resFileModel)
+                            # Append ResultFileModel to SubplotModel.containedResultFiles
+                            subplotModel.containedResultFiles.append(resFileModel)
                     
                     # Append the SubplotModel inside the PlotModel.containedSubplots
                     plotModel.containedSubplots.append(subplotModel)
@@ -1041,42 +1042,49 @@ class Presenter():
   # LOAD SIGNALS
              
     def LoadSignalsFromResFile(self,filePath):
-        '''Load results.'''       
-        # Read results file
-        file = open(filePath,'r')
-        lines = file.readlines()
-        file.close()
-        
+        '''Load results.'''     
+            
         # Initialize lists 
         signals = []
         signalNames = []
-        
-        # Create the list of signals
-        headerTokens = lines[0].split(',')
-        headerTokens = headerTokens[:-1]
-        for i, headerToken in enumerate(headerTokens):
-            headerToken = headerToken.strip() 
-            signalTokens = headerToken.split(':')
-            name = signalTokens[:-1]
-            name = ":".join(name)
-            units = signalTokens[-1]
-            sigQuantity = self.DetermineSignalQuantity(name,units)
-            sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indexInResFile=i)
-            signals.append(sigTemp)
-            signalNames.append(name)
-        
-        # Iterate on the lines - skip the first one
-        for line in lines[1:]:
-            valueTokens = line.split(',')
-            valueTokens = valueTokens[:-1]
-            for i, valueStr in enumerate(valueTokens):
-                if valueStr == "":
-                    continue
-                
-                value = float(valueStr) 
-                signals[i].AppendData(value)
-                
+              
+        # Read results file
+        if os.path.exists(filePath):     
+            file = open(filePath,'r')
+            lines = file.readlines()
+            file.close()
+            
+            # Create the list of signals
+            headerTokens = lines[0].split(',')
+            headerTokens = headerTokens[:-1]
+            for i, headerToken in enumerate(headerTokens):
+                headerToken = headerToken.strip() 
+                signalTokens = headerToken.split(':')
+                name = signalTokens[:-1]
+                name = ":".join(name)
+                units = signalTokens[-1]
+                sigQuantity = self.DetermineSignalQuantity(name,units)
+                sigTemp = SignalModel(name=name,units=units,quantity=sigQuantity,indexInResFile=i)
+                signals.append(sigTemp)
+                signalNames.append(name)
+            
+            # Iterate on the lines - skip the first one
+            for line in lines[1:]:
+                valueTokens = line.split(',')
+                valueTokens = valueTokens[:-1]
+                for i, valueStr in enumerate(valueTokens):
+                    if valueStr == "":
+                        continue
+                    
+                    value = float(valueStr) 
+                    signals[i].AppendData(value)
+                    
+        else:
+             self.PrintError('Results File ' + filePath + ' not found.')
+                    
         return signals, signalNames
+
+   
              
     def DetermineSignalQuantity(self,name,units)->str:
         '''Take the unit of the signal, and determine its quantity.'''
