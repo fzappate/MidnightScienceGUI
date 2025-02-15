@@ -923,6 +923,19 @@ class Presenter():
         elif signal.quantity == 'Pressure':
             unitList = ['Pa','MPa','bar']
             scalingList = [1, 1e-6, 1e-5]
+            
+        elif signal.quantity == 'Angle':
+            unitList = ['rad','deg','rev']
+            scalingList = [1, 180/np.pi, 1/(2*np.pi)]
+            
+        elif signal.quantity == 'Angular Velocity':
+            unitList = ['rad/s','deg/s','rpm']
+            scalingList = [1, 180/np.pi, 60/(2*np.pi)]
+            
+        elif signal.quantity == 'Angular Acceleration':
+            unitList = ['rad/s^2','deg/s^2','rpm/s']
+            scalingList = [1, 180/np.pi, 60/(2*np.pi)]
+            
         else:
             unitList = [signal.units]
             scalingList = [1]            
@@ -1089,9 +1102,25 @@ class Presenter():
             return 'BulkModulus'
         
         elif units == '-':
-            return 'Ratio'        
+            return 'Ratio'  
+        
+        elif units == 'm/s':
+            return 'Velocity'
+        
+        elif units == 'm/s^2':
+            return 'Acceleration'
+        
+        elif units == 'rad':
+            return 'Angle' 
+         
+        elif units == 'rad/s':
+            return 'Angular Velocity'   
+        
+        elif units == 'rad/s^2': 
+            return 'Angular Acceleration'
         
         else:
+            self.PrintMessage('Units of signal ' + name + ' not found.')
             print('Units of signal ' + name + ' not found.')
 
 
