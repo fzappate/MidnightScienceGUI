@@ -4,7 +4,7 @@
 ; Name of the app:
 #define MyAppName "Midnight Science Plotter"
 ; Version of the app:
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "1.0.4"
 ; Publisher of the app:
 #define MyAppPublisher "Midnight Science"
 ; Name of the .exe of the app:
@@ -34,7 +34,7 @@ PrivilegesRequiredOverridesAllowed=dialog
 ; Location of the output setup file:
 OutputDir=C:\Software\GUI\setup
 ; Name of the output setup file:
-OutputBaseFilename=MSPlotter_win_v0.1.0_setup
+OutputBaseFilename="MSPlotter_win_v1.0.4_setup"
 ; Icon of the output setup file:
 SetupIconFile=C:\Software\GUI\assets\SetupIcon.ico
 Compression=lzma
