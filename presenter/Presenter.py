@@ -381,7 +381,7 @@ class Presenter():
         f.write('"width": '+ str(plottedSignal.width) +',\n')
         f.write('"style": "'+ plottedSignal.style +'",\n')
         f.write('"marker": "'+ plottedSignal.marker +'",\n')
-        f.write('"color": "'+ plottedSignal.color +'",\n')
+        f.write('"color": "'+ str(plottedSignal.color) +'",\n')
         f.write('"label": "'+ plottedSignal.label +'",\n')
         f.write('"units": "'+ plottedSignal.units +'",\n')
         f.write('"scalingFactor": '+ str(plottedSignal.scalingFactor)+',\n')

@@ -3,6 +3,10 @@ class SignalModel():
                  name = '',
                  units = '',
                  quantity = '',
+                 style = '-',
+                 marker = ' ',
+                 color = [1, 1, 1],
+                 label = '',
                  width = 1,
                  indexInResFile = 0,
                  scalingFactor = 1)->None:
@@ -16,6 +20,10 @@ class SignalModel():
         self.quantity = quantity
         self.units = units
         self.width = width
+        self.style = style
+        self.marker = marker
+        self.color = color
+        self.label = label
         self.rawData = []
         self.scaledData = []
         self.indexInResFile = indexInResFile
